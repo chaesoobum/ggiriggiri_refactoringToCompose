@@ -82,8 +82,6 @@ dependencies {
 
 
 
-
-
     implementation("androidx.compose.material:material-icons-extended:1.7.6")
     implementation("androidx.navigation:navigation-compose:2.8.5")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
@@ -104,7 +102,6 @@ dependencies {
     implementation(libs.glide)
     annotationProcessor(libs.compiler) // 버전 맞추기!
     implementation("com.github.penfeizhou.android.animation:apng:2.24.0")
-
 
     // 카카오
     implementation("com.kakao.sdk:v2-all:2.20.6") // 전체 모듈 설치, 2.11.0 버전부터 지원

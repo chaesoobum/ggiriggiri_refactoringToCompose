@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,11 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.friends.ggiriggiri.R
-import com.friends.ggiriggiri.screen.ui.home.UserMain_QuestionOfToday
 
 // date는 포맷팅 된상태로 들어올것
 @Composable
-fun RequestItem(
+fun RequestListScreenItem(
     name: String,
     content:String,
     date:String
@@ -46,7 +44,7 @@ fun RequestItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "채수범",
+                        text = name,
                         fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
                         fontSize = 16.sp
                     )
@@ -58,7 +56,7 @@ fun RequestItem(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "내용입니다 내용입니다 내용입니다 내용입니다 내용입니다",
+                    text = content,
                     fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
                     fontSize = 14.sp,
                     maxLines = 2,
@@ -73,7 +71,7 @@ fun RequestItem(
             contentAlignment = Alignment.BottomEnd
         ) {
             Text(
-                text = "2025.03.04 00:15",
+                text = date,
                 modifier = Modifier
                     .padding(20.dp),
                 fontFamily = FontFamily(Font(R.font.nanumsquareregular)),
@@ -86,5 +84,5 @@ fun RequestItem(
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
-    RequestItem("채수범","내용입니다","2025.03.04 00:15")
+    RequestListScreenItem("채수범","내용입니다","2025.03.04 00:15")
 }

@@ -26,6 +26,7 @@ fun TopAppBar(
     navigationIconImage:ImageVector? = null,
     navigationIconOnClick:() -> Unit = {},
     menuItems : @Composable RowScope.() -> Unit = {},
+    isDivider : Boolean? = true
 ) {
     Column {
         CenterAlignedTopAppBar(
@@ -56,9 +57,11 @@ fun TopAppBar(
             },
             scrollBehavior = scrollBehavior
         )
-        Divider(
-            color = Color.Gray,
-            thickness = 1.dp
-        )
+        if (isDivider == true){
+            Divider(
+                color = Color.Gray,
+                thickness = 1.dp
+            )
+        }
     }
 }

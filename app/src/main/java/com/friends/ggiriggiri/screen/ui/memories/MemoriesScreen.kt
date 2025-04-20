@@ -22,6 +22,7 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,16 +37,24 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.component.TopAppBar
+import com.friends.ggiriggiri.screen.viewmodel.MemoriesViewModel
+import com.friends.ggiriggiri.screen.viewmodel.UserLoginViewModel
 import com.friends.ggiriggiri.util.Memories
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun MemoriesScreen(modifier: Modifier) {
+fun MemoriesScreen(
+    modifier: Modifier,
+    memoriesViewModel: MemoriesViewModel = hiltViewModel()
+) {
     MemoriesContent(
         modifier,
+        memoriesViewModel
     )
 }
 
@@ -53,7 +62,13 @@ fun MemoriesScreen(modifier: Modifier) {
 @Composable
 fun MemoriesContent(
     modifier: Modifier,
+    memoriesViewModel: MemoriesViewModel
 ) {
+
+    LaunchedEffect(Unit) {
+        memoriesViewModel.takeInformationForRequestsListScreen()
+    }
+
     val context = LocalContext.current
     val selectedColor = Color(ContextCompat.getColor(context, R.color.mainColor))
 
@@ -73,6 +88,7 @@ fun MemoriesContent(
         onRefresh = {
             coroutineScope.launch {
                 isRefreshing = true
+                memoriesViewModel.takeInformationForRequestsListScreen()
                 delay(1000)
                 isRefreshing = false
             }
@@ -86,6 +102,7 @@ fun MemoriesContent(
                     .fillMaxWidth()
                     .statusBarsPadding()
             ) {
+                TopAppBar(title = "추억들", isDivider = false)
                 TabRow(
                     selectedTabIndex = pagerState.currentPage,
                     indicator = { tabPositions ->
@@ -139,8 +156,14 @@ fun MemoriesContent(
                     .fillMaxSize()
             ) { page ->
                 when (memoriesTabs[page]) {
-                    Memories.Answers -> AnswersListScreen(modifier)
-                    Memories.Requests -> RequestsListScreen(modifier)
+                    Memories.Answers -> QuestionListScreen(
+                        list = memoriesViewModel.listForRequestsListScreen.value,
+                        isRefreshing = isRefreshing)
+                    Memories.Requests -> RequestListScreen(
+                        list = memoriesViewModel.listForRequestsListScreen.value,
+                        isRefreshing = isRefreshing
+                    )
+
                 }
             }
 
@@ -157,8 +180,3 @@ fun MemoriesContent(
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewMemoriesScreen() {
-    MemoriesContent(modifier = Modifier)
-}

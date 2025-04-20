@@ -23,6 +23,6 @@ sealed class Group(val route: String,val label: String,val icon: Int){
 }
 
 sealed class Memories(val route: String,val label: String,val icon: Int){
-    object Requests : Memories("Requests","요청들",R.drawable.exclamation_24px)
-    object Answers : Memories("Answers","답변들",R.drawable.question_mark_24px)
+    object Requests : Memories("Requests","요청",R.drawable.exclamation_24px)
+    object Answers : Memories("Answers","답변",R.drawable.question_mark_24px)
 }

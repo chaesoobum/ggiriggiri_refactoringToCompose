@@ -30,6 +30,7 @@ import kotlinx.coroutines.withContext
 import java.net.URL
 import java.nio.ByteBuffer
 
+//png 이미지 url
 @Composable
 fun ApngImageFromUrl(
     imageUrl: String,

@@ -33,7 +33,7 @@ fun UserMainScreen() {
             navController = navController,
             startDestination = Screen.Home.route,
             modifier = Modifier
-                .padding(0.dp) // ← 기존 innerPadding 제거
+                .padding(0.dp)
                 .fillMaxSize()
         ) {
             composable(Screen.Home.route) {

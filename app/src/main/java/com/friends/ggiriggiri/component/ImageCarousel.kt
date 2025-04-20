@@ -10,6 +10,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,22 +33,30 @@ import com.valentinilk.shimmer.shimmer
 @Composable
 fun ImageCarousel(
     items: List<String>,
-    onImageClick: (String) -> Unit) {
+    onImageClick: (String) -> Unit
+) {
     val listState = rememberLazyListState()
     val flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
     val shimmerInstance = rememberShimmer(shimmerBounds = ShimmerBounds.View)
 
-    Box(
+    val currentIndex by remember {
+        derivedStateOf {
+            val firstVisibleItem = listState.firstVisibleItemIndex
+            val offset = listState.firstVisibleItemScrollOffset
+            if (offset > 125) firstVisibleItem + 1 else firstVisibleItem
+        }
+    }
+
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 0.dp, end = 0.dp, top = 20.dp)
+            .padding(top = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LazyRow(
             state = listState,
             flingBehavior = flingBehavior,
-            modifier = Modifier
-                .fillMaxWidth(),
-            //horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.fillMaxWidth(),
         ) {
             items(items) { item ->
                 Box(
@@ -70,7 +81,7 @@ fun ImageCarousel(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .shimmer(shimmerInstance)
-                                        .padding(start = 20.dp,end=20.dp)
+                                        .padding(start = 20.dp, end = 20.dp)
                                         .background(
                                             brush = Brush.horizontalGradient(
                                                 colors = listOf(
@@ -86,7 +97,7 @@ fun ImageCarousel(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(start = 20.dp,end=20.dp)
+                                        .padding(start = 20.dp, end = 20.dp)
                                         .clip(RoundedCornerShape(12.dp))
                                         .background(Color.Gray.copy(alpha = 0.3f)),
                                     contentAlignment = Alignment.Center
@@ -101,19 +112,38 @@ fun ImageCarousel(
                                     contentDescription = contentDescription,
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(start = 20.dp,end=20.dp)
+                                        .padding(start = 20.dp, end = 20.dp)
                                         .clickable { onImageClick(item) },
                                     contentScale = ContentScale.Fit
                                 )
                             }
-
                         }
                     }
                 }
             }
         }
-    }
 
+        // 점 인디케이터 추가
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            items.forEachIndexed { index, _ ->
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .size(if (currentIndex == index) 10.dp else 8.dp)
+                        .clip(RoundedCornerShape(50))
+                        .background(
+                            if (currentIndex == index) colorResource(id = R.color.mainColor)
+                            else Color.Gray.copy(alpha = 0.4f)
+                        )
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+    }
 }
 
 @Preview(showBackground = true)
