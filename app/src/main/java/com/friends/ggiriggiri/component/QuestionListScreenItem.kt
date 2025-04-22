@@ -1,9 +1,13 @@
 package com.friends.ggiriggiri.component
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
@@ -24,47 +28,55 @@ fun QuestionListScreenItem(
     questionTitle: String = "이 그룹에서 제로 콜라 안마실거 같은 사람은?",
     questionDate: String = "2025.02.07"
 ) {
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+            .height(100.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = questionNumber,
-                fontSize = 15.sp,
-                maxLines = 1,
-                fontFamily = FontFamily(Font(R.font.nanumsquarebold))
-            )
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            Text(
-                text = questionTitle,
-                fontSize = 14.sp,
-                maxLines = 1,
-                modifier = Modifier.weight(1f),
-                fontFamily = FontFamily(Font(R.font.nanumsquarebold))
-            )
-        }
-
-        Text(
-            text = questionDate,
-            fontSize = 12.sp,
-            fontFamily = FontFamily(Font(R.font.nanumsquareregular)),
-            textAlign = TextAlign.End,
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp, end = 10.dp, bottom = 10.dp),
-        )
+                .fillMaxSize()
+                .padding(20.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Row {
+                    Text(
+                        text = questionNumber,
+                        fontSize = 15.sp,
+                        maxLines = 1,
+                        fontFamily = FontFamily(Font(R.font.nanumsquarebold))
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = questionTitle,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f),
+                        fontFamily = FontFamily(Font(R.font.nanumsquarebold))
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row {
+                    Text(
+                        text = questionDate,
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(R.font.nanumsquareregular)),
+                        textAlign = TextAlign.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+            }
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun previews(){
+fun previews() {
     QuestionListScreenItem()
 }

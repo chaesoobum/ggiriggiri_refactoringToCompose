@@ -31,7 +31,10 @@ fun QuestionListScreen(
             }
         } else {
             list.forEach {
-                QuestionListScreenItem(it[0], it[1], it[2])
+                //questionNumber: String = "#001",
+                //    questionTitle: String = "이 그룹에서 제로 콜라 안마실거 같은 사람은?",
+                //    questionDate: String = "2025.02.07"
+                QuestionListScreenItem("#001", "이 그룹에서 제로 콜라 안마실거 같은 사람은?", "2025.02.07")
             }
         }
         Spacer(modifier = Modifier.height(100.dp))

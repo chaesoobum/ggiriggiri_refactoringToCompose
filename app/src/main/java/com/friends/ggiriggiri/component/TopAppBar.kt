@@ -34,7 +34,7 @@ fun TopAppBar(
             title = {
                 Text(
                     text = title,
-                    fontFamily = FontFamily(Font(R.font.nanumsquareextrabold))
+                    fontFamily = FontFamily(Font(R.font.nanumsquarebold))
                 )
             },
             // 네비게이션 아이콘

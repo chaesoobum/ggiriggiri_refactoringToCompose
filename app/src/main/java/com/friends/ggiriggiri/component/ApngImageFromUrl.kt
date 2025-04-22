@@ -2,6 +2,10 @@ package com.friends.ggiriggiri.component
 
 
 import android.widget.ImageView
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,14 +22,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.github.penfeizhou.animation.apng.APNGDrawable
 import com.github.penfeizhou.animation.io.ByteBufferReader
 import com.github.penfeizhou.animation.loader.ByteBufferLoader
 import com.valentinilk.shimmer.ShimmerBounds
+import com.valentinilk.shimmer.ShimmerTheme
 import com.valentinilk.shimmer.rememberShimmer
 import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.net.URL
 import java.nio.ByteBuffer
@@ -40,11 +47,32 @@ fun ApngImageFromUrl(
     var apngDrawable by remember { mutableStateOf<APNGDrawable?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
-    val shimmerInstance = rememberShimmer(shimmerBounds = ShimmerBounds.View)
+    val shimmerInstance = rememberShimmer(
+        shimmerBounds = ShimmerBounds.View,
+        theme = ShimmerTheme(
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = 500,
+                    easing = LinearEasing
+                ),
+                repeatMode = RepeatMode.Restart
+            ),
+            blendMode = androidx.compose.ui.graphics.BlendMode.SrcOver,
+            rotation = 0f, // 또는 20f로 기울기 효과
+            shaderColors = listOf(
+                Color.LightGray.copy(alpha = 0.6f),
+                Color.LightGray.copy(alpha = 0.3f),
+                Color.LightGray.copy(alpha = 0.6f)
+            ),
+            shaderColorStops = null, // 자동 분포
+            shimmerWidth = 200.dp // shimmer wave 넓이
+        )
+    )
 
     LaunchedEffect(imageUrl) {
         withContext(Dispatchers.IO) {
             try {
+                //delay(2000) //스캘래톤을 보기위한 임시 딜레이
                 val inputStream = URL(imageUrl).openStream()
                 val byteArray = inputStream.readBytes()
                 val byteBuffer = ByteBuffer.wrap(byteArray)

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.viewmodel.MemoriesViewModel
 import com.friends.ggiriggiri.screen.viewmodel.UserLoginViewModel
@@ -89,7 +90,7 @@ fun MemoriesContent(
             coroutineScope.launch {
                 isRefreshing = true
                 memoriesViewModel.takeInformationForRequestsListScreen()
-                delay(1000)
+                delay(2000)//스켈레톤을 보기위한 임시딜레이
                 isRefreshing = false
             }
         }
@@ -102,7 +103,18 @@ fun MemoriesContent(
                     .fillMaxWidth()
                     .statusBarsPadding()
             ) {
-                TopAppBar(title = "추억들", isDivider = false)
+                TopAppBar(
+                    title = "추억들",
+                    isDivider = false,
+                    menuItems = {
+                        CustomIconButton(
+                            icon = ImageVector.vectorResource(R.drawable.notifications_24px),
+                            iconButtonOnClick = {
+                                // 클릭 시 동작
+                            }
+                        )
+                    },
+                )
                 TabRow(
                     selectedTabIndex = pagerState.currentPage,
                     indicator = { tabPositions ->
@@ -155,15 +167,11 @@ fun MemoriesContent(
                 modifier = Modifier
                     .fillMaxSize()
             ) { page ->
+                val list = memoriesViewModel.listForRequestsListScreen.value
+                val isLoading = memoriesViewModel.isLoading.value
                 when (memoriesTabs[page]) {
-                    Memories.Answers -> QuestionListScreen(
-                        list = memoriesViewModel.listForRequestsListScreen.value,
-                        isRefreshing = isRefreshing)
-                    Memories.Requests -> RequestListScreen(
-                        list = memoriesViewModel.listForRequestsListScreen.value,
-                        isRefreshing = isRefreshing
-                    )
-
+                    Memories.Answers -> QuestionListScreen(list, isRefreshing || isLoading)
+                    Memories.Requests -> RequestListScreen(list, isRefreshing || isLoading)
                 }
             }
 

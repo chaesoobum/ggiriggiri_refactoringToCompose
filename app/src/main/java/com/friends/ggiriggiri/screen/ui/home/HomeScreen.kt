@@ -15,18 +15,23 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil.compose.SubcomposeAsyncImage
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.ImageCarousel
 import com.friends.ggiriggiri.component.TopAppBar
+import kotlinx.coroutines.delay
 
 val dummyMemberImageIds = listOf(
     R.drawable.ic_default_profile,
@@ -38,9 +43,21 @@ val dummyMemberImageIds = listOf(
 
 @Composable
 fun HomeScreen(modifier: Modifier) {
+    val memberImageUrls = remember { mutableStateOf<List<String>>(emptyList()) }
+
+    // 딜레이 후 이미지 로딩 시뮬레이션
+    LaunchedEffect(Unit) {
+        delay(2000L) // 2초 후에 데이터 세팅
+        memberImageUrls.value = listOf(
+            "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
+            "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
+            "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26"
+        )
+    }
+
     HomeContent(
-        modifier,
-        dummyMemberImageIds
+        modifier = modifier,
+        memberImageUrls = memberImageUrls.value
     )
 }
 
@@ -48,12 +65,22 @@ fun HomeScreen(modifier: Modifier) {
 @Composable
 fun HomeContent(
     modifier: Modifier,
-    memberImageIds: List<Int>
+    memberImageUrls: List<String>
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(title = "그룹명")
+            TopAppBar(
+                title = "그룹명",
+                menuItems = {
+                    CustomIconButton(
+                        icon = ImageVector.vectorResource(R.drawable.notifications_24px),
+                        iconButtonOnClick = {
+                            // 클릭 시 동작
+                        }
+                    )
+                },
+            )
         }
     ) { innerPadding ->
         Box(
@@ -66,16 +93,23 @@ fun HomeContent(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                UserMain_MemberList(memberImageIds)
+//                UserMain_MemberList(
+//                    memberImageUrls = listOf(
+//                        "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
+//                        "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
+//                        "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
+//                    )
+//                )
+                UserMain_MemberList(memberImageUrls = memberImageUrls)
                 UserMain_QuestionOfToday()
                 UserMain_ToAsk()
 
                 val selectedImageUrl = remember { mutableStateOf<String?>(null) }
                 val items = listOf(
-                    "https://picsum.photos/id/1015/300/200",
+                    "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
                     "https://picsum.photos/id/1016/400/600",
                     "https://not-a-real-url/image.jpg", // 실패 테스트
-                    "https://picsum.photos/id/1018/1200/400",
+                    "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
                 )
                 ImageCarousel(items = items, onImageClick = { url -> selectedImageUrl.value = url })
                 if (selectedImageUrl.value != null) {
@@ -107,7 +141,7 @@ fun HomeContent(
                         }
                     }
                 }
-            Spacer(modifier = Modifier.height(100.dp))
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }
