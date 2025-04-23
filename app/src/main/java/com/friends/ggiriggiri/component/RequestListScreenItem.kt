@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,12 +24,18 @@ import com.friends.ggiriggiri.R
 @Composable
 fun RequestListScreenItem(
     name: String,
-    content:String,
-    date:String
+    content: String,
+    date: String,
+    onClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable {
+                onClick(
+
+                )
+            }
     ) {
         Box(
             modifier = Modifier
@@ -84,5 +91,5 @@ fun RequestListScreenItem(
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
-    RequestListScreenItem("채수범","내용입니다","2025.03.04 00:15")
+    RequestListScreenItem("채수범", "내용입니다", "2025.03.04 00:15")
 }

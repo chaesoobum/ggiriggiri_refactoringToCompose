@@ -31,7 +31,10 @@ import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.ImageCarousel
 import com.friends.ggiriggiri.component.TopAppBar
+import com.friends.ggiriggiri.component.TopAppBarWithShimmer
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import okhttp3.Dispatcher
 
 val dummyMemberImageIds = listOf(
     R.drawable.ic_default_profile,
@@ -67,11 +70,17 @@ fun HomeContent(
     modifier: Modifier,
     memberImageUrls: List<String>
 ) {
+    val loading = remember { mutableStateOf(true) }
+    LaunchedEffect(Unit) {
+        delay(2000)
+        loading.value = false
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
+            TopAppBarWithShimmer(
                 title = "그룹명",
+                isLoadingTitle = loading.value,
                 menuItems = {
                     CustomIconButton(
                         icon = ImageVector.vectorResource(R.drawable.notifications_24px),

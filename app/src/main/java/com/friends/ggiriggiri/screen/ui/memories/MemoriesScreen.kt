@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri.screen.ui.memories
 
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,7 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.TopAppBar
-import com.friends.ggiriggiri.screen.viewmodel.MemoriesViewModel
+import com.friends.ggiriggiri.screen.viewmodel.memories.MemoriesViewModel
 import com.friends.ggiriggiri.screen.viewmodel.UserLoginViewModel
 import com.friends.ggiriggiri.util.Memories
 import kotlinx.coroutines.delay
@@ -170,8 +171,8 @@ fun MemoriesContent(
                 val list = memoriesViewModel.listForRequestsListScreen.value
                 val isLoading = memoriesViewModel.isLoading.value
                 when (memoriesTabs[page]) {
-                    Memories.Answers -> QuestionListScreen(list, isRefreshing || isLoading)
-                    Memories.Requests -> RequestListScreen(list, isRefreshing || isLoading)
+                    Memories.Answers -> QuestionListScreen(list, isRefreshing || isLoading,)
+                    Memories.Requests -> RequestListScreen(list, isRefreshing || isLoading, memoriesViewModel.friendsApplication)
                 }
             }
 

@@ -24,18 +24,18 @@ fun GroupNameWithSettingsButton(
     onGroupNameClick: () -> Unit = {},
 ) {
     Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onGroupNameClick() }
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()
+        horizontalArrangement = Arrangement.Center
     ) {
         Text(
             text = groupName,
             fontSize = 20.sp,
             color = Color.Black,
-            textDecoration = TextDecoration.Underline,
-            modifier = Modifier
-                .clickable { onGroupNameClick() }
-                .alignByBaseline()
+            textDecoration = TextDecoration.Underline
         )
 
         Icon(
@@ -44,7 +44,6 @@ fun GroupNameWithSettingsButton(
             tint = Color.Black,
             modifier = Modifier
                 .padding(start = 4.dp)
-                .alignByBaseline()
         )
     }
 }

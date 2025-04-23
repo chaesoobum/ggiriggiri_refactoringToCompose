@@ -107,7 +107,7 @@ fun UserMain_MemberList(
                                     modifier = Modifier
                                         .size(50.dp)
                                         .clip(CircleShape)
-                                        .background(Color.Gray.copy(alpha = 0.3f))
+                                        .background(Color.Gray.copy(alpha = 0.7f))
                                         .shimmer(shimmerInstance)
                                 )
                             } else {

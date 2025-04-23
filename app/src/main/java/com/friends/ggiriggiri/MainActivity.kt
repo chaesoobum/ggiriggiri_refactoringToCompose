@@ -22,11 +22,13 @@ import com.friends.ggiriggiri.screen.ui.UserMainScreen
 import com.friends.ggiriggiri.ui.theme.GgiriggiriTheme
 import com.friends.ggiriggiri.util.MainScreenName
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.reflect.Modifier
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-
-
+import com.friends.ggiriggiri.screen.ui.ViewNotificationScreen
+import com.friends.ggiriggiri.screen.ui.home.DoAnswerScreen
+import com.friends.ggiriggiri.screen.ui.home.DoRequestScreen
+import com.friends.ggiriggiri.screen.ui.memories.ViewOneQuestionScreen
+import com.friends.ggiriggiri.screen.ui.memories.viewonerequest.ViewOneRequestScreen
+import com.friends.ggiriggiri.screen.ui.mypage.LegalScreen
+import com.friends.ggiriggiri.screen.ui.mypage.SettingGroupScreen
 
 
 @AndroidEntryPoint
@@ -95,6 +97,34 @@ fun Main() {
 
         composable(route = MainScreenName.SCREEN_USER_GROUP.name) {
             UserGroupScreen()
+        }
+
+        composable(route = MainScreenName.SCREEN_VIEW_ONE_REQUEST.name) {
+            ViewOneRequestScreen()
+        }
+
+        composable(route = MainScreenName.SCREEN_VIEW_ONE_QUESTION.name) {
+            ViewOneQuestionScreen()
+        }
+
+        composable(route = MainScreenName.SCREEN_DO_REQUEST.name) {
+            DoRequestScreen()
+        }
+
+        composable(route = MainScreenName.SCREEN_DO_ANSWER.name) {
+            DoAnswerScreen()
+        }
+
+        composable(route = MainScreenName.SCREEN_NOTIFICATION.name) {
+            ViewNotificationScreen()
+        }
+
+        composable(route = MainScreenName.SCREEN_SETTING_GROUP.name) {
+            SettingGroupScreen()
+        }
+
+        composable(route = MainScreenName.SCREEN_LEGAL.name) {
+            LegalScreen()
         }
     }
 }

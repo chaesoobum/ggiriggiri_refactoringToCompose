@@ -9,6 +9,20 @@ enum class MainScreenName{
     SCREEN_USER_MAIN,
     //그룹화면
     SCREEN_USER_GROUP,
+    //요청 보는화면
+    SCREEN_VIEW_ONE_REQUEST,
+    //답변 보는화면
+    SCREEN_VIEW_ONE_QUESTION,
+    //요청하는화면
+    SCREEN_DO_REQUEST,
+    //질문에 답하는 화면
+    SCREEN_DO_ANSWER,
+    //알림창
+    SCREEN_NOTIFICATION,
+    //그룹설정화면
+    SCREEN_SETTING_GROUP,
+    //개인정보처리방침/이용약관화면
+    SCREEN_LEGAL
 }
 
 sealed class Screen(val route: String, val label: String, val icon: Int) {

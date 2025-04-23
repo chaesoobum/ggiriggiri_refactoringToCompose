@@ -1,10 +1,11 @@
-package com.friends.ggiriggiri.screen.viewmodel
+package com.friends.ggiriggiri.screen.viewmodel.memories
 
 import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.service.MemoriesService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -17,6 +18,8 @@ class MemoriesViewModel @Inject constructor(
     @ApplicationContext context: Context,
     val memoriesService: MemoriesService
 ) : ViewModel() {
+    val friendsApplication = context as FriendsApplication
+
 
     //처음로딩될때 스캘레톤을 띄우기위한 변수
     private val _isLoading = mutableStateOf(true) // 기본값 true: 처음 들어왔을 땐 로딩 중
