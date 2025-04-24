@@ -26,12 +26,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.ImageCarousel
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.component.TopAppBarWithShimmer
+import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import okhttp3.Dispatcher
@@ -45,12 +47,14 @@ val dummyMemberImageIds = listOf(
 )
 
 @Composable
-fun HomeScreen(modifier: Modifier) {
-    val memberImageUrls = remember { mutableStateOf<List<String>>(emptyList()) }
-
+fun HomeScreen(
+    modifier: Modifier,
+    viewModel: HomeViewModel= hiltViewModel()
+) {
     // 딜레이 후 이미지 로딩 시뮬레이션
+    val memberImageUrls = remember { mutableStateOf<List<String>>(emptyList()) }
     LaunchedEffect(Unit) {
-        delay(2000L) // 2초 후에 데이터 세팅
+        //delay(2000L) // 2초 후에 데이터 세팅
         memberImageUrls.value = listOf(
             "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
             "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
@@ -60,7 +64,8 @@ fun HomeScreen(modifier: Modifier) {
 
     HomeContent(
         modifier = modifier,
-        memberImageUrls = memberImageUrls.value
+        memberImageUrls = memberImageUrls.value,
+        viewModel
     )
 }
 
@@ -68,19 +73,20 @@ fun HomeScreen(modifier: Modifier) {
 @Composable
 fun HomeContent(
     modifier: Modifier,
-    memberImageUrls: List<String>
+    memberImageUrls: List<String>,
+    viewModel: HomeViewModel
 ) {
-    val loading = remember { mutableStateOf(true) }
+    val isTitleLoading = remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
         delay(2000)
-        loading.value = false
+        isTitleLoading.value = false
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBarWithShimmer(
                 title = "그룹명",
-                isLoadingTitle = loading.value,
+                isLoadingTitle = isTitleLoading.value,
                 menuItems = {
                     CustomIconButton(
                         icon = ImageVector.vectorResource(R.drawable.notifications_24px),
@@ -111,7 +117,7 @@ fun HomeContent(
 //                )
                 UserMain_MemberList(memberImageUrls = memberImageUrls)
                 UserMain_QuestionOfToday()
-                UserMain_ToAsk()
+                UserMain_ToAsk(viewModel)
 
                 val selectedImageUrl = remember { mutableStateOf<String?>(null) }
                 val items = listOf(

@@ -45,7 +45,7 @@ import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.TextButton
 import com.friends.ggiriggiri.component.TopAppBar
-import com.friends.ggiriggiri.screen.viewmodel.MyPageViewModel
+import com.friends.ggiriggiri.screen.viewmodel.mypage.MyPageViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,12 +27,16 @@ import com.friends.ggiriggiri.R
 fun QuestionListScreenItem(
     questionNumber: String = "#001",
     questionTitle: String = "이 그룹에서 제로 콜라 안마실거 같은 사람은?",
-    questionDate: String = "2025.02.07"
+    questionDate: String = "2025.02.07",
+    onClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
+            .clickable {
+                onClick()
+            }
     ) {
         Box(
             modifier = Modifier

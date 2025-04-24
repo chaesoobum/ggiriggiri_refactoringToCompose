@@ -32,9 +32,7 @@ fun RequestListScreenItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                onClick(
-
-                )
+                onClick()
             }
     ) {
         Box(

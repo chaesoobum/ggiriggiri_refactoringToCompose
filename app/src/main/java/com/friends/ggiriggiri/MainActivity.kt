@@ -25,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.friends.ggiriggiri.screen.ui.ViewNotificationScreen
 import com.friends.ggiriggiri.screen.ui.home.DoAnswerScreen
 import com.friends.ggiriggiri.screen.ui.home.DoRequestScreen
-import com.friends.ggiriggiri.screen.ui.memories.ViewOneQuestionScreen
+import com.friends.ggiriggiri.screen.ui.memories.viewonequestion.ViewOneQuestionScreen
 import com.friends.ggiriggiri.screen.ui.memories.viewonerequest.ViewOneRequestScreen
 import com.friends.ggiriggiri.screen.ui.mypage.LegalScreen
 import com.friends.ggiriggiri.screen.ui.mypage.SettingGroupScreen

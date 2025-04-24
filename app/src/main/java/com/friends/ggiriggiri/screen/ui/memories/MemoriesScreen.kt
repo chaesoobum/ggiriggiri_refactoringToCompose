@@ -171,7 +171,7 @@ fun MemoriesContent(
                 val list = memoriesViewModel.listForRequestsListScreen.value
                 val isLoading = memoriesViewModel.isLoading.value
                 when (memoriesTabs[page]) {
-                    Memories.Answers -> QuestionListScreen(list, isRefreshing || isLoading,)
+                    Memories.Answers -> QuestionListScreen(list, isRefreshing || isLoading, memoriesViewModel.friendsApplication)
                     Memories.Requests -> RequestListScreen(list, isRefreshing || isLoading, memoriesViewModel.friendsApplication)
                 }
             }

@@ -22,12 +22,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.ApngImageFromUrl
 import com.friends.ggiriggiri.component.CustomButton
+import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
+import com.friends.ggiriggiri.util.MainScreenName
 
 @Composable
-fun UserMain_QuestionOfToday() {
+fun UserMain_QuestionOfToday(
+    viewModel: HomeViewModel= hiltViewModel()
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -103,7 +108,13 @@ fun UserMain_QuestionOfToday() {
             contentAlignment = Alignment.Center
         ) {
             CustomButton(
-                buttonColor = colorResource(id = R.color.white)
+                text = "답변하기",
+                buttonColor = colorResource(id = R.color.white) ,
+                onClick = {
+                    viewModel.friendsApplication.navHostController.apply {
+                        navigate(MainScreenName.SCREEN_DO_ANSWER.name)
+                    }
+                }
             )
 
         }

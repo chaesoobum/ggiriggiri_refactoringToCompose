@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.screen.viewmodel
+package com.friends.ggiriggiri.screen.viewmodel.mypage
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

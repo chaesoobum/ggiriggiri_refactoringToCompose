@@ -1,23 +1,21 @@
-package com.friends.ggiriggiri.screen.ui.home
+package com.friends.ggiriggiri.screen.ui.memories.viewonequestion
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,43 +23,35 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
-import com.friends.ggiriggiri.component.OutlinedTextField
+import com.friends.ggiriggiri.component.ApngImageFromUrl
 import com.friends.ggiriggiri.component.TopAppBar
-import com.friends.ggiriggiri.screen.ui.memories.viewonequestion.QuestionImage
-import com.friends.ggiriggiri.screen.ui.memories.viewonequestion.QuestionText
-import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
+import com.friends.ggiriggiri.screen.viewmodel.memories.MemoriesViewModel
 import com.friends.ggiriggiri.util.MainScreenName
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.ShimmerTheme
 import com.valentinilk.shimmer.rememberShimmer
 import kotlinx.coroutines.delay
-import java.nio.file.WatchEvent
+
 
 @Composable
-fun DoAnswerScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+fun ViewOneQuestionScreen(
+    viewModel: MemoriesViewModel = hiltViewModel()
 ) {
-    DoAnswerContent()
+    ViewOneQuestionContent(viewModel)
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DoAnswerContent(
-    viewModel: HomeViewModel = hiltViewModel()
+fun ViewOneQuestionContent(
+    viewModel: MemoriesViewModel
 ) {
     //서버의 지연시간을 테스트하기위한 변수와 딜레이
     var isLoading by remember { mutableStateOf(true) }
@@ -69,7 +59,6 @@ fun DoAnswerContent(
         delay(2000)
         isLoading = false
     }
-    val focusManager: FocusManager = LocalFocusManager.current
 
     val shimmerInstance = rememberShimmer(
         shimmerBounds = ShimmerBounds.View,
@@ -95,61 +84,47 @@ fun DoAnswerContent(
 
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                // 외부 터치 시 포커스를 해제하고 키보드 내리기
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus() // 포커스를 해제
-                })
-            },
+            .fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = "답변하기",
                 navigationIconImage = ImageVector.vectorResource(id = R.drawable.arrow_back_ios_24px),
                 navigationIconOnClick = {
                     viewModel.friendsApplication.navHostController.apply {
-                        popBackStack(MainScreenName.SCREEN_DO_ANSWER.name,true)
+                        popBackStack(MainScreenName.SCREEN_VIEW_ONE_QUESTION.name,true)
                     }
-                },
-                isDivider = false
+                }
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            QuestionImage("https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confounded%20Face.png")
-            Spacer(modifier = Modifier.height(10.dp))
-            Row (
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ){
-                Text(
-                    text = "친구의 애인의 도대체 애랑 왜 만나는지 궁금했던적이 있다",
-                    fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    textAlign = TextAlign.Center
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                QuestionImage("https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confounded%20Face.png")
+                QuestionText(
+                    "진짜 감동받았던 순간은?",
+                    shimmerInstance,
+                    isLoading
                 )
-            }
-            OutlinedTextField(
-                paddingTop = 20.dp,
-                paddingStart = 20.dp,
-                paddingEnd = 20.dp,
-                label = "답변하기",
-                singleLine = true,
 
-            )
+                AnswersList(
+                    "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
+                    shimmerInstance,
+                    isLoading
+                )
+
+
+            }
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewDoAnswerContent() {
-    DoAnswerContent()
+fun PreviewViewOneQuestionScreen() {
+    ViewOneQuestionScreen()
 }
