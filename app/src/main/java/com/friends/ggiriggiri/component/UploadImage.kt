@@ -69,11 +69,13 @@ fun UploadImage(
         }
     }
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(start = 20.dp, end = 20.dp, top = 20.dp)
-        .size(400.dp) ) {
-        if (selectedImageUri == null){ //이미지가 없을때
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+            .size(400.dp)
+    ) {
+        if (selectedImageUri == null) { //이미지가 없을때
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -86,14 +88,20 @@ fun UploadImage(
                         // 점선 효과가 적용된 Stroke 객체 준비
                         val stroke = Stroke(
                             width = strokeWidth,
-                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashWidth, dashGap), 0f)
+                            pathEffect = PathEffect.dashPathEffect(
+                                floatArrayOf(dashWidth, dashGap),
+                                0f
+                            )
                         )
                         // 테두리를 그릴 영역 계산 (stroke의 절반은 내부로 오도록 오프셋)
                         val halfStroke = strokeWidth / 2
                         drawRoundRect(
                             color = Color.Gray,                         // 테두리 색상
                             topLeft = Offset(halfStroke, halfStroke),   // 좌상단 오프셋
-                            size = Size(size.width - strokeWidth, size.height - strokeWidth), // 테두리 크기
+                            size = Size(
+                                size.width - strokeWidth,
+                                size.height - strokeWidth
+                            ), // 테두리 크기
                             style = stroke                              // Stroke 스타일 (점선 적용)
                             // cornerRadius = CornerRadius(radiusPx)   // 필요하면 모서리 둥글기 조절
                         )
@@ -117,7 +125,7 @@ fun UploadImage(
                             contentDescription = "기본이미지"
                         )
                     }
-                    Column (
+                    Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .weight(.7f),
@@ -155,18 +163,40 @@ fun UploadImage(
                     }
                 }
             }
-        }else{ //이미지가 있을때
-            Box (
+        } else { //이미지가 있을때
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .size(400.dp)
-            ){
-                Image(
-                    painter = rememberAsyncImagePainter(model = selectedImageUri),
-                    contentDescription = "선택한 이미지",
+            ) {
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                )
+                        .fillMaxWidth()
+                        .weight(5f)
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(model = selectedImageUri),
+                        contentDescription = "선택한 이미지",
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    CustomButton(
+                        text = "다시 촬영 하기",
+                        paddingTop = 20.dp,
+                        onClick = {
+                            //카메라 런처 실행
+                            val uri = createImageUri(context)
+                            cameraImageUri = uri
+                            cameraLauncher.launch(uri)
+                        }
+                    )
+                }
             }
         }
     }

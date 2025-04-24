@@ -20,13 +20,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun QuestionText(
     text:String,
-    shimmerInstance: Shimmer,
     isLoading: Boolean
 ) {
     Spacer(modifier = Modifier.height(10.dp))
@@ -43,7 +43,7 @@ fun QuestionText(
                     .height(20.dp)
                     .clip(RoundedCornerShape(6.dp))
                     .background(Color.Gray.copy(alpha = 0.5f))
-                    .shimmer(shimmerInstance)
+                    .shimmer(rememberDefaultShimmer())
                     .padding(16.dp)
             )
         } else Text(

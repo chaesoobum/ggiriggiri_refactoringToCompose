@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
 import com.github.penfeizhou.animation.apng.APNGDrawable
 import com.github.penfeizhou.animation.io.ByteBufferReader
 import com.github.penfeizhou.animation.loader.ByteBufferLoader
@@ -47,28 +48,6 @@ fun ApngImageFromUrl(
     var apngDrawable by remember { mutableStateOf<APNGDrawable?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
-    val shimmerInstance = rememberShimmer(
-        shimmerBounds = ShimmerBounds.View,
-        theme = ShimmerTheme(
-            animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = 500,
-                    easing = LinearEasing
-                ),
-                repeatMode = RepeatMode.Restart
-            ),
-            blendMode = androidx.compose.ui.graphics.BlendMode.SrcOver,
-            rotation = 0f, // 또는 20f로 기울기 효과
-            shaderColors = listOf(
-                Color.LightGray.copy(alpha = 0.6f),
-                Color.LightGray.copy(alpha = 0.3f),
-                Color.LightGray.copy(alpha = 0.6f)
-            ),
-            shaderColorStops = null, // 자동 분포
-            shimmerWidth = 200.dp // shimmer wave 넓이
-        )
-    )
-
     LaunchedEffect(imageUrl) {
         withContext(Dispatchers.IO) {
             try {
@@ -91,7 +70,7 @@ fun ApngImageFromUrl(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(CircleShape)
-                    .shimmer(shimmerInstance)
+                    .shimmer(rememberDefaultShimmer())
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(

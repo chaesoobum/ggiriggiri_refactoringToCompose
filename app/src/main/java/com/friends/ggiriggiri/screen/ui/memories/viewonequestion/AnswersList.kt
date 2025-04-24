@@ -11,7 +11,6 @@ import com.valentinilk.shimmer.Shimmer
 @Composable
 fun AnswersList(
     imageUrl: String,
-    shimmerInstance: Shimmer,
     isLoading: Boolean,
 ) {
     Column(
@@ -21,11 +20,11 @@ fun AnswersList(
     ) {
         if (isLoading) {
             repeat(5) {
-                AnswersListItem(imageUrl, isLoading, shimmerInstance)
+                AnswersListItem(imageUrl, isLoading)
             }
         } else {
             repeat(20) {
-                AnswersListItem(imageUrl, isLoading, shimmerInstance)
+                AnswersListItem(imageUrl, isLoading)
             }
         }
     }

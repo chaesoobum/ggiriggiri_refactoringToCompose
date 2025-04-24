@@ -18,13 +18,13 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun RequestImage(
     imageUrl: String,
-    shimmerInstance: Shimmer
 ) {
     Box(
         modifier = Modifier
@@ -45,7 +45,7 @@ fun RequestImage(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .shimmer(shimmerInstance)
+                            .shimmer(rememberDefaultShimmer())
                             .background(Color.Transparent)
                     )
                 }

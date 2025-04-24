@@ -71,28 +71,6 @@ fun DoAnswerContent(
     }
     val focusManager: FocusManager = LocalFocusManager.current
 
-    val shimmerInstance = rememberShimmer(
-        shimmerBounds = ShimmerBounds.View,
-        theme = ShimmerTheme(
-            animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = 500,
-                    easing = LinearEasing
-                ),
-                repeatMode = RepeatMode.Restart
-            ),
-            blendMode = androidx.compose.ui.graphics.BlendMode.SrcOver,
-            rotation = 0f, // 또는 20f로 기울기 효과
-            shaderColors = listOf(
-                Color.LightGray.copy(alpha = 0.6f),
-                Color.LightGray.copy(alpha = 0.3f),
-                Color.LightGray.copy(alpha = 0.6f)
-            ),
-            shaderColorStops = null, // 자동 분포
-            shimmerWidth = 200.dp // shimmer wave 넓이
-        )
-    )
-
     Scaffold(
         modifier = Modifier
             .fillMaxSize()

@@ -33,6 +33,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.ShimmerTheme
@@ -45,7 +46,6 @@ fun RequestHeader(
     nickname: String,
     date: String,
     isLoading: Boolean = false,
-    shimmerInstance: Shimmer
 ) {
 
     Row(
@@ -71,7 +71,7 @@ fun RequestHeader(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .shimmer(shimmerInstance)
+                            .shimmer(rememberDefaultShimmer())
                             .background(Color.Gray.copy(alpha = 0.6f), CircleShape)
                     )
                 }
@@ -97,7 +97,7 @@ fun RequestHeader(
                         .width(80.dp)
                         .clip(RoundedCornerShape(4.dp))
                         .background(Color.Gray.copy(alpha = 0.5f))
-                        .shimmer(shimmerInstance)
+                        .shimmer(rememberDefaultShimmer())
                 )
                 Spacer(modifier = Modifier.size(6.dp))
                 Box(
@@ -106,7 +106,7 @@ fun RequestHeader(
                         .width(100.dp)
                         .clip(RoundedCornerShape(4.dp))
                         .background(Color.Gray.copy(alpha = 0.5f))
-                        .shimmer(shimmerInstance)
+                        .shimmer(rememberDefaultShimmer())
                 )
             } else {
                 Text(

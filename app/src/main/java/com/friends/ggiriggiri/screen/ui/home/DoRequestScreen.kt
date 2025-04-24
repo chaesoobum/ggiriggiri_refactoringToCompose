@@ -111,7 +111,8 @@ fun DoRequestContent(
                 label = "요청하기",
                 paddingStart = 20.dp,
                 paddingEnd = 20.dp,
-                paddingTop = 20.dp
+                paddingTop = 20.dp,
+                singleLine = true
             )
             /*
             요청 버튼
@@ -120,10 +121,13 @@ fun DoRequestContent(
                 text = "요청하기",
                 paddingStart = 20.dp,
                 paddingEnd = 20.dp,
-                paddingTop = 20.dp
+                paddingTop = 20.dp,
+                onClick = {
+                    viewModel.friendsApplication.navHostController.apply {
+                        popBackStack(MainScreenName.SCREEN_DO_REQUEST.name,true)
+                    }
+                }
             )
-
-
         }
     }
 }

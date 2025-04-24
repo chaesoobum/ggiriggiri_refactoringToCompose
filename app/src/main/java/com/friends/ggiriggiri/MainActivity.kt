@@ -25,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.friends.ggiriggiri.screen.ui.ViewNotificationScreen
 import com.friends.ggiriggiri.screen.ui.home.DoAnswerScreen
 import com.friends.ggiriggiri.screen.ui.home.DoRequestScreen
+import com.friends.ggiriggiri.screen.ui.home.memberlist.MemberListDetail
 import com.friends.ggiriggiri.screen.ui.memories.viewonequestion.ViewOneQuestionScreen
 import com.friends.ggiriggiri.screen.ui.memories.viewonerequest.ViewOneRequestScreen
 import com.friends.ggiriggiri.screen.ui.mypage.LegalScreen
@@ -125,6 +126,10 @@ fun Main() {
 
         composable(route = MainScreenName.SCREEN_LEGAL.name) {
             LegalScreen()
+        }
+
+        composable(route = MainScreenName.SCREEN_MEMBER_LIST_DETAIL.name) {
+            MemberListDetail()
         }
     }
 }

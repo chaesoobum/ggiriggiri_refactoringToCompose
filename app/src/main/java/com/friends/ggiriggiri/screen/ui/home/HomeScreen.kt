@@ -31,12 +31,10 @@ import coil.compose.SubcomposeAsyncImage
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.ImageCarousel
-import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.component.TopAppBarWithShimmer
+import com.friends.ggiriggiri.screen.ui.home.memberlist.UserMain_MemberList
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import okhttp3.Dispatcher
 
 val dummyMemberImageIds = listOf(
     R.drawable.ic_default_profile,
@@ -115,7 +113,7 @@ fun HomeContent(
 //                        "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
 //                    )
 //                )
-                UserMain_MemberList(memberImageUrls = memberImageUrls)
+                UserMain_MemberList(memberImageUrls = memberImageUrls, viewModel = viewModel)
                 UserMain_QuestionOfToday()
                 UserMain_ToAsk(viewModel)
 

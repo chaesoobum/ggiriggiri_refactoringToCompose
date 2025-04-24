@@ -22,7 +22,9 @@ enum class MainScreenName{
     //그룹설정화면
     SCREEN_SETTING_GROUP,
     //개인정보처리방침/이용약관화면
-    SCREEN_LEGAL
+    SCREEN_LEGAL,
+    //그룹원보기화면
+    SCREEN_MEMBER_LIST_DETAIL,
 }
 
 sealed class Screen(val route: String, val label: String, val icon: Int) {

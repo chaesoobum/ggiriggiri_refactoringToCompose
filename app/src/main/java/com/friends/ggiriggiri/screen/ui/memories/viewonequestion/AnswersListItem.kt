@@ -38,6 +38,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.ProfileImage
+import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.ShimmerTheme
@@ -48,29 +49,7 @@ import com.valentinilk.shimmer.shimmer
 fun AnswersListItem(
     imageUrl: String,
     isLoading: Boolean,
-    shimmerInstance: Shimmer
 ) {
-    val shimmerInstance = rememberShimmer(
-        shimmerBounds = ShimmerBounds.View,
-        theme = ShimmerTheme(
-            animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = 500,
-                    easing = LinearEasing
-                ),
-                repeatMode = RepeatMode.Restart
-            ),
-            blendMode = androidx.compose.ui.graphics.BlendMode.SrcOver,
-            rotation = 0f, // 또는 20f로 기울기 효과
-            shaderColors = listOf(
-                Color.LightGray.copy(alpha = 0.6f),
-                Color.LightGray.copy(alpha = 0.3f),
-                Color.LightGray.copy(alpha = 0.6f)
-            ),
-            shaderColorStops = null, // 자동 분포
-            shimmerWidth = 200.dp // shimmer wave 넓이
-        )
-    )
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -96,7 +75,7 @@ fun AnswersListItem(
                             modifier = Modifier
                                 .width(100.dp)
                                 .height(20.sp.value.dp) // 텍스트 크기 기준 높이
-                                .shimmer(shimmerInstance)
+                                .shimmer(rememberDefaultShimmer())
                                 .background(Color.Gray.copy(alpha = 0.5f))
                                 .clip(RoundedCornerShape(6.dp))
                         )
@@ -123,7 +102,7 @@ fun AnswersListItem(
                             modifier = Modifier
                                 .width(200.dp)
                                 .height(15.sp.value.dp) // 텍스트 크기 기준 높이
-                                .shimmer(shimmerInstance)
+                                .shimmer(rememberDefaultShimmer())
                                 .background(Color.Gray.copy(alpha = 0.5f))
                                 .clip(RoundedCornerShape(6.dp))
                         )
@@ -147,7 +126,15 @@ fun AnswersListItem(
                 .weight(1f),
             contentAlignment = Alignment.Center
         ) {
-            ProfileImage(imageUrl, shimmerInstance)
+            ProfileImage(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .border(1.dp, Color.Gray, CircleShape),
+                ContentScale.Crop,
+                imageUrl,
+            )
         }
     }
     Spacer(modifier = Modifier.height(20.dp))

@@ -15,39 +15,39 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun ProfileImage(
+    modifier: Modifier,
+    contentScale:ContentScale,
     imageUrl:String,
-    shimmerInstance: Shimmer
 ) {
     // 프로필 이미지
     SubcomposeAsyncImage(
         model = imageUrl,
         contentDescription = "프로필 이미지",
-        modifier = Modifier
-            .size(40.dp)
-            .clip(CircleShape)
-            .background(Color.White)
-            .border(1.dp, Color.Gray, CircleShape),
-        contentScale = ContentScale.Crop
+        modifier = modifier,
+        contentScale = contentScale
     ) {
         when (painter.state) {
             is AsyncImagePainter.State.Loading -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .shimmer(shimmerInstance)
-                        .background(Color.Gray.copy(alpha = 0.6f), CircleShape)
+                        .shimmer(rememberDefaultShimmer())
+                        .background(Color.Gray.copy(alpha = 0.6f))
+                        //.background(Color.Gray.copy(alpha = 0.6f), CircleShape)
                 )
             }
             is AsyncImagePainter.State.Error -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Gray.copy(alpha = 0.3f), CircleShape)
+                        .background(Color.Gray.copy(alpha = 0.6f))
+                        //.background(Color.Gray.copy(alpha = 0.3f), CircleShape)
                 )
             }
             else -> SubcomposeAsyncImageContent()

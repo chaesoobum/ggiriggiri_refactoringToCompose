@@ -7,6 +7,17 @@ import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.valentinilk.shimmer.Shimmer
+import com.valentinilk.shimmer.ShimmerBounds
+import com.valentinilk.shimmer.ShimmerTheme
+import com.valentinilk.shimmer.rememberShimmer
 
 object tools{
 
@@ -48,6 +59,9 @@ object tools{
         )
         return Uri.parse(outUri)
     }
+
+    @Composable
+    fun rememberDefaultShimmer() = com.friends.ggiriggiri.util.rememberDefaultShimmer()
 
 
 }

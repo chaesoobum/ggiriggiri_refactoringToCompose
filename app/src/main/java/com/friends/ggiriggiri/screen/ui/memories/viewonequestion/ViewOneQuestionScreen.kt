@@ -60,28 +60,6 @@ fun ViewOneQuestionContent(
         isLoading = false
     }
 
-    val shimmerInstance = rememberShimmer(
-        shimmerBounds = ShimmerBounds.View,
-        theme = ShimmerTheme(
-            animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = 500,
-                    easing = LinearEasing
-                ),
-                repeatMode = RepeatMode.Restart
-            ),
-            blendMode = androidx.compose.ui.graphics.BlendMode.SrcOver,
-            rotation = 0f, // 또는 20f로 기울기 효과
-            shaderColors = listOf(
-                Color.LightGray.copy(alpha = 0.6f),
-                Color.LightGray.copy(alpha = 0.3f),
-                Color.LightGray.copy(alpha = 0.6f)
-            ),
-            shaderColorStops = null, // 자동 분포
-            shimmerWidth = 200.dp // shimmer wave 넓이
-        )
-    )
-
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -107,13 +85,11 @@ fun ViewOneQuestionContent(
                 QuestionImage("https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confounded%20Face.png")
                 QuestionText(
                     "진짜 감동받았던 순간은?",
-                    shimmerInstance,
                     isLoading
                 )
 
                 AnswersList(
                     "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
-                    shimmerInstance,
                     isLoading
                 )
 

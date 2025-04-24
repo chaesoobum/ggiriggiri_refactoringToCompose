@@ -21,13 +21,13 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun RequestText(
     text:String,
-    shimmerInstance: Shimmer,
     isLoading: Boolean
 ) {
     //요청 텍스트
@@ -49,7 +49,7 @@ fun RequestText(
                         .height(20.dp)
                         .clip(RoundedCornerShape(6.dp))
                         .background(Color.Gray.copy(alpha = 0.5f))
-                        .shimmer(shimmerInstance)
+                        .shimmer(rememberDefaultShimmer())
                         .padding(16.dp)
                 )
             } else Text(
