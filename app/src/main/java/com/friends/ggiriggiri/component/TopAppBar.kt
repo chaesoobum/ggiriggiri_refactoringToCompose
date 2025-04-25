@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -11,12 +12,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.friends.ggiriggiri.R
+import java.nio.file.WatchEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,8 +31,13 @@ fun TopAppBar(
     menuItems : @Composable RowScope.() -> Unit = {},
     isDivider : Boolean? = true
 ) {
-    Column {
+    Column(
+        modifier = Modifier
+            .background(Color.White)
+    ) {
         CenterAlignedTopAppBar(
+            modifier = Modifier
+                .background(Color.White),
             // 타이틀
             title = {
                 Text(

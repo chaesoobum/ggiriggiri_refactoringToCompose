@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri.screen.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,25 +35,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.OutlinedTextField
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion.QuestionImage
+import com.friends.ggiriggiri.screen.viewmodel.home.DoAnswerViewModel
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
 import kotlinx.coroutines.delay
 
 @Composable
 fun DoAnswerScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    navController: NavHostController = rememberNavController(),
+    viewModel: DoAnswerViewModel = hiltViewModel(),
 ) {
-    DoAnswerContent()
+    DoAnswerContent(navController = navController,viewModel = viewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoAnswerContent(
-    viewModel: HomeViewModel = hiltViewModel()
+    navController: NavHostController,
+    viewModel: DoAnswerViewModel,
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     //서버의 지연시간을 테스트하기위한 변수와 딜레이
     var isLoading by remember { mutableStateOf(true) }
@@ -76,7 +83,7 @@ fun DoAnswerContent(
                 title = "답변하기",
                 navigationIconImage = ImageVector.vectorResource(id = R.drawable.arrow_back_ios_24px),
                 navigationIconOnClick = {
-                    viewModel.friendsApplication.navHostController.apply {
+                    homeViewModel.friendsApplication.navHostController.apply {
                         popBackStack(MainScreenName.SCREEN_DO_ANSWER.name,true)
                     }
                 },
@@ -90,7 +97,12 @@ fun DoAnswerContent(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            QuestionImage("https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confounded%20Face.png")
+            //Log.d("DoAnswerContent",viewModel.questionImageUrl)
+            val imageUrl = navController
+                .previousBackStackEntry
+                ?.savedStateHandle
+                ?.get<String>("imageUrl") ?: ""
+            QuestionImage(imageUrl)
             Spacer(modifier = Modifier.height(10.dp))
             Row (
                 modifier = Modifier
@@ -120,5 +132,5 @@ fun DoAnswerContent(
 @Preview(showBackground = true)
 @Composable
 fun PreviewDoAnswerContent() {
-    DoAnswerContent()
+    //DoAnswerContent()
 }

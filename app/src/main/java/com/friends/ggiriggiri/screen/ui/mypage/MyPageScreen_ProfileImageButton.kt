@@ -82,7 +82,7 @@ fun ProfileImageButton(
     val model = imageUrl
         ?: "android.resource://${context.packageName}/${R.drawable.ic_default_profile}"
 
-    Row(modifier = Modifier.padding(top = 20.dp)) {
+    Row(modifier = Modifier.padding(top = 20.dp).background(Color.White)) {
         Box(modifier = Modifier.weight(1f))
         Box(
             modifier = Modifier

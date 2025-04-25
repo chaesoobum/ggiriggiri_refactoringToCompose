@@ -65,8 +65,7 @@ fun TopAppBarWithShimmer(
                     )
                 }
             },
-            navigationIcon = if (navigationIconImage == null) {
-                {}
+            navigationIcon = if (navigationIconImage == null) {{}
             } else {
                 {
                     IconButton(onClick = navigationIconOnClick) {

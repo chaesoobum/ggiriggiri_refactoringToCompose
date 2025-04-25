@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
@@ -34,35 +35,30 @@ import com.friends.ggiriggiri.component.ImageCarousel
 import com.friends.ggiriggiri.component.TopAppBarWithShimmer
 import com.friends.ggiriggiri.screen.ui.home.memberlist.UserMain_MemberList
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
-import kotlinx.coroutines.delay
-
-val dummyMemberImageIds = listOf(
-    R.drawable.ic_default_profile,
-    R.drawable.ic_default_profile,
-    R.drawable.ic_default_profile,
-    R.drawable.ic_default_profile,
-    R.drawable.ic_default_profile
-)
+import com.friends.ggiriggiri.util.MainScreenName
 
 @Composable
 fun HomeScreen(
     modifier: Modifier,
-    viewModel: HomeViewModel= hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
-    // 딜레이 후 이미지 로딩 시뮬레이션
-    val memberImageUrls = remember { mutableStateOf<List<String>>(emptyList()) }
+    // 서버에서 데이터가져오는 부분
     LaunchedEffect(Unit) {
-        //delay(2000L) // 2초 후에 데이터 세팅
-        memberImageUrls.value = listOf(
-            "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
-            "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
-            "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26"
-        )
+        // 타이틀 로딩 시뮬레이션(2초)
+        viewModel.getAppBarTitle()
+
+        // 딜레이 후 이미지 로딩 시뮬레이션
+        viewModel.getMemberProfileImage()
+
+        //그룹이미지 랜덤 가져오기
+        viewModel.getImageCarousel()
+
+        //오늘의 질문 이미지 가져오기
+        viewModel.getQuestionImageUrl()
     }
 
     HomeContent(
         modifier = modifier,
-        memberImageUrls = memberImageUrls.value,
         viewModel
     )
 }
@@ -71,25 +67,23 @@ fun HomeScreen(
 @Composable
 fun HomeContent(
     modifier: Modifier,
-    memberImageUrls: List<String>,
     viewModel: HomeViewModel
 ) {
-    val isTitleLoading = remember { mutableStateOf(true) }
-    LaunchedEffect(Unit) {
-        delay(2000)
-        isTitleLoading.value = false
-    }
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
+        containerColor = Color.White,
         topBar = {
             TopAppBarWithShimmer(
                 title = "그룹명",
-                isLoadingTitle = isTitleLoading.value,
+                isLoadingTitle = viewModel.isTitleLoading.value,
                 menuItems = {
                     CustomIconButton(
                         icon = ImageVector.vectorResource(R.drawable.notifications_24px),
                         iconButtonOnClick = {
-                            // 클릭 시 동작
+                            viewModel.friendsApplication.navHostController.apply {
+                                navigate(MainScreenName.SCREEN_NOTIFICATION.name)
+                            }
                         }
                     )
                 },
@@ -106,25 +100,12 @@ fun HomeContent(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-//                UserMain_MemberList(
-//                    memberImageUrls = listOf(
-//                        "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
-//                        "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
-//                        "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
-//                    )
-//                )
-                UserMain_MemberList(memberImageUrls = memberImageUrls, viewModel = viewModel)
-                UserMain_QuestionOfToday()
-                UserMain_ToAsk(viewModel)
+                UserMain_MemberList(memberImageUrls = viewModel.memberImageUrls.value)
+                UserMain_QuestionOfToday(questionImageUrl = viewModel.questionImageUrl.value)
+                UserMain_ToAsk()
 
                 val selectedImageUrl = remember { mutableStateOf<String?>(null) }
-                val items = listOf(
-                    "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
-                    "https://picsum.photos/id/1016/400/600",
-                    "https://not-a-real-url/image.jpg", // 실패 테스트
-                    "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
-                )
-                ImageCarousel(items = items, onImageClick = { url -> selectedImageUrl.value = url })
+                ImageCarousel(items = viewModel.groupImageUrls.value , onImageClick = { url -> selectedImageUrl.value = url })
                 if (selectedImageUrl.value != null) {
                     Dialog(
                         onDismissRequest = { selectedImageUrl.value = null },

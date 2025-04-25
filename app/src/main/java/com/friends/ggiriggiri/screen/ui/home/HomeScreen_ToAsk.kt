@@ -34,7 +34,7 @@ import com.friends.ggiriggiri.util.MainScreenName
 
 @Composable
 fun UserMain_ToAsk(
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier

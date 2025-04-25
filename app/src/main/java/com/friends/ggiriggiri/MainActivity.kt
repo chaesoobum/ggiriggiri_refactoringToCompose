@@ -22,7 +22,7 @@ import com.friends.ggiriggiri.screen.ui.UserMainScreen
 import com.friends.ggiriggiri.ui.theme.GgiriggiriTheme
 import com.friends.ggiriggiri.util.MainScreenName
 import dagger.hilt.android.AndroidEntryPoint
-import com.friends.ggiriggiri.screen.ui.ViewNotificationScreen
+import com.friends.ggiriggiri.screen.ui.notification.ViewNotificationScreen
 import com.friends.ggiriggiri.screen.ui.home.DoAnswerScreen
 import com.friends.ggiriggiri.screen.ui.home.DoRequestScreen
 import com.friends.ggiriggiri.screen.ui.home.memberlist.MemberListDetail

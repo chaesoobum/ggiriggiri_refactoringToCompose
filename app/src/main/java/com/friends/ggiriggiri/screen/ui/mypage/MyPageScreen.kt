@@ -2,6 +2,7 @@ package com.friends.ggiriggiri.screen.ui.mypage
 
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -46,24 +47,28 @@ import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.TextButton
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.viewmodel.mypage.MyPageViewModel
+import com.friends.ggiriggiri.util.MainScreenName
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyPageScreen(
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel()
-    ) {
-    MyPageContent(modifier)
+) {
+    MyPageContent(modifier, viewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyPageContent(
-    modifier: Modifier
-){
+    modifier: Modifier,
+    viewModel: MyPageViewModel
+) {
     val context = LocalContext.current
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
                 title = "마이 페이지",
@@ -71,7 +76,9 @@ fun MyPageContent(
                     CustomIconButton(
                         icon = ImageVector.vectorResource(R.drawable.notifications_24px),
                         iconButtonOnClick = {
-                            // 클릭 시 동작
+                            viewModel.friendsApplication.navHostController.apply {
+                                navigate(MainScreenName.SCREEN_NOTIFICATION.name)
+                            }
                         }
                     )
                 },
@@ -84,6 +91,7 @@ fun MyPageContent(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
+                .background(Color.White)
                 .pointerInput(Unit) {
                     // 외부 터치 시 포커스를 해제하고 키보드 내리기
                     detectTapGestures(onTap = {

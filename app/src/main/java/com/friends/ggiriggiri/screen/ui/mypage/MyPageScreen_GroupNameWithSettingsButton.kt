@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,13 +21,12 @@ import com.friends.ggiriggiri.R
 
 @Composable
 fun GroupNameWithSettingsButton(
-    groupName: String = "그룹명(버튼)",
+    groupName: String = "그룹명",
     onGroupNameClick: () -> Unit = {},
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onGroupNameClick() }
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
@@ -44,6 +44,7 @@ fun GroupNameWithSettingsButton(
             tint = Color.Black,
             modifier = Modifier
                 .padding(start = 4.dp)
+                .clickable { onGroupNameClick() }
         )
     }
 }

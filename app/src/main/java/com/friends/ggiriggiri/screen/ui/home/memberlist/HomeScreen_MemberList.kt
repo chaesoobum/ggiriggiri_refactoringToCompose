@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import com.friends.ggiriggiri.R
@@ -47,7 +48,7 @@ import com.valentinilk.shimmer.shimmer
 @Composable
 fun UserMain_MemberList(
     memberImageUrls: List<String>,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
 
     val isLoading = memberImageUrls.isEmpty()

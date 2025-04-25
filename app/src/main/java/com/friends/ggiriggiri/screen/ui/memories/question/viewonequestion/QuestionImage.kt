@@ -27,7 +27,7 @@ fun QuestionImage(
             modifier = Modifier
                 .weight(4f)){
             ApngImageFromUrl(
-                imageUrl = "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confounded%20Face.png"
+                imageUrl = imageUrl
             )
         }
         Box (

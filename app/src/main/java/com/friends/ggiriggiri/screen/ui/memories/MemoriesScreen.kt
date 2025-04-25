@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri.screen.ui.memories
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,7 @@ import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.ui.memories.question.QuestionListScreen
 import com.friends.ggiriggiri.screen.ui.memories.request.RequestListScreen
 import com.friends.ggiriggiri.screen.viewmodel.memories.MemoriesViewModel
+import com.friends.ggiriggiri.util.MainScreenName
 import com.friends.ggiriggiri.util.Memories
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -51,11 +54,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun MemoriesScreen(
     modifier: Modifier,
-    memoriesViewModel: MemoriesViewModel = hiltViewModel()
+    viewModel: MemoriesViewModel = hiltViewModel()
 ) {
     MemoriesContent(
         modifier,
-        memoriesViewModel
+        viewModel
     )
 }
 
@@ -63,11 +66,11 @@ fun MemoriesScreen(
 @Composable
 fun MemoriesContent(
     modifier: Modifier,
-    memoriesViewModel: MemoriesViewModel
+    viewModel: MemoriesViewModel
 ) {
 
     LaunchedEffect(Unit) {
-        memoriesViewModel.takeInformationForRequestsListScreen()
+        viewModel.takeInformationForRequestsListScreen()
     }
 
     val context = LocalContext.current
@@ -89,7 +92,7 @@ fun MemoriesContent(
         onRefresh = {
             coroutineScope.launch {
                 isRefreshing = true
-                memoriesViewModel.takeInformationForRequestsListScreen()
+                viewModel.takeInformationForRequestsListScreen()
                 delay(2000)//스켈레톤을 보기위한 임시딜레이
                 isRefreshing = false
             }
@@ -102,6 +105,7 @@ fun MemoriesContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
+                    .background(Color.White)
             ) {
                 TopAppBar(
                     title = "추억들",
@@ -110,7 +114,9 @@ fun MemoriesContent(
                         CustomIconButton(
                             icon = ImageVector.vectorResource(R.drawable.notifications_24px),
                             iconButtonOnClick = {
-                                // 클릭 시 동작
+                                viewModel.friendsApplication.navHostController.apply {
+                                    navigate(MainScreenName.SCREEN_NOTIFICATION.name)
+                                }
                             }
                         )
                     },
@@ -167,18 +173,18 @@ fun MemoriesContent(
                 modifier = Modifier
                     .fillMaxSize()
             ) { page ->
-                val list = memoriesViewModel.listForRequestsListScreen.value
-                val isLoading = memoriesViewModel.isLoading.value
+                val list = viewModel.listForRequestsListScreen.value
+                val isLoading = viewModel.isLoading.value
                 when (memoriesTabs[page]) {
                     Memories.Answers -> QuestionListScreen(
                         list,
                         isRefreshing || isLoading,
-                        memoriesViewModel.friendsApplication
+                        viewModel.friendsApplication
                     )
                     Memories.Requests -> RequestListScreen(
                         list,
                         isRefreshing || isLoading,
-                        memoriesViewModel.friendsApplication
+                        viewModel.friendsApplication
                     )
                 }
             }
