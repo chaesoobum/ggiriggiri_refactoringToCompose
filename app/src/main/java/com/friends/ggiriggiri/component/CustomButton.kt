@@ -23,7 +23,7 @@ fun CustomButton(
     paddingStart: Dp = 0.dp,
     paddingEnd: Dp = 0.dp,
     paddingBottom:Dp = 0.dp,
-    onClick: () -> Unit = {},
+    onClick:() -> Unit = {},
     buttonColor: Color = Color(0xFFFDF497), // 기본 버튼 색
     textColor: Color = Color.Black,         // 기본 텍스트 색
     fontFamily: FontFamily = FontFamily(

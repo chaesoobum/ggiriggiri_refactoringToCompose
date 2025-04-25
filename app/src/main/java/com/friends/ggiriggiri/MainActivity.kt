@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,6 +31,7 @@ import com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion.ViewOn
 import com.friends.ggiriggiri.screen.ui.memories.request.viewonerequest.ViewOneRequestScreen
 import com.friends.ggiriggiri.screen.ui.mypage.LegalScreen
 import com.friends.ggiriggiri.screen.ui.mypage.SettingGroupScreen
+import com.friends.ggiriggiri.screen.viewmodel.home.DoAnswerViewModel
 
 
 @AndroidEntryPoint

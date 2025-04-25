@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri.screen.ui.home
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -28,15 +30,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.ApngImageFromUrl
 import com.friends.ggiriggiri.component.CustomButton
+import com.friends.ggiriggiri.screen.viewmodel.PublicViewModel
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
+import com.friends.ggiriggiri.util.findActivity
 import com.friends.ggiriggiri.util.rememberDefaultShimmer
 import com.friends.ggiriggiri.util.tools
 import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun UserMain_QuestionOfToday(
-    viewModel: HomeViewModel= hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     questionImageUrl:String
 ) {
     Column(
@@ -128,14 +132,19 @@ fun UserMain_QuestionOfToday(
                 .weight(1f),
             contentAlignment = Alignment.Center
         ) {
+
+            //데이터를 전역모델에 넣어서 돌려쓰기위한 뷰모델
+            val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
             CustomButton(
                 text = "답변하기",
                 buttonColor = colorResource(id = R.color.white) ,
                 onClick = {
-                    viewModel.friendsApplication.navHostController.currentBackStackEntry
-                        ?.savedStateHandle
-                        ?.set("imageUrl", viewModel.questionImageUrl.value)
-                    viewModel.friendsApplication.navHostController.navigate(MainScreenName.SCREEN_DO_ANSWER.name)
+                    val navController = viewModel.friendsApplication.navHostController
+                    val imageUrl = viewModel.questionImageUrl.value
+
+                    pvm.setQuestionImageUrl(imageUrl)  // 먼저 데이터 세팅
+
+                    navController.navigate(MainScreenName.SCREEN_DO_ANSWER.name)  // 데이터 세팅 완료 후 화면 이동
                 }
             )
 

@@ -26,6 +26,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
@@ -41,25 +42,25 @@ import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.OutlinedTextField
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion.QuestionImage
+import com.friends.ggiriggiri.screen.viewmodel.PublicViewModel
 import com.friends.ggiriggiri.screen.viewmodel.home.DoAnswerViewModel
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
+import com.friends.ggiriggiri.util.findActivity
 import kotlinx.coroutines.delay
 
 @Composable
 fun DoAnswerScreen(
-    navController: NavHostController = rememberNavController(),
-    viewModel: DoAnswerViewModel = hiltViewModel(),
+    doAnswerViewModel: DoAnswerViewModel = hiltViewModel()
 ) {
-    DoAnswerContent(navController = navController,viewModel = viewModel)
+    DoAnswerContent(doAnswerViewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoAnswerContent(
-    navController: NavHostController,
-    viewModel: DoAnswerViewModel,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    doAnswerViewModel: DoAnswerViewModel,
+    homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
     //서버의 지연시간을 테스트하기위한 변수와 딜레이
     var isLoading by remember { mutableStateOf(true) }
@@ -97,12 +98,12 @@ fun DoAnswerContent(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            //Log.d("DoAnswerContent",viewModel.questionImageUrl)
-            val imageUrl = navController
-                .previousBackStackEntry
-                ?.savedStateHandle
-                ?.get<String>("imageUrl") ?: ""
-            QuestionImage(imageUrl)
+
+            val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
+            doAnswerViewModel.setQuestionImageUrl(pvm.questionImageUrl.value)
+            pvm.deleteQuestionImageUrl()
+            QuestionImage(doAnswerViewModel.questionImageUrl.value)
+
             Spacer(modifier = Modifier.height(10.dp))
             Row (
                 modifier = Modifier
