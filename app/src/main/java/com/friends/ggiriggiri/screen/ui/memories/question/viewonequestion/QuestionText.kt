@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.screen.ui.memories.viewonequestion
+package com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,9 +40,11 @@ fun QuestionText(
             Box(
                 modifier = Modifier
                     .width(200.dp)
-                    .height(20.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(Color.Gray.copy(alpha = 0.5f))
+                    .height(20.sp.value.dp)
+                    .background(
+                        Color.LightGray.copy(alpha = 0.7f),
+                        RoundedCornerShape(4.dp)
+                    )
                     .shimmer(rememberDefaultShimmer())
                     .padding(16.dp)
             )

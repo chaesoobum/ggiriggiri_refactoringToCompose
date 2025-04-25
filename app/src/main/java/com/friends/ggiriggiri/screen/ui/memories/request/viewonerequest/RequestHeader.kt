@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.screen.ui.memories.viewonerequest
+package com.friends.ggiriggiri.screen.ui.memories.request.viewonerequest
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -72,14 +72,20 @@ fun RequestHeader(
                         modifier = Modifier
                             .fillMaxSize()
                             .shimmer(rememberDefaultShimmer())
-                            .background(Color.Gray.copy(alpha = 0.6f), CircleShape)
+                            .background(
+                                Color.LightGray.copy(alpha = 0.7f),
+                                RoundedCornerShape(4.dp)
+                            )
                     )
                 }
                 is AsyncImagePainter.State.Error -> {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.Gray.copy(alpha = 0.3f), CircleShape)
+                            .background(
+                                Color.LightGray.copy(alpha = 0.7f),
+                                RoundedCornerShape(4.dp)
+                            )
                     )
                 }
                 else -> SubcomposeAsyncImageContent()
@@ -95,8 +101,10 @@ fun RequestHeader(
                     modifier = Modifier
                         .height(16.dp)
                         .width(80.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(Color.Gray.copy(alpha = 0.5f))
+                        .background(
+                            Color.LightGray.copy(alpha = 0.7f),
+                            RoundedCornerShape(4.dp)
+                        )
                         .shimmer(rememberDefaultShimmer())
                 )
                 Spacer(modifier = Modifier.size(6.dp))
@@ -104,8 +112,10 @@ fun RequestHeader(
                     modifier = Modifier
                         .height(14.dp)
                         .width(100.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(Color.Gray.copy(alpha = 0.5f))
+                        .background(
+                            Color.LightGray.copy(alpha = 0.7f),
+                            RoundedCornerShape(4.dp)
+                        )
                         .shimmer(rememberDefaultShimmer())
                 )
             } else {

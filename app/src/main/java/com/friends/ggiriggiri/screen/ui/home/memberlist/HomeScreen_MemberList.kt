@@ -108,7 +108,10 @@ fun UserMain_MemberList(
                                                 modifier = Modifier
                                                     .fillMaxSize()
                                                     .shimmer(rememberDefaultShimmer())
-                                                    .background(Color.Gray, CircleShape)
+                                                    .background(
+                                                        Color.LightGray.copy(alpha = 0.7f),
+                                                        RoundedCornerShape(4.dp)
+                                                    )
                                             )
                                         }
 
@@ -116,7 +119,10 @@ fun UserMain_MemberList(
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxSize()
-                                                    .background(Color.Gray, CircleShape)
+                                                    .background(
+                                                        Color.LightGray.copy(alpha = 0.7f),
+                                                        RoundedCornerShape(4.dp)
+                                                    )
                                             )
                                         }
 

@@ -54,7 +54,7 @@ fun TopAppBarWithShimmer(
                             .width(120.dp)
                             .shimmer(rememberDefaultShimmer())
                             .background(
-                                Color.Gray.copy(alpha = 0.7f),
+                                Color.LightGray.copy(alpha = 0.7f),
                                 RoundedCornerShape(4.dp)
                             )
                     )

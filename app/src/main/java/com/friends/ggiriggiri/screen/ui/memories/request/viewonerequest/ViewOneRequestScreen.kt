@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.screen.ui.memories.viewonerequest
+package com.friends.ggiriggiri.screen.ui.memories.request.viewonerequest
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,12 +28,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
-import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.viewmodel.memories.MemoriesViewModel
 import com.friends.ggiriggiri.util.MainScreenName
-import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.delay
 
 @Composable

@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.screen.ui.memories
+package com.friends.ggiriggiri.screen.ui.memories.question
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,8 +12,6 @@ import androidx.compose.ui.unit.dp
 import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.component.QuestionListScreenItem
 import com.friends.ggiriggiri.component.QuestionListScreenItemSkeleton
-import com.friends.ggiriggiri.component.RequestListScreenItem
-import com.friends.ggiriggiri.component.RequestListScreenItemSkeleton
 import com.friends.ggiriggiri.util.MainScreenName
 
 //MemoriesScreen 에서 리스트를 받아서 아이템을 채워준다

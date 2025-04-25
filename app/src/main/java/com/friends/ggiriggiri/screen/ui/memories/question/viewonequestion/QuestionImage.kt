@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.screen.ui.memories.viewonequestion
+package com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row

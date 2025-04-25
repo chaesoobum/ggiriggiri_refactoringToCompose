@@ -64,7 +64,7 @@ import com.friends.ggiriggiri.component.OutlinedTextField
 import com.friends.ggiriggiri.component.OutlinedTextFieldEndIconMode
 import com.friends.ggiriggiri.component.OutlinedTextFieldInputType
 import com.friends.ggiriggiri.component.TextButton
-import com.friends.ggiriggiri.screen.viewmodel.UserLoginViewModel
+import com.friends.ggiriggiri.screen.viewmodel.userlogin.UserLoginViewModel
 
 @Composable
 fun UserLoginScreen(userLoginViewModel: UserLoginViewModel = hiltViewModel()) {

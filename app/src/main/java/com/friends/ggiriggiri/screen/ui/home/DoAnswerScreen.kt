@@ -1,9 +1,5 @@
 package com.friends.ggiriggiri.screen.ui.home
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,15 +37,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.OutlinedTextField
 import com.friends.ggiriggiri.component.TopAppBar
-import com.friends.ggiriggiri.screen.ui.memories.viewonequestion.QuestionImage
-import com.friends.ggiriggiri.screen.ui.memories.viewonequestion.QuestionText
+import com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion.QuestionImage
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
-import com.valentinilk.shimmer.ShimmerBounds
-import com.valentinilk.shimmer.ShimmerTheme
-import com.valentinilk.shimmer.rememberShimmer
 import kotlinx.coroutines.delay
-import java.nio.file.WatchEvent
 
 @Composable
 fun DoAnswerScreen(

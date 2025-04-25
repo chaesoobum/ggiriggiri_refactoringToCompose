@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.screen.viewmodel
+package com.friends.ggiriggiri.screen.viewmodel.userlogin
 
 import android.app.Activity
 import android.content.Context
@@ -112,7 +112,7 @@ class UserLoginViewModel @Inject constructor(
         val task = GoogleSignIn.getSignedInAccountFromIntent(result)
         if (task.isSuccessful) {
             val account = task.result
-            val googleUserInfo = GoogleUserInfo.from(account)
+            val googleUserInfo = GoogleUserInfo.Companion.from(account)
 
             //자동로그인 저장
             preferenceManager.saveLoginInfo("google", googleUserInfo.email, account.idToken)

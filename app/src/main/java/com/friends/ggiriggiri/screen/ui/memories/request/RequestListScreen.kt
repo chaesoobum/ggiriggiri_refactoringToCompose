@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.screen.ui.memories
+package com.friends.ggiriggiri.screen.ui.memories.request
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

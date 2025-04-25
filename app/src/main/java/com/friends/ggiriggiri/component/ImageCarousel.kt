@@ -93,8 +93,11 @@ fun ImageCarousel(
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .background(Color.Gray, RoundedCornerShape(4.dp))
                                             .shimmer(rememberDefaultShimmer())
+                                            .background(
+                                                Color.LightGray.copy(alpha = 0.7f),
+                                                RoundedCornerShape(4.dp)
+                                            )
                                     )
                                 }
                             }
@@ -105,7 +108,10 @@ fun ImageCarousel(
                                         .fillMaxSize()
                                         .padding(start = 20.dp, end = 20.dp)
                                         .clip(RoundedCornerShape(12.dp))
-                                        .background(Color.Gray.copy(alpha = 0.3f)),
+                                        .background(
+                                            Color.LightGray.copy(alpha = 0.7f),
+                                            RoundedCornerShape(4.dp)
+                                        ),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     androidx.compose.material3.Text("이미지 로딩 에러", color = Color.White)

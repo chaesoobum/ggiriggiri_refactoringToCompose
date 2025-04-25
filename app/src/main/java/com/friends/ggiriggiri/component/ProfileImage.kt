@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,16 +39,20 @@ fun ProfileImage(
                     modifier = Modifier
                         .fillMaxSize()
                         .shimmer(rememberDefaultShimmer())
-                        .background(Color.Gray.copy(alpha = 0.6f))
-                        //.background(Color.Gray.copy(alpha = 0.6f), CircleShape)
+                        .background(
+                            Color.LightGray.copy(alpha = 0.7f),
+                            RoundedCornerShape(4.dp)
+                        )
                 )
             }
             is AsyncImagePainter.State.Error -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Gray.copy(alpha = 0.6f))
-                        //.background(Color.Gray.copy(alpha = 0.3f), CircleShape)
+                        .background(
+                            Color.LightGray.copy(alpha = 0.7f),
+                            RoundedCornerShape(4.dp)
+                        )
                 )
             }
             else -> SubcomposeAsyncImageContent()

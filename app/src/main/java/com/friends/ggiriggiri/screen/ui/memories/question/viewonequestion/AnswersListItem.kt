@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.screen.ui.memories.viewonequestion
+package com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -76,8 +76,10 @@ fun AnswersListItem(
                                 .width(100.dp)
                                 .height(20.sp.value.dp) // 텍스트 크기 기준 높이
                                 .shimmer(rememberDefaultShimmer())
-                                .background(Color.Gray.copy(alpha = 0.5f))
-                                .clip(RoundedCornerShape(6.dp))
+                                .background(
+                                    Color.LightGray.copy(alpha = 0.7f),
+                                    RoundedCornerShape(4.dp)
+                                )
                         )
                     } else {
                         Text(
@@ -103,8 +105,10 @@ fun AnswersListItem(
                                 .width(200.dp)
                                 .height(15.sp.value.dp) // 텍스트 크기 기준 높이
                                 .shimmer(rememberDefaultShimmer())
-                                .background(Color.Gray.copy(alpha = 0.5f))
-                                .clip(RoundedCornerShape(6.dp))
+                                .background(
+                                    Color.LightGray.copy(alpha = 0.7f),
+                                    RoundedCornerShape(4.dp)
+                                )
                         )
                     } else {
                         Text(

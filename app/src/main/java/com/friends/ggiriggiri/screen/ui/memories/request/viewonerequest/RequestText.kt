@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.screen.ui.memories.viewonerequest
+package com.friends.ggiriggiri.screen.ui.memories.request.viewonerequest
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,8 +47,10 @@ fun RequestText(
                     modifier = Modifier
                         .width(100.dp)
                         .height(20.dp)
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(Color.Gray.copy(alpha = 0.5f))
+                        .background(
+                            Color.LightGray.copy(alpha = 0.7f),
+                            RoundedCornerShape(4.dp)
+                        )
                         .shimmer(rememberDefaultShimmer())
                         .padding(16.dp)
                 )

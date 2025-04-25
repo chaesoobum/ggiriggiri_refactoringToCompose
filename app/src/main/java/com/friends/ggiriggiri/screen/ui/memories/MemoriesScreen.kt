@@ -1,6 +1,5 @@
 package com.friends.ggiriggiri.screen.ui.memories
 
-import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,15 +34,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.TopAppBar
+import com.friends.ggiriggiri.screen.ui.memories.question.QuestionListScreen
+import com.friends.ggiriggiri.screen.ui.memories.request.RequestListScreen
 import com.friends.ggiriggiri.screen.viewmodel.memories.MemoriesViewModel
-import com.friends.ggiriggiri.screen.viewmodel.UserLoginViewModel
 import com.friends.ggiriggiri.util.Memories
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -171,8 +170,16 @@ fun MemoriesContent(
                 val list = memoriesViewModel.listForRequestsListScreen.value
                 val isLoading = memoriesViewModel.isLoading.value
                 when (memoriesTabs[page]) {
-                    Memories.Answers -> QuestionListScreen(list, isRefreshing || isLoading, memoriesViewModel.friendsApplication)
-                    Memories.Requests -> RequestListScreen(list, isRefreshing || isLoading, memoriesViewModel.friendsApplication)
+                    Memories.Answers -> QuestionListScreen(
+                        list,
+                        isRefreshing || isLoading,
+                        memoriesViewModel.friendsApplication
+                    )
+                    Memories.Requests -> RequestListScreen(
+                        list,
+                        isRefreshing || isLoading,
+                        memoriesViewModel.friendsApplication
+                    )
                 }
             }
 

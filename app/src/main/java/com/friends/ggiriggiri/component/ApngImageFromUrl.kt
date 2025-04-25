@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -72,12 +73,8 @@ fun ApngImageFromUrl(
                     .clip(CircleShape)
                     .shimmer(rememberDefaultShimmer())
                     .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                Color.Gray.copy(alpha = 0.8f),
-                                Color.LightGray.copy(alpha = 0.2f)
-                            )
-                        )
+                        Color.LightGray.copy(alpha = 0.7f),
+                        RoundedCornerShape(4.dp)
                     )
             )
         } else {

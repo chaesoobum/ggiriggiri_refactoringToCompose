@@ -43,7 +43,10 @@ fun RequestListScreenItemSkeleton() {
                             .fillMaxWidth()
                             .weight(1f)
                             .height(16.dp)
-                            .background(Color.Gray.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
+                            .background(
+                                Color.LightGray.copy(alpha = 0.7f),
+                                RoundedCornerShape(4.dp)
+                            )
                             .shimmer(rememberDefaultShimmer())
                     )
                     Spacer(modifier = Modifier.width(5.dp))
@@ -52,7 +55,10 @@ fun RequestListScreenItemSkeleton() {
                             .fillMaxWidth()
                             .weight(.2f)
                             .height(16.dp)
-                            .background(Color.Gray.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
+                            .background(
+                                Color.LightGray.copy(alpha = 0.7f),
+                                RoundedCornerShape(4.dp)
+                            )
                             .shimmer(rememberDefaultShimmer())
                     )
                     Box(
@@ -69,7 +75,10 @@ fun RequestListScreenItemSkeleton() {
                         modifier = Modifier
                             .weight(4f)
                             .height(16.dp)
-                            .background(Color.Gray.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
+                            .background(
+                                Color.LightGray.copy(alpha = 0.7f),
+                                RoundedCornerShape(4.dp)
+                            )
                             .shimmer(rememberDefaultShimmer())
                     )
                     Box(
@@ -98,7 +107,10 @@ fun RequestListScreenItemSkeleton() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(16.dp)
-                        .background(Color.Gray.copy(alpha = 0.7f), RoundedCornerShape(4.dp))
+                        .background(
+                            Color.LightGray.copy(alpha = 0.7f),
+                            RoundedCornerShape(4.dp)
+                        )
                         .shimmer(rememberDefaultShimmer())
                 )
             }
