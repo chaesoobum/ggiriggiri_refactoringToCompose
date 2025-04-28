@@ -22,6 +22,7 @@ class GoogleLoginRepository @Inject constructor() {
             .requestEmail() // 이메일 요청
             .build()
 
+
         return GoogleSignIn.getClient(activity, googleSignInOption)
     }
 
