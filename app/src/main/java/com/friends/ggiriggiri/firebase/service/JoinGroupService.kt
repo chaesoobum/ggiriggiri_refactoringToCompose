@@ -17,6 +17,6 @@ class JoinGroupService @Inject constructor(
     }
 
     suspend fun updateUserGroupDocumentId(userDocumentId: String, groupDocumentId: String) {
-        joinGroupRepository.updateUserGroupDocumentId(userDocumentId,userDocumentId)
+        joinGroupRepository.updateUserGroupDocumentId(userDocumentId,groupDocumentId)
     }
 }
