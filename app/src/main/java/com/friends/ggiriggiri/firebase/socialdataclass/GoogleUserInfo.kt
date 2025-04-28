@@ -1,8 +1,6 @@
-package com.friends.ggiriggiri.dataclass
+package com.friends.ggiriggiri.firebase.socialdataclass
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import org.json.JSONObject
-import java.net.URLDecoder
 
 data class GoogleUserInfo(
     val userId: String,

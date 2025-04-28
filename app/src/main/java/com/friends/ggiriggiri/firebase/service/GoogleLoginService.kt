@@ -1,11 +1,8 @@
-package com.friends.ggiriggiri.service
+package com.friends.ggiriggiri.firebase.service
 
 import android.app.Activity
 import android.content.Intent
-import com.friends.ggiriggiri.dataclass.model.UserModel
-import com.friends.ggiriggiri.dataclass.vo.UserVO
-import com.friends.ggiriggiri.repository.GoogleLoginRepository
-import com.friends.ggiriggiri.repository.KakaoLoginRepository
+import com.friends.ggiriggiri.firebase.repository.GoogleLoginRepository
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import javax.inject.Inject
 

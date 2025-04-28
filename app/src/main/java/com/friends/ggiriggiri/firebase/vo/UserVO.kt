@@ -1,6 +1,6 @@
-package com.friends.ggiriggiri.dataclass.vo
+package com.friends.ggiriggiri.firebase.vo
 
-import com.friends.ggiriggiri.dataclass.model.UserModel
+import com.friends.ggiriggiri.firebase.model.UserModel
 import com.friends.ggiriggiri.util.UserSocialLoginState
 import com.friends.ggiriggiri.util.UserState
 

@@ -1,18 +1,13 @@
-package com.friends.ggiriggiri.repository
+package com.friends.ggiriggiri.firebase.repository
 
 import android.app.Activity
 import android.util.Log
-import com.friends.ggiriggiri.dataclass.KakaoUserInfo
-import com.friends.ggiriggiri.dataclass.model.UserModel
-import com.friends.ggiriggiri.dataclass.vo.UserVO
+import com.friends.ggiriggiri.firebase.socialdataclass.KakaoUserInfo
 import com.friends.ggiriggiri.internaldata.PreferenceManager
-import com.google.firebase.firestore.FirebaseFirestore
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.auth.model.Prompt
 import com.kakao.sdk.user.UserApiClient
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 
 class KakaoLoginRepository @Inject constructor(
     private val prefManager: PreferenceManager

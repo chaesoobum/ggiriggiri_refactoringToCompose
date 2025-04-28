@@ -1,10 +1,8 @@
-package com.friends.ggiriggiri.service
+package com.friends.ggiriggiri.firebase.service
 
 import android.app.Activity
-import android.content.Context
-import com.friends.ggiriggiri.dataclass.KakaoUserInfo
-import com.friends.ggiriggiri.repository.KakaoLoginRepository
-import com.kakao.sdk.user.UserApiClient
+import com.friends.ggiriggiri.firebase.socialdataclass.KakaoUserInfo
+import com.friends.ggiriggiri.firebase.repository.KakaoLoginRepository
 import javax.inject.Inject
 
 class KakaoLoginService @Inject constructor(

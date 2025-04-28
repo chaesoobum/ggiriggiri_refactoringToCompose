@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
-import com.friends.ggiriggiri.service.MemoriesService
+import com.friends.ggiriggiri.firebase.service.MemoriesService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay

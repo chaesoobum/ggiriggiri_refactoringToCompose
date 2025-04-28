@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.dataclass
+package com.friends.ggiriggiri.firebase.socialdataclass
 
 import com.kakao.sdk.user.model.User
 

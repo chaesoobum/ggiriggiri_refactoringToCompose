@@ -1,7 +1,7 @@
-package com.friends.ggiriggiri.service
+package com.friends.ggiriggiri.firebase.service
 
-import com.friends.ggiriggiri.dataclass.model.UserModel
-import com.friends.ggiriggiri.repository.LoginAndRegisterRepository
+import com.friends.ggiriggiri.firebase.model.UserModel
+import com.friends.ggiriggiri.firebase.repository.LoginAndRegisterRepository
 import javax.inject.Inject
 
 class LoginAndRegisterService@Inject constructor(

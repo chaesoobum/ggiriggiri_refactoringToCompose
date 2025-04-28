@@ -1,13 +1,14 @@
-package com.friends.ggiriggiri.repository
+package com.friends.ggiriggiri.firebase.repository
 
-import com.friends.ggiriggiri.dataclass.model.GroupModel
+import com.friends.ggiriggiri.firebase.model.GroupModel
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
-class TestRepository@Inject constructor() {
+class TestRepository@Inject constructor(
+    private val firestore: FirebaseFirestore
+) {
 
     suspend fun db(){
-        val db = FirebaseFirestore.getInstance()
 
         val groupModel = GroupModel()
         groupModel.groupCode = "csb"
@@ -16,7 +17,7 @@ class TestRepository@Inject constructor() {
 
         val groupVO = groupModel.toGroupVO()
 
-        db.collection("_groups")
+        firestore.collection("_groups")
             .add(groupVO)
             .addOnSuccessListener { documentReference ->
 

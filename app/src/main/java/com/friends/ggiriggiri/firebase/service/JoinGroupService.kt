@@ -1,8 +1,8 @@
-package com.friends.ggiriggiri.service
+package com.friends.ggiriggiri.firebase.service
 
 
-import com.friends.ggiriggiri.dataclass.model.GroupModel
-import com.friends.ggiriggiri.repository.JoinGroupRepository
+import com.friends.ggiriggiri.firebase.model.GroupModel
+import com.friends.ggiriggiri.firebase.repository.JoinGroupRepository
 import javax.inject.Inject
 
 class JoinGroupService @Inject constructor(

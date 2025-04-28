@@ -1,8 +1,8 @@
-package com.friends.ggiriggiri.repository
+package com.friends.ggiriggiri.firebase.repository
 
 import android.util.Log
-import com.friends.ggiriggiri.dataclass.model.UserModel
-import com.friends.ggiriggiri.dataclass.vo.UserVO
+import com.friends.ggiriggiri.firebase.model.UserModel
+import com.friends.ggiriggiri.firebase.vo.UserVO
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject

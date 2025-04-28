@@ -4,33 +4,26 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.FriendsApplication
-import com.friends.ggiriggiri.dataclass.GoogleUserInfo
-import com.friends.ggiriggiri.dataclass.model.UserModel
+import com.friends.ggiriggiri.firebase.socialdataclass.GoogleUserInfo
+import com.friends.ggiriggiri.firebase.model.UserModel
 import com.friends.ggiriggiri.internaldata.PreferenceManager
-import com.friends.ggiriggiri.service.GoogleLoginService
-import com.friends.ggiriggiri.service.KakaoLoginService
-import com.friends.ggiriggiri.service.LoginAndRegisterService
-import com.friends.ggiriggiri.service.NaverLoginService
+import com.friends.ggiriggiri.firebase.service.GoogleLoginService
+import com.friends.ggiriggiri.firebase.service.KakaoLoginService
+import com.friends.ggiriggiri.firebase.service.LoginAndRegisterService
+import com.friends.ggiriggiri.firebase.service.NaverLoginService
 import com.friends.ggiriggiri.util.MainScreenName
 import com.friends.ggiriggiri.util.UserSocialLoginState
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class UserLoginViewModel @Inject constructor(
@@ -193,7 +186,7 @@ class UserLoginViewModel @Inject constructor(
         val task = GoogleSignIn.getSignedInAccountFromIntent(result)
         if (task.isSuccessful) {
             val account = task.result
-            val googleUserInfo = GoogleUserInfo.Companion.from(account)
+            val googleUserInfo = GoogleUserInfo.from(account)
 
             Log.d("google", googleUserInfo.name)
             Log.d("google", googleUserInfo.profileImageUrl)

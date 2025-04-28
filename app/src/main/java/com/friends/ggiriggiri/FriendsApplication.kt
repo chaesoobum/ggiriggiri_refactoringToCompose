@@ -2,7 +2,7 @@ package com.friends.ggiriggiri
 
 import android.app.Application
 import androidx.navigation.NavHostController
-import com.friends.ggiriggiri.dataclass.model.UserModel
+import com.friends.ggiriggiri.firebase.model.UserModel
 import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.HiltAndroidApp

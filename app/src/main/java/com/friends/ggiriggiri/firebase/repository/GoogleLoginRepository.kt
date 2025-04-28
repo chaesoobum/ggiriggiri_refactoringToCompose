@@ -1,18 +1,12 @@
-package com.friends.ggiriggiri.repository
+package com.friends.ggiriggiri.firebase.repository
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import com.friends.ggiriggiri.R
-import com.friends.ggiriggiri.dataclass.model.UserModel
-import com.friends.ggiriggiri.dataclass.vo.UserVO
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 
 class GoogleLoginRepository @Inject constructor() {
 

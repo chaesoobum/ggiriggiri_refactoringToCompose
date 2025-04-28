@@ -1,4 +1,4 @@
-package com.friends.ggiriggiri.repository
+package com.friends.ggiriggiri.firebase.repository
 
 import javax.inject.Inject
 

@@ -1,17 +1,12 @@
-package com.friends.ggiriggiri.repository
+package com.friends.ggiriggiri.firebase.repository
 
 import android.app.Activity
-import android.content.ContentValues.TAG
 import android.util.Log
-import com.friends.ggiriggiri.dataclass.NaverUserInfo
-import com.friends.ggiriggiri.dataclass.model.UserModel
-import com.friends.ggiriggiri.dataclass.vo.UserVO
+import com.friends.ggiriggiri.firebase.socialdataclass.NaverUserInfo
 import com.friends.ggiriggiri.internaldata.PreferenceManager
-import com.google.firebase.firestore.FirebaseFirestore
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
-import kotlinx.coroutines.tasks.await
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -20,7 +15,6 @@ import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 
 class NaverLoginRepository @Inject constructor(
     private val prefManager: PreferenceManager

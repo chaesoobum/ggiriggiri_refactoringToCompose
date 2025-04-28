@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.internaldata.PreferenceManager
-import com.friends.ggiriggiri.service.JoinGroupService
+import com.friends.ggiriggiri.firebase.service.JoinGroupService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay

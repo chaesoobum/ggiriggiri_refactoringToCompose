@@ -1,8 +1,8 @@
-package com.friends.ggiriggiri.repository
+package com.friends.ggiriggiri.firebase.repository
 
 import android.util.Log
-import com.friends.ggiriggiri.dataclass.model.GroupModel
-import com.friends.ggiriggiri.dataclass.vo.GroupVO
+import com.friends.ggiriggiri.firebase.model.GroupModel
+import com.friends.ggiriggiri.firebase.vo.GroupVO
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
