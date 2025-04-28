@@ -2,11 +2,11 @@ package com.friends.ggiriggiri.firebase.service
 
 
 import com.friends.ggiriggiri.firebase.model.GroupModel
-import com.friends.ggiriggiri.firebase.repository.JoinGroupRepository
+import com.friends.ggiriggiri.firebase.repository.GroupRepository
 import javax.inject.Inject
 
-class JoinGroupService @Inject constructor(
-    val joinGroupRepository: JoinGroupRepository
+class GroupService @Inject constructor(
+    val joinGroupRepository: GroupRepository
 ) {
     suspend fun getGroupModel(groupCode: String, groupPw: String): GroupModel? {
         return joinGroupRepository.getGroupModel(groupCode, groupPw)

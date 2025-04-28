@@ -8,7 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class JoinGroupRepository@Inject constructor(
+class GroupRepository@Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
     //그룹코드와 비밀번호에 맞는 그룹모델을 가져온다 없으면 null이다
@@ -70,5 +70,38 @@ class JoinGroupRepository@Inject constructor(
         }
     }
 
+    // 그룹 문서에서 유저 아이디를 제거한다
+    suspend fun removeUserFromGroup(groupDocumentId: String, userDocumentId: String) {
+        try {
+            val groupRef = firestore.collection("_groups").document(groupDocumentId)
+
+            // 배열에서 userDocumentId 제거
+            groupRef.update(
+                "groupUserDocumentID", FieldValue.arrayRemove(userDocumentId)
+            ).await()
+
+            Log.d("JoinGroupRepository", "유저 제거 성공: userDocumentId=$userDocumentId 그룹=$groupDocumentId")
+        } catch (e: Exception) {
+            Log.e("JoinGroupRepository", "유저 제거 실패", e)
+            throw e
+        }
+    }
+
+    // 유저 문서에서 그룹 아이디를 제거한다
+    suspend fun removeGroupDocumentIdFromUser(userDocumentId: String) {
+        try {
+            val userRef = firestore.collection("_users").document(userDocumentId)
+
+            // userGroupDocumentID 필드를 삭제
+            userRef.update(
+                "userGroupDocumentID", FieldValue.delete()
+            ).await()
+
+            Log.d("JoinGroupRepository", "유저 문서 그룹 ID 제거 성공: userDocumentId=$userDocumentId")
+        } catch (e: Exception) {
+            Log.e("JoinGroupRepository", "유저 문서 그룹 ID 제거 실패", e)
+            throw e
+        }
+    }
 
 }

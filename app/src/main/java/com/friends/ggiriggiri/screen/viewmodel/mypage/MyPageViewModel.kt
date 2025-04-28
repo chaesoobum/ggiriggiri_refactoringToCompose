@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.friends.ggiriggiri.FriendsApplication
+import com.friends.ggiriggiri.firebase.service.GroupService
 import com.friends.ggiriggiri.internaldata.PreferenceManager
 import com.friends.ggiriggiri.util.MainScreenName
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val preferenceManager: PreferenceManager,
+    val groupService: GroupService
 ): ViewModel() {
     val friendsApplication = context as FriendsApplication
 
@@ -35,6 +37,13 @@ class MyPageViewModel @Inject constructor(
             popBackStack(MainScreenName.SCREEN_USER_MAIN.name,true)
             navigate(MainScreenName.SCREEN_USER_LOGIN.name)
         }
+    }
+
+    fun leaveTheGroup(){
+        //그룹에서 나간다
+        preferenceManager.changeIsGroupInFalse()
+
+
     }
 
 }
