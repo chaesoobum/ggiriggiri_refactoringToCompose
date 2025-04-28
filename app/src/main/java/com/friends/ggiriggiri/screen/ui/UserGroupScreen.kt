@@ -94,7 +94,7 @@ fun UserGroupScreen(
                             selected = selected,
                             onClick = {
                                 coroutineScope.launch {
-                                    pagerState.animateScrollToPage(index)
+                                    pagerState.scrollToPage(index)
                                 }
                             },
                             icon = {

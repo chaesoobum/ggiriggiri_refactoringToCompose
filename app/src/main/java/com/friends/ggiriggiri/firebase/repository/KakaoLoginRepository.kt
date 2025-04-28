@@ -88,15 +88,9 @@ class KakaoLoginRepository @Inject constructor(
             Log.d("kakao",profileImageUrl) //profileImageUrl
             Log.d("kakao",nickname) //성명
 
-            saveLoginInfo(email,accessToken)
 
             onSuccess(accessToken, userInfo)
         }
-    }
-
-    // 쉐어드 프리퍼런스 저장
-    fun saveLoginInfo(userId: String, accessToken: String? = null) {
-        prefManager.saveLoginInfo("kakao", userId, accessToken)
     }
 
     //로그아웃

@@ -45,6 +45,11 @@ class UserLoginViewModel @Inject constructor(
     // 프로그래스바
     val isLoading = MutableStateFlow(false) // 로딩 상태
 
+
+    suspend fun loadUserModel(userDocumentId: String): UserModel {
+        return loginAndRegisterService.getUserModelByDocumentId(userDocumentId)
+    }
+
     fun onKakaoLoginClicked(activity: Activity) {
         viewModelScope.launch {
             isLoading.value = true
@@ -70,11 +75,11 @@ class UserLoginViewModel @Inject constructor(
                     viewModelScope.launch {
                         //로그인이나 회원가입을 하고 데이터를 가져온다
                         val userModelFromDB = loginAndRegisterService.loginOrRegister(userModel)
-
                         //자동로그인 저장
                         preferenceManager.saveLoginInfo(
                             UserSocialLoginState.KAKAO.name,
                             userInfo.email.toString(),
+                            userModelFromDB.userDocumentId,
                             token
                         )
 
@@ -135,9 +140,10 @@ class UserLoginViewModel @Inject constructor(
 
                         //자동로그인 저장
                         preferenceManager.saveLoginInfo(
-                            UserSocialLoginState.NAVER.name,
-                            userInfo.email,
-                            token
+                            platform = UserSocialLoginState.NAVER.name,
+                            userId = userInfo.email,
+                            userDocumentId = userModelFromDB.userDocumentId,
+                            accessToken = token
                         )
 
                         //로그인 유저 저장
@@ -206,6 +212,7 @@ class UserLoginViewModel @Inject constructor(
                 preferenceManager.saveLoginInfo(
                     UserSocialLoginState.GOOGLE.name,
                     googleUserInfo.email,
+                    userModelFromDB.userDocumentId,
                     account.idToken
                 )
 

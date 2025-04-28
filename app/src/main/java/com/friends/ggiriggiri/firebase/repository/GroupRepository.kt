@@ -87,19 +87,19 @@ class GroupRepository@Inject constructor(
         }
     }
 
-    // 유저 문서에서 그룹 아이디를 제거한다
+    // 유저 문서에서 그룹 아이디를 빈 문자열로 설정한다
     suspend fun removeGroupDocumentIdFromUser(userDocumentId: String) {
         try {
             val userRef = firestore.collection("_users").document(userDocumentId)
 
-            // userGroupDocumentID 필드를 삭제
+            // userGroupDocumentID 필드를 빈 문자열로 설정
             userRef.update(
-                "userGroupDocumentID", FieldValue.delete()
+                "userGroupDocumentID", ""
             ).await()
 
-            Log.d("JoinGroupRepository", "유저 문서 그룹 ID 제거 성공: userDocumentId=$userDocumentId")
+            Log.d("JoinGroupRepository", "유저 문서 그룹 ID 빈 문자열 설정 성공: userDocumentId=$userDocumentId")
         } catch (e: Exception) {
-            Log.e("JoinGroupRepository", "유저 문서 그룹 ID 제거 실패", e)
+            Log.e("JoinGroupRepository", "유저 문서 그룹 ID 빈 문자열 설정 실패", e)
             throw e
         }
     }

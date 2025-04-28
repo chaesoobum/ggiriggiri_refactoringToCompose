@@ -19,4 +19,12 @@ class GroupService @Inject constructor(
     suspend fun updateUserGroupDocumentId(userDocumentId: String, groupDocumentId: String) {
         joinGroupRepository.updateUserGroupDocumentId(userDocumentId,groupDocumentId)
     }
+
+    suspend fun removeUserFromGroup(groupDocumentId: String, userDocumentId: String) {
+        joinGroupRepository.removeUserFromGroup(groupDocumentId,userDocumentId)
+    }
+
+    suspend fun removeGroupDocumentIdFromUser(userDocumentId: String) {
+        joinGroupRepository.removeGroupDocumentIdFromUser(userDocumentId)
+    }
 }

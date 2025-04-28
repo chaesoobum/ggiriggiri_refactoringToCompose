@@ -17,14 +17,16 @@ class PreferenceManager @Inject constructor(
         private const val KEY_ACCESS_TOKEN = "ACCESS_TOKEN"
         private const val KEY_IS_LOGGED_IN = "IS_LOGGED_IN"
         private const val KEY_DOES_USER_IN_GROUP = "DOES_USER_IN_GROUP"
+        private const val KEY_USER_DOCUMENT_ID = "USER_DOCUMENT_ID"
     }
 
     /* 로그인 정보 저장 */
-    fun saveLoginInfo(platform: String, userId: String, accessToken: String? = null) {
+    fun saveLoginInfo(platform: String, userId: String,userDocumentId:String, accessToken: String? = null) {
         with(prefs.edit()) {
             putString(KEY_PLATFORM, platform)
             putString(KEY_USER_ID, userId)
             putBoolean(KEY_IS_LOGGED_IN, true)
+            putString(KEY_USER_DOCUMENT_ID,userDocumentId)
             accessToken?.let { putString(KEY_ACCESS_TOKEN, it) }
             apply()
         }
@@ -69,6 +71,11 @@ class PreferenceManager @Inject constructor(
     /* 사용자 ID */
     fun getUserId(): String? {
         return prefs.getString(KEY_USER_ID, null)
+    }
+
+    /* 사용자 문서ID */
+    fun getUserDocumentId(): String? {
+        return prefs.getString(KEY_USER_DOCUMENT_ID, null)
     }
 
     /* 액세스 토큰 */

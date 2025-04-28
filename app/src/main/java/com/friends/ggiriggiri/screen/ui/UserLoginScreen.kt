@@ -1,6 +1,7 @@
 package com.friends.ggiriggiri.screen.ui
 
 import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -38,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -67,7 +69,9 @@ import com.friends.ggiriggiri.component.TextButton
 import com.friends.ggiriggiri.screen.viewmodel.userlogin.UserLoginViewModel
 
 @Composable
-fun UserLoginScreen(userLoginViewModel: UserLoginViewModel = hiltViewModel()) {
+fun UserLoginScreen(
+    userLoginViewModel: UserLoginViewModel = hiltViewModel()
+) {
     val context = LocalContext.current
     val activity = context as Activity
     val isLoading by userLoginViewModel.isLoading.collectAsState()
@@ -80,55 +84,35 @@ fun UserLoginScreen(userLoginViewModel: UserLoginViewModel = hiltViewModel()) {
     }
 
     LaunchedEffect(intent) {
-        if (intent != null && activity != null) {
+        if (intent != null) {
             launcher.launch(intent)
         }
     }
 
-
-    UserLoginContent(
-        idText = userLoginViewModel.textFieldUserLoginIdValue,
-        passwordText = userLoginViewModel.textFieldUserLoginPasswordValue,
-        onKakaoLoginClicked = {
-            activity?.let {
-                userLoginViewModel.onKakaoLoginClicked(activity)
-            }
-        },
-        onNaverLoginClicked = {
-            activity?.let {
-                userLoginViewModel.onNaverLoginClicked(activity)
-            }
-        },
-        onGoogleLoginClicked = {
-            activity?.let {
-                userLoginViewModel.onGoogleLoginClicked(activity)
-            }
-        },
-    )
+    UserLoginContent(userLoginViewModel)
 
     CustomProgressDialog(isShowing = isLoading)
 }
 
+
 @Composable
 fun UserLoginContent(
-    idText: MutableState<String>,
-    passwordText: MutableState<String>,
-    onKakaoLoginClicked: () -> Unit,
-    onNaverLoginClicked: () -> Unit,
-    onGoogleLoginClicked: () -> Unit
+    userLoginViewModel: UserLoginViewModel
 ) {
+    val activity = LocalActivity.current!!
+
+    val idText = userLoginViewModel.textFieldUserLoginIdValue
+    val passwordText = userLoginViewModel.textFieldUserLoginPasswordValue
+
     Scaffold { innerPadding ->
-        val focusManager: FocusManager = LocalFocusManager.current
+        val focusManager = LocalFocusManager.current
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
                 .pointerInput(Unit) {
-                    // 외부 터치 시 포커스를 해제하고 키보드 내리기
-                    detectTapGestures(onTap = {
-                        focusManager.clearFocus() // 포커스를 해제
-                    })
+                    detectTapGestures { focusManager.clearFocus() }
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -156,6 +140,7 @@ fun UserLoginContent(
                         Font(R.font.nanumsquareregular)
                     ),
                 )
+
                 OutlinedTextField(
                     textFieldValue = idText,
                     label = "아이디",
@@ -163,10 +148,11 @@ fun UserLoginContent(
                     paddingStart = 20.dp,
                     paddingEnd = 20.dp,
                     singleLine = true,
-                    inputCondition = "[^a-zA-Z0-9_]",
+                    inputCondition = "[^a-zA-Z0-9_]?",
                     leadingIcon = ImageVector.vectorResource(R.drawable.person_24px),
                     readOnly = false
                 )
+
                 OutlinedTextField(
                     textFieldValue = passwordText,
                     label = "비밀번호",
@@ -176,16 +162,18 @@ fun UserLoginContent(
                     singleLine = true,
                     trailingIconMode = OutlinedTextFieldEndIconMode.PASSWORD,
                     inputType = OutlinedTextFieldInputType.PASSWORD,
-                    inputCondition = "[^a-zA-Z0-9_]",
+                    inputCondition = "[^a-zA-Z0-9_]?",
                     leadingIcon = ImageVector.vectorResource(R.drawable.key_24px),
                     readOnly = false
                 )
+
                 CustomButton(
                     text = "로그인",
                     paddingTop = 20.dp,
                     paddingStart = 20.dp,
                     paddingEnd = 20.dp
                 )
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -207,25 +195,24 @@ fun UserLoginContent(
                         TextButton(
                             text = "회원가입",
                             onClick = {
-                            //회원가입
+                                // 회원가입 클릭 시 로직
                             },
                             underline = true,
                             fontSize = 14.sp,
                             fontFamily = FontFamily(Font(R.font.nanumsquareextrabold)),
-                            )
+                        )
                     }
 
-                    // 오른쪽 영역 (아이디/비번 찾기 관련)
                     Row(
                         modifier = Modifier
                             .wrapContentWidth()
-                            .padding(top = 10.dp), // 오른쪽 여백
+                            .padding(top = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         TextButton(
                             text = "아이디 찾기",
                             onClick = {
-                                //아이디 찾기
+                                // 아이디 찾기 클릭 시 로직
                             },
                             underline = true,
                             fontSize = 13.sp,
@@ -234,18 +221,20 @@ fun UserLoginContent(
                         TextButton(
                             text = "비밀번호 찾기",
                             onClick = {
-                                //비밀번호 찾기
+                                // 비밀번호 찾기 클릭 시 로직
                             },
                             underline = true,
                             fontSize = 13.sp,
                         )
                     }
                 }
-                Box(
+
+                // SNS 로그인
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp, start = 20.dp, end = 20.dp),
-                    contentAlignment = Alignment.Center, // Box 안에서 Row 자체를 가운데 정렬
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -277,30 +266,17 @@ fun UserLoginContent(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                         )
                     }
-
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp, start = 20.dp, end = 20.dp),
-                    contentAlignment = Alignment.Center, // Box 안에서 Row 자체를 가운데 정렬
-                ) {
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 50.dp, end = 50.dp, bottom = 30.dp),
+                            .padding(top = 10.dp),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Kakao 버튼
                         IconButton(
-                            onClick = { onKakaoLoginClicked() },
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(
-                                    Color.Transparent,
-                                    shape = CircleShape
-                                ) // 둥글게 하고 싶으면 CircleShape
+                            onClick = {
+                                userLoginViewModel.onKakaoLoginClicked(activity)
+                            },
+                            modifier = Modifier.size(40.dp)
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.kakao),
@@ -311,12 +287,11 @@ fun UserLoginContent(
 
                         Spacer(modifier = Modifier.width(40.dp))
 
-                        // Naver 버튼
                         IconButton(
-                            onClick = { onNaverLoginClicked() },
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(Color.Transparent, shape = CircleShape)
+                            onClick = {
+                                userLoginViewModel.onNaverLoginClicked(activity)
+                            },
+                            modifier = Modifier.size(40.dp)
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.naver),
@@ -327,12 +302,11 @@ fun UserLoginContent(
 
                         Spacer(modifier = Modifier.width(40.dp))
 
-                        // Google 버튼
                         IconButton(
-                            onClick = { onGoogleLoginClicked() },
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(Color.Transparent, shape = CircleShape)
+                            onClick = {
+                                userLoginViewModel.onGoogleLoginClicked(activity)
+                            },
+                            modifier = Modifier.size(40.dp)
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.google),
@@ -341,7 +315,6 @@ fun UserLoginContent(
                             )
                         }
                     }
-
                 }
             }
         }
@@ -349,18 +322,19 @@ fun UserLoginContent(
 }
 
 
+
 @Preview
 @Composable
 fun MyScreenPreview() {
-    val idText = remember { mutableStateOf("exampleId") }
-    val passwordText = remember { mutableStateOf("examplePassword") }
-
-    UserLoginContent(
-        idText = idText,
-        passwordText = passwordText,
-        onKakaoLoginClicked = {},
-        onNaverLoginClicked = {},
-        onGoogleLoginClicked = {},
-    )
+//    val idText = remember { mutableStateOf("exampleId") }
+//    val passwordText = remember { mutableStateOf("examplePassword") }
+//
+//    UserLoginContent(
+//        idText = idText,
+//        passwordText = passwordText,
+//        onKakaoLoginClicked = {},
+//        onNaverLoginClicked = {},
+//        onGoogleLoginClicked = {},
+//    )
 
 }

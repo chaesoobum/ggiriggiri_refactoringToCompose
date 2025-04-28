@@ -3,12 +3,8 @@ package com.friends.ggiriggiri.screen.ui.mypage
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,11 +16,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,22 +35,16 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.friends.ggiriggiri.Main
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomAlertDialog
 import com.friends.ggiriggiri.component.CustomIconButton
-import com.friends.ggiriggiri.component.TextButton
+import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.component.TopAppBar
-import com.friends.ggiriggiri.internaldata.PreferenceManager
 import com.friends.ggiriggiri.screen.viewmodel.mypage.MyPageViewModel
 import com.friends.ggiriggiri.util.MainScreenName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -156,7 +144,7 @@ fun MyPageContent(
                 text = "로그아웃",
                 imageVector = ImageVector.vectorResource(R.drawable.logout_24px),
                 onMyPageButtonClick = {
-                    viewModel.settingShowDialogTrue()
+                    viewModel.showLogoutDialogTrue()
                 }
             )
             MyPageButton(
@@ -167,6 +155,13 @@ fun MyPageContent(
                 }
             )
             MyPageButton(
+                text = "그룹탈퇴",
+                imageVector = ImageVector.vectorResource(R.drawable.disabled_by_default_24px),
+                onMyPageButtonClick = {
+                    viewModel.showLeaveGroupDialogTrue()
+                }
+            )
+            MyPageButton(
                 text = "개인정보처리방침/\n이용약관",
                 imageVector = ImageVector.vectorResource(R.drawable.info_24px),
                 onMyPageButtonClick = {
@@ -174,21 +169,42 @@ fun MyPageContent(
                 }
             )
 
-            if (viewModel.showDialog.value) {
+            // 프로그레스 다이얼로그
+            CustomProgressDialog(viewModel.isLoading.value)
+
+            if (viewModel.showLogoutDialog.value) {
                 CustomAlertDialog(
-                    onDismiss = { viewModel.settingShowDialogFalse() },
+                    onDismiss = { viewModel.showLogoutDialogFalse() },
                     onConfirmation = {
-                        viewModel.settingShowDialogFalse()
+                        viewModel.showLogoutDialogFalse()
                         viewModel.logout()
                     },
                     onPositiveText = "네",
-                    onDismissRequest = { viewModel.settingShowDialogFalse() },
+                    onDismissRequest = { viewModel.showLogoutDialogFalse() },
                     onNegativeText = "취소",
                     dialogTitle = "알림",
                     dialogText = "로그아웃 하시겠습니까?",
                     icon = Icons.Default.Info
                 )
             }
+
+            if (viewModel.showLeaveTheGroupDialog.value) {
+                CustomAlertDialog(
+                    onDismiss = { viewModel.showLeaveGroupDialogFalse() },
+                    onConfirmation = {
+                        viewModel.showLeaveGroupDialogFalse()
+                        viewModel.leaveTheGroup()
+                    },
+                    onPositiveText = "네",
+                    onDismissRequest = { viewModel.showLeaveGroupDialogFalse() },
+                    onNegativeText = "취소",
+                    dialogTitle = "알림",
+                    dialogText = "그룹에서 나가시겠습니까?",
+                    icon = Icons.Default.Info
+                )
+            }
+
+
 
 
 

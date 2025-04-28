@@ -89,8 +89,6 @@ class NaverLoginRepository @Inject constructor(
                             Log.d("naver",profileImageUrl) //profileImageUrl
                             Log.d("naver",name) //성명
 
-                            saveLoginInfo(email, accessToken)
-
                             onSuccess(accessToken, userInfo)
                         } catch (e: Exception) {
                             Log.e("NaverLogin", "JSON 파싱 오류", e)
@@ -104,10 +102,6 @@ class NaverLoginRepository @Inject constructor(
                 }
             }
         })
-    }
-
-    private fun saveLoginInfo(userId: String, accessToken: String?) {
-        prefManager.saveLoginInfo("naver", userId, accessToken)
     }
 
     //onComplete: () -> Unit	함수가 하나의 "파라미터"로 전달된다. 이 파라미터는 아무 인자도 받지 않고(Unit), 아무 값도 리턴하지 않는(Unit) 함수다.

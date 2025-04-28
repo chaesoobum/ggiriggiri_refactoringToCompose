@@ -10,4 +10,7 @@ class LoginAndRegisterService@Inject constructor(
     suspend fun loginOrRegister(userModel: UserModel): UserModel {
         return loginAndRegisterRepository.loginOrRegister(userModel)
     }
+    suspend fun getUserModelByDocumentId(userDocumentId: String): UserModel {
+        return loginAndRegisterRepository.getUserModelByDocumentId(userDocumentId)
+    }
 }

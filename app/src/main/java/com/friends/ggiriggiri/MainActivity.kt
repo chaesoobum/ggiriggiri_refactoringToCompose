@@ -9,6 +9,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -16,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.friends.ggiriggiri.firebase.model.UserModel
 import com.friends.ggiriggiri.internaldata.PreferenceManager
 import com.friends.ggiriggiri.screen.ui.UserGroupScreen
 import com.friends.ggiriggiri.screen.ui.UserLoginScreen
@@ -66,81 +72,103 @@ fun Main(
     Log.d("preferenceManager",userLoginViewModel.preferenceManager.isLoggedIn().toString())
 
 
-    // 자동 로그인 여부에 따라 시작 목적지 결정
-    val startDestination = when {
-        !userLoginViewModel.preferenceManager.isLoggedIn() -> {
-            MainScreenName.SCREEN_USER_LOGIN.name
-        }
-        !userLoginViewModel.preferenceManager.isGroupIn() -> {
-            MainScreenName.SCREEN_USER_GROUP.name
-        }
-        else -> {
-            MainScreenName.SCREEN_USER_MAIN.name
+    val isLoggedIn = userLoginViewModel.preferenceManager.isLoggedIn()
+
+    var startDestination by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        if (userLoginViewModel.preferenceManager.isLoggedIn()) {
+            val userDocumentId = userLoginViewModel.preferenceManager.getUserDocumentId()
+            if (!userDocumentId.isNullOrEmpty()) {
+                try {
+                    val userModel = userLoginViewModel.loadUserModel(userDocumentId)
+                    friendsApplication.loginUserModel = userModel
+
+                    startDestination = if (userModel.userGroupDocumentID.isEmpty()) {
+                        MainScreenName.SCREEN_USER_GROUP.name
+                    } else {
+                        MainScreenName.SCREEN_USER_MAIN.name
+                    }
+                } catch (e: Exception) {
+                    userLoginViewModel.preferenceManager.clearLoginInfo()
+                    friendsApplication.loginUserModel = UserModel()
+                    startDestination = MainScreenName.SCREEN_USER_LOGIN.name
+                }
+            } else {
+                startDestination = MainScreenName.SCREEN_USER_LOGIN.name
+            }
+        } else {
+            startDestination = MainScreenName.SCREEN_USER_LOGIN.name
         }
     }
 
-    NavHost(
-        navController = navHostController,
-        startDestination = startDestination,
-        enterTransition = {
-            fadeIn(tween(300)) +
-                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(300))
-        },
-        popExitTransition = {
-            fadeOut(tween(300)) +
-                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(300))
-        },
-        exitTransition = {
-            fadeOut(tween(300))
-        },
-        popEnterTransition = {
-            fadeIn(tween(300))
-        }
-    ) {
-        composable(route = MainScreenName.SCREEN_USER_LOGIN.name) {
-            UserLoginScreen()
-        }
 
-        composable(route = MainScreenName.SCREEN_USER_MAIN.name) {
-            UserMainScreen()
-        }
+    // 여기 중요
+    if (startDestination != null) {
+        NavHost(
+            navController = navHostController,
+            startDestination = startDestination!!,
+            enterTransition = {
+                fadeIn(tween(300)) +
+                        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(300))
+            },
+            popExitTransition = {
+                fadeOut(tween(300)) +
+                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(300))
+            },
+            exitTransition = {
+                fadeOut(tween(300))
+            },
+            popEnterTransition = {
+                fadeIn(tween(300))
+            }
+        ) {
+            composable(route = MainScreenName.SCREEN_USER_LOGIN.name) {
+                UserLoginScreen()
+            }
 
-        composable(route = MainScreenName.SCREEN_USER_GROUP.name) {
-            UserGroupScreen()
-        }
+            composable(route = MainScreenName.SCREEN_USER_MAIN.name) {
+                UserMainScreen()
+            }
 
-        composable(route = MainScreenName.SCREEN_VIEW_ONE_REQUEST.name) {
-            ViewOneRequestScreen()
-        }
+            composable(route = MainScreenName.SCREEN_USER_GROUP.name) {
+                UserGroupScreen()
+            }
 
-        composable(route = MainScreenName.SCREEN_VIEW_ONE_QUESTION.name) {
-            ViewOneQuestionScreen()
-        }
+            composable(route = MainScreenName.SCREEN_VIEW_ONE_REQUEST.name) {
+                ViewOneRequestScreen()
+            }
 
-        composable(route = MainScreenName.SCREEN_DO_REQUEST.name) {
-            DoRequestScreen()
-        }
+            composable(route = MainScreenName.SCREEN_VIEW_ONE_QUESTION.name) {
+                ViewOneQuestionScreen()
+            }
 
-        composable(route = MainScreenName.SCREEN_DO_ANSWER.name) {
-            DoAnswerScreen()
-        }
+            composable(route = MainScreenName.SCREEN_DO_REQUEST.name) {
+                DoRequestScreen()
+            }
 
-        composable(route = MainScreenName.SCREEN_NOTIFICATION.name) {
-            ViewNotificationScreen()
-        }
+            composable(route = MainScreenName.SCREEN_DO_ANSWER.name) {
+                DoAnswerScreen()
+            }
 
-        composable(route = MainScreenName.SCREEN_SETTING_GROUP.name) {
-            SettingGroupScreen()
-        }
+            composable(route = MainScreenName.SCREEN_NOTIFICATION.name) {
+                ViewNotificationScreen()
+            }
 
-        composable(route = MainScreenName.SCREEN_LEGAL.name) {
-            LegalScreen()
-        }
+            composable(route = MainScreenName.SCREEN_SETTING_GROUP.name) {
+                SettingGroupScreen()
+            }
 
-        composable(route = MainScreenName.SCREEN_MEMBER_LIST_DETAIL.name) {
-            MemberListDetail()
+            composable(route = MainScreenName.SCREEN_LEGAL.name) {
+                LegalScreen()
+            }
+
+            composable(route = MainScreenName.SCREEN_MEMBER_LIST_DETAIL.name) {
+                MemberListDetail()
+            }
         }
     }
+
 }
 
 
