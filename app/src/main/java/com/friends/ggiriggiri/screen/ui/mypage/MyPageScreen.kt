@@ -16,12 +16,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,12 +45,18 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.friends.ggiriggiri.Main
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.component.CustomAlertDialog
 import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.TextButton
 import com.friends.ggiriggiri.component.TopAppBar
+import com.friends.ggiriggiri.internaldata.PreferenceManager
 import com.friends.ggiriggiri.screen.viewmodel.mypage.MyPageViewModel
 import com.friends.ggiriggiri.util.MainScreenName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -147,7 +156,7 @@ fun MyPageContent(
                 text = "로그아웃",
                 imageVector = ImageVector.vectorResource(R.drawable.logout_24px),
                 onMyPageButtonClick = {
-                    Toast.makeText(context, "토스트 메시지입니다!", Toast.LENGTH_SHORT).show()
+                    viewModel.settingShowDialogTrue()
                 }
             )
             MyPageButton(
@@ -164,6 +173,22 @@ fun MyPageContent(
                     Toast.makeText(context, "토스트 메시지입니다!", Toast.LENGTH_SHORT).show()
                 }
             )
+
+            if (viewModel.showDialog.value) {
+                CustomAlertDialog(
+                    onDismiss = { viewModel.settingShowDialogFalse() },
+                    onConfirmation = {
+                        viewModel.settingShowDialogFalse()
+                        viewModel.logout()
+                    },
+                    onPositiveText = "네",
+                    onDismissRequest = { viewModel.settingShowDialogFalse() },
+                    onNegativeText = "취소",
+                    dialogTitle = "알림",
+                    dialogText = "로그아웃 하시겠습니까?",
+                    icon = Icons.Default.Info
+                )
+            }
 
 
 

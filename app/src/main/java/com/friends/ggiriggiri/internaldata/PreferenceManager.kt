@@ -3,7 +3,9 @@ package com.friends.ggiriggiri.internaldata
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PreferenceManager @Inject constructor(
     @ApplicationContext context: Context
 ) {
@@ -14,6 +16,7 @@ class PreferenceManager @Inject constructor(
         private const val KEY_USER_ID = "USER_ID"
         private const val KEY_ACCESS_TOKEN = "ACCESS_TOKEN"
         private const val KEY_IS_LOGGED_IN = "IS_LOGGED_IN"
+        private const val KEY_DOES_USER_IN_GROUP = "DOES_USER_IN_GROUP"
     }
 
     /* 로그인 정보 저장 */
@@ -35,6 +38,27 @@ class PreferenceManager @Inject constructor(
     /* 로그인 여부 확인 */
     fun isLoggedIn(): Boolean {
         return prefs.getBoolean(KEY_IS_LOGGED_IN, false)
+    }
+
+    /* 그룹 가입여부 true로 바꾸기 */
+    fun changeIsGroupInTrue(){
+        with(prefs.edit()){
+            putBoolean(KEY_DOES_USER_IN_GROUP,true)
+            apply()
+        }
+    }
+
+    /* 그룹 가입여부 false로 바꾸기 */
+    fun changeIsGroupInFalse(){
+        with(prefs.edit()){
+            putBoolean(KEY_DOES_USER_IN_GROUP,false)
+            apply()
+        }
+    }
+
+    /* 그룹 가입 여부 확인 */
+    fun isGroupIn(): Boolean {
+        return prefs.getBoolean(KEY_DOES_USER_IN_GROUP, false)
     }
 
     /* 로그인한 플랫폼 (kakao, google, naver) */

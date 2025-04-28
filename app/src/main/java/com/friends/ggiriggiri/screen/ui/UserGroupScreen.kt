@@ -25,16 +25,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.ui.groupsubscreen.JoinGroupScreen
 import com.friends.ggiriggiri.screen.ui.groupsubscreen.MakeGroupScreen
+import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
+import com.friends.ggiriggiri.screen.viewmodel.userlogin.UserLoginViewModel
 import com.friends.ggiriggiri.util.Group
+import com.friends.ggiriggiri.util.MainScreenName
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserGroupScreen() {
+fun UserGroupScreen(
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    userLoginViewModel: UserLoginViewModel = hiltViewModel()
+) {
     val context = LocalContext.current
     val selectedColor = Color(ContextCompat.getColor(context, R.color.mainColor))
 
@@ -55,7 +62,20 @@ fun UserGroupScreen() {
                     .statusBarsPadding()
             ) {
                 TopAppBar(
-                    title = "그룹 만들기/그룹 들어가기"
+                    title = "그룹 만들기/그룹 들어가기",
+                    isDivider = false,
+                    navigationIconImage = ImageVector.vectorResource(id = R.drawable.arrow_back_ios_24px),
+                    navigationIconOnClick = {
+                        homeViewModel.friendsApplication.navHostController.apply {
+
+                            //자동로그인 기록을 지운다
+                            userLoginViewModel.preferenceManager.clearLoginInfo()
+
+                            //화면을 이동한다
+                            popBackStack(MainScreenName.SCREEN_USER_GROUP.name,true)
+                            navigate(MainScreenName.SCREEN_USER_LOGIN.name)
+                        }
+                    },
                 )
                 TabRow(
                     selectedTabIndex = pagerState.currentPage,

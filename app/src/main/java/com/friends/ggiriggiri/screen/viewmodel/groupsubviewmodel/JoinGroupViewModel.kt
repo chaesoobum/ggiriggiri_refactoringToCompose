@@ -1,10 +1,13 @@
 package com.friends.ggiriggiri.screen.viewmodel.groupsubviewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
+import com.friends.ggiriggiri.internaldata.PreferenceManager
+import com.friends.ggiriggiri.service.JoinGroupService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -15,6 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class JoinGroupViewModel@Inject constructor(
     @ApplicationContext context: Context,
+    private val preferenceManager: PreferenceManager,
+    private val joinGroupService: JoinGroupService
 ) :ViewModel(){
     val friendsApplication = context as FriendsApplication
 
@@ -49,21 +54,37 @@ class JoinGroupViewModel@Inject constructor(
         }
     }
 
-    val showSuccessDialog = mutableStateOf(false)
+    private val _showFailDialog = mutableStateOf(false)
+    val showFailDialog = _showFailDialog
+    fun showFailDialogTrue(){
+        _showFailDialog.value = true
+    }
+    fun showFailDialogFalse(){
+        _showFailDialog.value = false
+    }
 
     fun joinGroupProcessLoading(){
         viewModelScope.launch {
             isLoading.value = true
 
-            delay(4000)
+            //입력한 정보에 맞는 그룹 모델을 가져온다
+            //없으면 null이다
+            val groupModel = joinGroupService.getGroupModel(textFieldJoinGroupCodeValue.value,textFieldJoinGroupPasswordValue.value)
 
-            if (textFieldJoinGroupCodeValue.value == "csb" && textFieldJoinGroupPasswordValue.value == "1234"){
-                isGroupExist.value = true
-            }else{
+            if (groupModel == null){
                 isGroupExist.value = false
-                showSuccessDialog.value = true
-            }
+                showFailDialogTrue()
+            }else{
+                //그룹에 들어갔으므로 preference를   그룹참여상태로 바꾼다
+                preferenceManager.changeIsGroupInTrue()
 
+                // 그룹문서에 유저아이디를 추가하고
+                joinGroupService.addUserToGroup(groupModel.groupDocumentId,friendsApplication.loginUserModel.userDocumentId)
+                // 유저문서에 그룹아이디를 추가한다
+                joinGroupService.updateUserGroupDocumentId(friendsApplication.loginUserModel.userDocumentId,groupModel.groupDocumentId)
+
+                isGroupExist.value = true
+            }
             isLoading.value = false
         }
     }

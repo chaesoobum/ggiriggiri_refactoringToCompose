@@ -1,16 +1,20 @@
 package com.friends.ggiriggiri.repository
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.friends.ggiriggiri.R
-import com.friends.ggiriggiri.internaldata.PreferenceManager
+import com.friends.ggiriggiri.dataclass.model.UserModel
+import com.friends.ggiriggiri.dataclass.vo.UserVO
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
-class GoogleLoginRepository@Inject constructor() {
+class GoogleLoginRepository @Inject constructor() {
 
     fun getGoogleClient(activity: Activity): GoogleSignInClient {
         val googleSignInOption = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -28,15 +32,4 @@ class GoogleLoginRepository@Inject constructor() {
 
         return client.signInIntent
     }
-    //
-
-    fun logout(context: Context, onComplete: () -> Unit = {}) {
-        val client = getGoogleClient(context as Activity)
-        client.signOut().addOnCompleteListener {
-            PreferenceManager(context.applicationContext).clearLoginInfo()
-            onComplete()
-        }
-    }
-
-
 }

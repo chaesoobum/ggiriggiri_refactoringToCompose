@@ -3,11 +3,16 @@ package com.friends.ggiriggiri.repository
 import android.app.Activity
 import android.util.Log
 import com.friends.ggiriggiri.dataclass.KakaoUserInfo
+import com.friends.ggiriggiri.dataclass.model.UserModel
+import com.friends.ggiriggiri.dataclass.vo.UserVO
 import com.friends.ggiriggiri.internaldata.PreferenceManager
+import com.google.firebase.firestore.FirebaseFirestore
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.auth.model.Prompt
 import com.kakao.sdk.user.UserApiClient
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class KakaoLoginRepository @Inject constructor(
     private val prefManager: PreferenceManager
@@ -17,34 +22,32 @@ class KakaoLoginRepository @Inject constructor(
         onSuccess: (token: String, userInfo: KakaoUserInfo) -> Unit,
         onFailure: (Throwable) -> Unit,
     ) {
-        //임시적으로 매번 로그아웃되게함
-        UserApiClient.instance.logout { error ->
-            if (error != null) {
-                Log.e("kakaologout", "로그아웃 실패. SDK에서 토큰 폐기됨", error)
-            }
-            else {
-                Log.i("kakaologout", "로그아웃 성공. SDK에서 토큰 폐기됨")
-            }
-        }
-        //
 
-        if (UserApiClient.instance.isKakaoTalkLoginAvailable(activity)) {
-            UserApiClient.instance.loginWithKakaoTalk(activity) { token, error ->
-                if (error != null) {
-                    Log.e("KakaoLogin", "카카오톡 로그인 실패, 계정 로그인 시도", error)
-                    UserApiClient.instance.loginWithKakaoAccount(
-                        activity,
-                        prompts = listOf(Prompt.LOGIN)
-                    ) { accountToken, accountError ->
-                        handleLoginResult(activity,accountToken, accountError, onSuccess, onFailure)
+        logout{
+            if (UserApiClient.instance.isKakaoTalkLoginAvailable(activity)) {
+                UserApiClient.instance.loginWithKakaoTalk(activity) { token, error ->
+                    if (error != null) {
+                        Log.e("KakaoLogin", "카카오톡 로그인 실패, 계정 로그인 시도", error)
+                        UserApiClient.instance.loginWithKakaoAccount(
+                            activity,
+                            prompts = listOf(Prompt.LOGIN)
+                        ) { accountToken, accountError ->
+                            handleLoginResult(
+                                activity,
+                                accountToken,
+                                accountError,
+                                onSuccess,
+                                onFailure
+                            )
+                        }
+                    } else {
+                        handleLoginResult(activity, token, error, onSuccess, onFailure)
                     }
-                } else {
-                    handleLoginResult(activity,token, error, onSuccess, onFailure)
                 }
-            }
-        } else {
-            UserApiClient.instance.loginWithKakaoAccount(activity) { token, error ->
-                handleLoginResult(activity,token, error, onSuccess, onFailure)
+            } else {
+                UserApiClient.instance.loginWithKakaoAccount(activity) { token, error ->
+                    handleLoginResult(activity, token, error, onSuccess, onFailure)
+                }
             }
         }
     }
@@ -82,9 +85,16 @@ class KakaoLoginRepository @Inject constructor(
             val userInfo = KakaoUserInfo.from(user)
 
             //자동로그인 저장
-
             val email = userInfo.email ?: "unknown"
+            val profileImageUrl = userInfo.profileImageUrl ?: "unknown"
+            val nickname = userInfo.nickname ?: "unknown"
+
+            Log.d("kakao",email) //이메일
+            Log.d("kakao",profileImageUrl) //profileImageUrl
+            Log.d("kakao",nickname) //성명
+
             saveLoginInfo(email,accessToken)
+
             onSuccess(accessToken, userInfo)
         }
     }
@@ -106,6 +116,7 @@ class KakaoLoginRepository @Inject constructor(
             onComplete()
         }
     }
+
 }
 
 

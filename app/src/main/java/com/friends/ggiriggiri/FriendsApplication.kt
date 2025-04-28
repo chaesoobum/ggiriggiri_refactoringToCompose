@@ -2,6 +2,7 @@ package com.friends.ggiriggiri
 
 import android.app.Application
 import androidx.navigation.NavHostController
+import com.friends.ggiriggiri.dataclass.model.UserModel
 import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.HiltAndroidApp
@@ -10,6 +11,9 @@ import dagger.hilt.android.HiltAndroidApp
 class FriendsApplication : Application() {
     // 네비게이션
     lateinit var navHostController: NavHostController
+
+    // 로그인 유저
+    lateinit var loginUserModel : UserModel
 
     override fun onCreate() {
         super.onCreate()

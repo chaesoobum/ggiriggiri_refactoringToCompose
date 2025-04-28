@@ -41,11 +41,12 @@ fun JoinGroupScreen(viewModel: JoinGroupViewModel = hiltViewModel()) {
     val isLoading by viewModel.isLoading.collectAsState()
 
     JoinGroupContent(
+        viewModel = viewModel,
         groupCodeText = viewModel.textFieldJoinGroupCodeValue,
         groupPasswordText = viewModel.textFieldJoinGroupPasswordValue,
         isLoading = isLoading,
         triggerForToast = viewModel.triggerForToast,
-        showSuccessDialog = viewModel.showSuccessDialog,
+        showFailDialog = viewModel.showFailDialog,
         isGroupExist = viewModel.isGroupExist,
         onJoinGroup = viewModel::joinGroup,
         onNavigateToMain = {
@@ -60,11 +61,12 @@ fun JoinGroupScreen(viewModel: JoinGroupViewModel = hiltViewModel()) {
 
 @Composable
 fun JoinGroupContent(
+    viewModel: JoinGroupViewModel,
     groupCodeText: MutableState<String>,
     groupPasswordText: MutableState<String>,
     isLoading: Boolean,
     triggerForToast: MutableState<Boolean>,
-    showSuccessDialog: MutableState<Boolean>,
+    showFailDialog: MutableState<Boolean>,
     isGroupExist: MutableState<Boolean>,
     onJoinGroup: () -> Unit,
     onNavigateToMain: () -> Unit
@@ -126,10 +128,10 @@ fun JoinGroupContent(
     }
 
     // 실패 다이얼로그
-    if (showSuccessDialog.value) {
+    if (showFailDialog.value) {
         CustomAlertDialog(
-            onDismiss = { showSuccessDialog.value = false },
-            onConfirmation = { showSuccessDialog.value = false },
+            onDismiss = { viewModel.showFailDialogFalse() },
+            onConfirmation = { viewModel.showFailDialogFalse() },
             onDismissRequest = {},
             onNegativeText = null,
             dialogTitle = "알림",
