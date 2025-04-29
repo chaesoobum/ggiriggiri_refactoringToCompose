@@ -6,25 +6,33 @@ import com.friends.ggiriggiri.firebase.repository.GroupRepository
 import javax.inject.Inject
 
 class GroupService @Inject constructor(
-    val joinGroupRepository: GroupRepository
+    val groupRepository: GroupRepository
 ) {
     suspend fun getGroupModel(groupCode: String, groupPw: String): GroupModel? {
-        return joinGroupRepository.getGroupModel(groupCode, groupPw)
+        return groupRepository.getGroupModel(groupCode, groupPw)
     }
 
     suspend fun addUserToGroup(groupDocumentId: String, userDocumentId: String){
-        joinGroupRepository.addUserToGroup(groupDocumentId,userDocumentId)
+        groupRepository.addUserToGroup(groupDocumentId,userDocumentId)
     }
 
     suspend fun updateUserGroupDocumentId(userDocumentId: String, groupDocumentId: String) {
-        joinGroupRepository.updateUserGroupDocumentId(userDocumentId,groupDocumentId)
+        groupRepository.updateUserGroupDocumentId(userDocumentId,groupDocumentId)
     }
 
     suspend fun removeUserFromGroup(groupDocumentId: String, userDocumentId: String) {
-        joinGroupRepository.removeUserFromGroup(groupDocumentId,userDocumentId)
+        groupRepository.removeUserFromGroup(groupDocumentId,userDocumentId)
     }
 
     suspend fun removeGroupDocumentIdFromUser(userDocumentId: String) {
-        joinGroupRepository.removeGroupDocumentIdFromUser(userDocumentId)
+        groupRepository.removeGroupDocumentIdFromUser(userDocumentId)
+    }
+
+    suspend fun checkDuplicationGroupCode(groupCode: String): Boolean {
+        return groupRepository.checkDuplicationGroupCode(groupCode)
+    }
+
+    suspend fun makeGroup(groupModel: GroupModel): GroupModel {
+        return groupRepository.makeGroup(groupModel)
     }
 }

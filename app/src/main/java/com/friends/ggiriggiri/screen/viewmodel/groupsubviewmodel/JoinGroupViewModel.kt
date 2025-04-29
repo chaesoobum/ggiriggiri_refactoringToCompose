@@ -21,7 +21,6 @@ import javax.inject.Inject
 class JoinGroupViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val joinGroupService: GroupService,
-    private val loginAndRegisterService: LoginAndRegisterService
 ) : ViewModel() {
     val friendsApplication = context as FriendsApplication
 
@@ -65,6 +64,7 @@ class JoinGroupViewModel @Inject constructor(
             if (groupModel == null) {
                 showFailDialogTrue()
             } else {
+
                 // 그룹 문서에 유저 아이디 추가
                 joinGroupService.addUserToGroup(groupModel.groupDocumentId, friendsApplication.loginUserModel.userDocumentId)
                 // 유저 문서에 그룹 아이디 저장

@@ -202,7 +202,7 @@ fun MakeGroupContent(
             fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, top = 20.dp, end = 10.dp),
+                .padding(start = 20.dp, top = 20.dp, end = 10.dp, bottom = 20.dp),
             //.alpha(0f),
             textAlign = TextAlign.Center
         )

@@ -1,11 +1,14 @@
 package com.friends.ggiriggiri.screen.viewmodel.groupsubviewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
+import com.friends.ggiriggiri.firebase.model.GroupModel
+import com.friends.ggiriggiri.firebase.service.GroupService
 import com.friends.ggiriggiri.util.MainScreenName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -17,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MakeGroupViewModel @Inject constructor(
     @ApplicationContext context: Context,
+    val groupService: GroupService
 ) : ViewModel() {
     val friendsApplication = context as FriendsApplication
     // 그룹이름 입력 요소
@@ -85,10 +89,12 @@ class MakeGroupViewModel @Inject constructor(
         if (textFieldMakeGroupCodeValue.value.length > 3) {
             viewModelScope.launch {
                 isLoading.value = true
-                delay(500)
 
                 val currentCode = textFieldMakeGroupCodeValue.value
-                if (textFieldMakeGroupCodeValue.value == "cssbbb") {
+
+                val result = groupService.checkDuplicationGroupCode(currentCode)
+
+                if (!result) {
                     textMakeGroupCodeDuplicateResult.value = "❌ 중복된 그룹코드가 있습니다"
                     textMakeGroupCodeDuplicateResultColor.value = Color(0xFFD50000)
                 } else {
@@ -163,9 +169,30 @@ class MakeGroupViewModel @Inject constructor(
     fun makeGroupProcessLoading(onFinish: () -> Unit){
         viewModelScope.launch {
             isLoading.value = true
-            delay(3000)
-            isLoading.value = false
-            onFinish()
+            try {
+                val groupModel = GroupModel(
+                    groupName = textFieldMakeGroupNameValue.value,
+                    groupCode = textFieldMakeGroupCodeValue.value,
+                    groupPw = textFieldMakeGroupPassword1Value.value,
+                    groupUserDocumentID = mutableListOf(friendsApplication.loginUserModel.userDocumentId)
+                )
+                val groupModelFromDB = groupService.makeGroup(groupModel)
+
+                groupService.updateUserGroupDocumentId(
+                    userDocumentId = friendsApplication.loginUserModel.userDocumentId,
+                    groupDocumentId = groupModelFromDB.groupDocumentId
+                )
+
+                friendsApplication.loginUserModel.userGroupDocumentID = groupModelFromDB.groupDocumentId
+
+                // 저장 성공
+                isLoading.value = false
+                onFinish()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                isLoading.value = false
+                showFailDialog.value = true
+            }
         }
 
     }

@@ -15,7 +15,7 @@ class GroupVO {
     // 그룹 비밀번호
     var groupPw: String = ""
     // 유저리스트 DocumnetID
-    var groupUserDocumentID: List<String> = listOf()
+    var groupUserDocumentID: MutableList<String> = mutableListOf()
     // 요청() 문서 아이디 리스트
     var groupRequestDocumentID: List<String> = listOf()
     // 질문() 문서 아이디 리스트
@@ -37,7 +37,7 @@ class GroupVO {
         }
 
         groupModel.groupCreateTime = groupCreateTime
-        groupModel.groupUserDocumentID = groupUserDocumentID.toList()
+        groupModel.groupUserDocumentID = groupUserDocumentID
         groupModel.groupRequestDocumentID = groupRequestDocumentID.toList()
         groupModel.groupQuestionDocumentID = groupQuestionDocumentID.toList()
         groupModel.groupGallery = groupGallery.toList()

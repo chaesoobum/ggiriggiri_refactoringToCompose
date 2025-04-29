@@ -104,4 +104,33 @@ class GroupRepository@Inject constructor(
         }
     }
 
+    //그룹문서에서 입력된 그룹코드가있는지 검사한다
+    suspend fun checkDuplicationGroupCode(groupCode: String): Boolean {
+        return try {
+            val querySnapshot = firestore.collection("_groups")
+                .whereEqualTo("groupCode", groupCode)
+                .limit(1)
+                .get()
+                .await()
+
+            querySnapshot.isEmpty // <- 이렇게 간결하게도 가능
+        } catch (e: Exception) {
+            Log.e("JoinGroupRepository", "그룹 조회 실패", e)
+            false
+        }
+    }
+
+    //그룹을 만든다
+    suspend fun makeGroup(groupModel: GroupModel): GroupModel {
+        val groupVO = groupModel.toGroupVO()
+
+        val documentReference = firestore.collection("_groups")
+            .add(groupVO)
+            .await()
+
+        val updatedGroupModel = groupVO.toGroupModel(documentReference.id)
+
+        return updatedGroupModel
+    }
+
 }
