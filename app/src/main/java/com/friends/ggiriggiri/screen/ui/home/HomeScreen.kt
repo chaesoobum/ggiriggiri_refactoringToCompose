@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,8 +35,10 @@ import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.ImageCarousel
 import com.friends.ggiriggiri.component.TopAppBarWithShimmer
 import com.friends.ggiriggiri.screen.ui.home.memberlist.UserMain_MemberList
+import com.friends.ggiriggiri.screen.viewmodel.PublicViewModel
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
+import com.friends.ggiriggiri.util.findActivity
 
 @Composable
 fun HomeScreen(
@@ -75,7 +78,7 @@ fun HomeContent(
         containerColor = Color.White,
         topBar = {
             TopAppBarWithShimmer(
-                title = "그룹명",
+                title = viewModel.groupTitle.value,
                 isLoadingTitle = viewModel.isTitleLoading.value,
                 menuItems = {
                     CustomIconButton(
@@ -101,6 +104,10 @@ fun HomeContent(
                     .verticalScroll(rememberScrollState())
             ) {
                 UserMain_MemberList(memberImageUrls = viewModel.memberImageUrls.value)
+                val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
+                pvm.setMemberImageUrls(viewModel.memberImageUrls.value)
+
+
                 UserMain_QuestionOfToday(questionImageUrl = viewModel.questionImageUrl.value)
                 UserMain_ToAsk()
 

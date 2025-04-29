@@ -176,7 +176,7 @@ class MakeGroupViewModel @Inject constructor(
                     groupPw = textFieldMakeGroupPassword1Value.value,
                     groupUserDocumentID = mutableListOf(friendsApplication.loginUserModel.userDocumentId)
                 )
-                val groupModelFromDB = groupService.makeGroup(groupModel)
+                val groupModelFromDB = groupService.makeGroup(groupModel = groupModel)
 
                 groupService.updateUserGroupDocumentId(
                     userDocumentId = friendsApplication.loginUserModel.userDocumentId,
