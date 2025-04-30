@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -22,7 +23,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.friends.ggiriggiri.firebase.model.UserModel
-import com.friends.ggiriggiri.internaldata.PreferenceManager
 import com.friends.ggiriggiri.screen.ui.UserGroupScreen
 import com.friends.ggiriggiri.screen.ui.UserLoginScreen
 import com.friends.ggiriggiri.screen.ui.UserMainScreen
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         // 상태바를 투명하게 만들기
-        window.statusBarColor = android.graphics.Color.TRANSPARENT
+        window.statusBarColor = Color.TRANSPARENT
 
         // 상태바 아이콘을 어둡게 (밝은 배경일 경우)
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
@@ -144,11 +144,11 @@ fun Main(
             }
 
             composable(route = MainScreenName.SCREEN_DO_REQUEST.name) {
-                DoRequestScreen()
+                DoRequestScreen(navHostController = navHostController)
             }
 
             composable(route = MainScreenName.SCREEN_DO_ANSWER.name) {
-                DoAnswerScreen()
+                DoAnswerScreen(navHostController = navHostController)
             }
 
             composable(route = MainScreenName.SCREEN_NOTIFICATION.name) {
@@ -160,11 +160,11 @@ fun Main(
             }
 
             composable(route = MainScreenName.SCREEN_LEGAL.name) {
-                LegalScreen()
+                LegalScreen(navHostController = navHostController)
             }
 
             composable(route = MainScreenName.SCREEN_MEMBER_LIST_DETAIL.name) {
-                MemberListDetail()
+                MemberListDetail(navHostController = navHostController)
             }
         }
     }

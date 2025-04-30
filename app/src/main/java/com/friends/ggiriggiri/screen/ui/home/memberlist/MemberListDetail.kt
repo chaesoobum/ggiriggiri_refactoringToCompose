@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.viewmodel.PublicViewModel
@@ -33,6 +34,7 @@ import com.friends.ggiriggiri.util.findActivity
 @Composable
 fun MemberListDetail(
     viewModel: HomeViewModel = hiltViewModel(),
+    navHostController:NavHostController
 ) {
     val items = remember { mutableStateOf<List<String>>(emptyList()) }
     val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
@@ -51,9 +53,7 @@ fun MemberListDetail(
                 title = "그룹원",
                 navigationIconImage = ImageVector.vectorResource(id = R.drawable.arrow_back_ios_24px),
                 navigationIconOnClick = {
-                    viewModel.friendsApplication.navHostController.apply {
-                        popBackStack(MainScreenName.SCREEN_MEMBER_LIST_DETAIL.name, true)
-                    }
+                    navHostController.popBackStack(MainScreenName.SCREEN_MEMBER_LIST_DETAIL.name, true)
                 }
             )
         }

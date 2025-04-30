@@ -51,9 +51,10 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun DoAnswerScreen(
-    doAnswerViewModel: DoAnswerViewModel = hiltViewModel()
+    doAnswerViewModel: DoAnswerViewModel = hiltViewModel(),
+    navHostController: NavHostController
 ) {
-    DoAnswerContent(doAnswerViewModel)
+    DoAnswerContent(doAnswerViewModel, navHostController = navHostController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +62,7 @@ fun DoAnswerScreen(
 fun DoAnswerContent(
     doAnswerViewModel: DoAnswerViewModel,
     homeViewModel: HomeViewModel = hiltViewModel(),
+    navHostController: NavHostController
 ) {
     //서버의 지연시간을 테스트하기위한 변수와 딜레이
     var isLoading by remember { mutableStateOf(true) }
@@ -84,9 +86,7 @@ fun DoAnswerContent(
                 title = "답변하기",
                 navigationIconImage = ImageVector.vectorResource(id = R.drawable.arrow_back_ios_24px),
                 navigationIconOnClick = {
-                    homeViewModel.friendsApplication.navHostController.apply {
-                        popBackStack(MainScreenName.SCREEN_DO_ANSWER.name,true)
-                    }
+                    navHostController.popBackStack(MainScreenName.SCREEN_DO_ANSWER.name, true)
                 },
                 isDivider = false
             )
@@ -105,11 +105,11 @@ fun DoAnswerContent(
             QuestionImage(doAnswerViewModel.questionImageUrl.value)
 
             Spacer(modifier = Modifier.height(10.dp))
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
-            ){
+            ) {
                 Text(
                     text = "친구의 애인의 도대체 애랑 왜 만나는지 궁금했던적이 있다",
                     fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
@@ -125,7 +125,7 @@ fun DoAnswerContent(
                 label = "답변하기",
                 singleLine = true,
 
-            )
+                )
         }
     }
 }

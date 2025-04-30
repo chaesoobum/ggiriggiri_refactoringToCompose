@@ -165,7 +165,9 @@ fun MyPageContent(
                 text = "개인정보처리방침/\n이용약관",
                 imageVector = ImageVector.vectorResource(R.drawable.info_24px),
                 onMyPageButtonClick = {
-                    Toast.makeText(context, "토스트 메시지입니다!", Toast.LENGTH_SHORT).show()
+                    viewModel.friendsApplication.navHostController.apply {
+                        navigate(MainScreenName.SCREEN_LEGAL.name)
+                    }
                 }
             )
 
@@ -203,13 +205,6 @@ fun MyPageContent(
                     icon = Icons.Default.Info
                 )
             }
-
-
-
-
-
-
-
             Spacer(modifier = Modifier.height(100.dp))
         }
     }

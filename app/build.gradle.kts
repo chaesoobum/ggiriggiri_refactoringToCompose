@@ -83,6 +83,9 @@ dependencies {
     //파이어스토어
     implementation("com.google.firebase:firebase-firestore-ktx")
 
+    //파이어베이스 스토리지
+    implementation("com.google.firebase:firebase-storage")
+
     //스와이프로해서 리프래쉬쓰려고
     implementation(libs.androidx.material)
 

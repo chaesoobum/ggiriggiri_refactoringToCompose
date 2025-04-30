@@ -46,6 +46,8 @@ fun TopAppBarWithShimmer(
 
     Column {
         CenterAlignedTopAppBar(
+            modifier = Modifier
+                .background(Color.White),
             title = {
                 if (isLoadingTitle) {
                     Box(

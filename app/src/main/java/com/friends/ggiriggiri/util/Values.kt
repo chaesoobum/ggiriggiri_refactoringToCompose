@@ -56,13 +56,12 @@ enum class UserSocialLoginState(val num: Int, val str:String){
     GOOGLE(4,"구글"),
 }
 
-enum class RequestState(val value: Int) {
-    ACTIVE(1),
-    INACTIVE(2);
-
+enum class RequestState(val value: Int,val str:String) {
+    ACTIVE(1,"활성화"),
+    INACTIVE(2,"비활성화");
     companion object {
         fun fromValue(value: Int?): RequestState {
-            return RequestState.entries.find { it.value == value } ?: ACTIVE
+            return entries.find { it.value == value } ?: ACTIVE
         }
     }
 }
