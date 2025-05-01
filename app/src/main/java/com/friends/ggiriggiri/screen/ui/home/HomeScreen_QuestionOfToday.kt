@@ -41,7 +41,7 @@ import com.valentinilk.shimmer.shimmer
 @Composable
 fun UserMain_QuestionOfToday(
     viewModel: HomeViewModel = hiltViewModel(),
-    questionImageUrl:String
+    //questionImageUrl:String
 ) {
     Column(
         modifier = Modifier
@@ -106,7 +106,7 @@ fun UserMain_QuestionOfToday(
                     modifier = Modifier.size(100.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (questionImageUrl.isBlank()) {
+                    if (viewModel.questionImageUrl.value.isBlank()) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -119,7 +119,7 @@ fun UserMain_QuestionOfToday(
                         )
                     } else {
                         ApngImageFromUrl(
-                            imageUrl = questionImageUrl,
+                            imageUrl = viewModel.questionImageUrl.value,
                             modifier = Modifier.fillMaxSize()
                         )
                     }

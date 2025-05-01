@@ -1,5 +1,7 @@
 package com.friends.ggiriggiri.firebase.repository
 
+import com.friends.ggiriggiri.firebase.model.RequestModel
+import com.friends.ggiriggiri.firebase.vo.RequestVO
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.async
@@ -32,7 +34,7 @@ class HomeRepository@Inject constructor(
 
             val chunks = groupUserDocumentIDs.chunked(10)
 
-            // 🔥 병렬 처리
+            // 병렬 처리
             val deferredList = chunks.map { chunk ->
                 async {
                     firestore.collection("_users")
@@ -65,7 +67,7 @@ class HomeRepository@Inject constructor(
     //그룹명을 가져온다
     suspend fun gettingGroupName(groupDocumentId: String): String {
         return try {
-            val firestore = FirebaseFirestore.getInstance()
+            //val firestore = FirebaseFirestore.getInstance()
 
             val groupSnapshot = firestore.collection("_groups")
                 .document(groupDocumentId)
@@ -80,6 +82,43 @@ class HomeRepository@Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             ""
+        }
+    }
+
+    //그룹에 요청이있는지 가져온다
+    suspend fun getActiveRequestInGroup(groupDocumentId: String): RequestModel? {
+        //val firestore = FirebaseFirestore.getInstance()
+
+        val groupSnapshot = firestore.collection("_requests")
+            .whereEqualTo("requestGroupDocumentID", groupDocumentId)
+            .whereEqualTo("requestState", 1)
+            .get()
+            .await()
+
+        val document = groupSnapshot.documents.firstOrNull()
+
+        return document?.let {
+            val vo = it.toObject(RequestVO::class.java)
+            vo?.toRequestModel(it.id)
+        }
+    }
+
+    //유저아이디로 유저이름을 가져온다
+    suspend fun getUserName(userDocumentId: String): String {
+        return try {
+            val userSnapshot = firestore.collection("_users")
+                .document(userDocumentId)
+                .get()
+                .await()
+
+            if (userSnapshot.exists()) {
+                userSnapshot.getString("userName") ?: "이름없음"
+            } else {
+                "존재하지 않음"
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "오류"
         }
     }
 

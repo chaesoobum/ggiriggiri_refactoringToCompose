@@ -28,10 +28,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.ShimmerTheme
@@ -41,7 +43,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun ImageCarousel(
-    items: List<String>,
+    viewModel: HomeViewModel = hiltViewModel(),
     onImageClick: (String) -> Unit
 ) {
     val listState = rememberLazyListState()
@@ -66,7 +68,7 @@ fun ImageCarousel(
             flingBehavior = flingBehavior,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            items(items) { item ->
+            items(viewModel.groupImageUrls.value) { item ->
                 Box(
                     modifier = Modifier
                         .width(250.dp)
@@ -141,7 +143,7 @@ fun ImageCarousel(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            items.forEachIndexed { index, _ ->
+            viewModel.groupImageUrls.value.forEachIndexed { index, _ ->
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
@@ -169,5 +171,5 @@ fun CarouselSample() {
         "https://picsum.photos/id/1019/800/800"
     )
 
-    ImageCarousel(items = items,onImageClick = {})
+    //ImageCarousel()
 }

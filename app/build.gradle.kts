@@ -86,6 +86,13 @@ dependencies {
     //파이어베이스 스토리지
     implementation("com.google.firebase:firebase-storage")
 
+    //파이어베이스 functions
+    implementation("com.google.firebase:firebase-functions-ktx")
+
+    //fcm
+    implementation ("com.google.firebase:firebase-messaging:23.4.1")
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+
     //스와이프로해서 리프래쉬쓰려고
     implementation(libs.androidx.material)
 
@@ -94,6 +101,11 @@ dependencies {
 
     // coil-compose
     implementation(libs.coil.compose)
+
+    //컴포즈 ui툴
+    debugImplementation ("androidx.compose.ui:ui-tooling:1.2.0-rc01")
+    debugImplementation ("androidx.customview:customview:1.1.0") // being pulled in by another dependency
+    debugImplementation ("androidx.customview:customview:1.2.0-alpha01")
 
 
 

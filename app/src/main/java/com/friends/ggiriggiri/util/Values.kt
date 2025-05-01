@@ -25,6 +25,8 @@ enum class MainScreenName{
     SCREEN_LEGAL,
     //그룹원보기화면
     SCREEN_MEMBER_LIST_DETAIL,
+    //요청에 답하는 화면
+    SCREEN_DO_RESPONSE,
 }
 
 sealed class Screen(val route: String, val label: String, val icon: Int) {

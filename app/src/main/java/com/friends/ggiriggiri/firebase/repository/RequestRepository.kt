@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import com.friends.ggiriggiri.firebase.model.RequestModel
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
@@ -12,6 +13,13 @@ import kotlinx.coroutines.tasks.await
 import java.io.File
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 
 class RequestRepository @Inject constructor() {
     private val storage: FirebaseStorage = Firebase.storage
@@ -50,21 +58,52 @@ class RequestRepository @Inject constructor() {
     }
 
     //요청vo업로드
-    suspend fun uploadNewRequest(requestModel: RequestModel){
+    suspend fun uploadNewRequest(requestModel: RequestModel) {
         try {
             val db = FirebaseFirestore.getInstance()
             val userCollection = db.collection("_requests")
 
             val newRequestVO = requestModel.toRequestVO()
-            userCollection.add(newRequestVO).await()
+            val docRef = userCollection.add(newRequestVO).await()
+            val requestDocumentId = docRef.id
 
+            // 30분 후 상태 변경 Cloud Task 예약
+            scheduleRequestStateUpdate(requestDocumentId)
 
-        }catch (e: Exception){
-            if (e is CancellationException) {
-                throw e
-            } else {
-                throw e
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e else throw e
+        }
+    }
+    //30분 예약후 상태변경
+    suspend fun scheduleRequestStateUpdate(requestDocumentId: String) {
+        val client = OkHttpClient()
+        val url = "https://us-central1-ggiriggiri-c33b2.cloudfunctions.net/scheduleRequestUpdateTask"
+
+        val jsonBody = JSONObject().apply {
+            put("requestDocumentId", requestDocumentId)
+        }
+
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+        val body = jsonBody.toString().toRequestBody(mediaType)
+
+        val request = Request.Builder()
+            .url(url)
+            .post(body)
+            .build()
+
+        withContext(Dispatchers.IO) {
+            try {
+                client.newCall(request).execute().use { response ->
+                    if (response.isSuccessful) {
+                        Log.d("CloudTask", "예약 성공: ${response.body?.string()}")
+                    } else {
+                        Log.e("CloudTask", "예약 실패: HTTP ${response.code}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("CloudTask", "예외 발생", e)
             }
         }
     }
+
 }

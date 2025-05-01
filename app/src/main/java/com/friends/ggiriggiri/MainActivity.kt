@@ -28,6 +28,7 @@ import com.friends.ggiriggiri.screen.ui.UserLoginScreen
 import com.friends.ggiriggiri.screen.ui.UserMainScreen
 import com.friends.ggiriggiri.screen.ui.home.DoAnswerScreen
 import com.friends.ggiriggiri.screen.ui.home.DoRequestScreen
+import com.friends.ggiriggiri.screen.ui.home.DoResponseScreen
 import com.friends.ggiriggiri.screen.ui.home.memberlist.MemberListDetail
 import com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion.ViewOneQuestionScreen
 import com.friends.ggiriggiri.screen.ui.memories.request.viewonerequest.ViewOneRequestScreen
@@ -38,6 +39,15 @@ import com.friends.ggiriggiri.screen.viewmodel.userlogin.UserLoginViewModel
 import com.friends.ggiriggiri.ui.theme.GgiriggiriTheme
 import com.friends.ggiriggiri.util.MainScreenName
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
 
 @AndroidEntryPoint
@@ -71,8 +81,6 @@ fun Main(
 
     Log.d("preferenceManager",userLoginViewModel.preferenceManager.isLoggedIn().toString())
 
-
-    val isLoggedIn = userLoginViewModel.preferenceManager.isLoggedIn()
 
     var startDestination by remember { mutableStateOf<String?>(null) }
 
@@ -151,6 +159,10 @@ fun Main(
                 DoAnswerScreen(navHostController = navHostController)
             }
 
+            composable(route = MainScreenName.SCREEN_DO_RESPONSE.name) {
+                DoResponseScreen(navHostController = navHostController)
+            }
+
             composable(route = MainScreenName.SCREEN_NOTIFICATION.name) {
                 ViewNotificationScreen()
             }
@@ -166,9 +178,13 @@ fun Main(
             composable(route = MainScreenName.SCREEN_MEMBER_LIST_DETAIL.name) {
                 MemberListDetail(navHostController = navHostController)
             }
+
+            composable("test") {
+                TestScreen()
+            }
+            
         }
     }
-
 }
 
 

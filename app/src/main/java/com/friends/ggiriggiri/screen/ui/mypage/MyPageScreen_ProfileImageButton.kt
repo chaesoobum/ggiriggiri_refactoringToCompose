@@ -22,6 +22,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,11 +39,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomButton
+import com.friends.ggiriggiri.firebase.service.MyPageService
+import com.friends.ggiriggiri.screen.viewmodel.mypage.MyPageViewModel
 import com.friends.ggiriggiri.util.tools.correctImageOrientation
 import com.friends.ggiriggiri.util.tools.createImageUri
 import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
@@ -52,7 +56,8 @@ import com.valentinilk.shimmer.shimmer
 @Composable
 fun ProfileImageButton(
     imageUrl: String?,
-    onImageSelected: (Uri) -> Unit
+    onImageSelected: (Uri) -> Unit,
+    myPageViewModel: MyPageViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -79,7 +84,10 @@ fun ProfileImageButton(
         }
     }
 
-    val model = imageUrl
+    LaunchedEffect(Unit) {
+        myPageViewModel.loadProfileImage(myPageViewModel.friendsApplication.loginUserModel.userDocumentId)
+    }
+    val model = myPageViewModel.profileImageUrl.value
         ?: "android.resource://${context.packageName}/${R.drawable.ic_default_profile}"
 
     Row(modifier = Modifier.padding(top = 20.dp).background(Color.White)) {

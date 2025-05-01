@@ -1,25 +1,31 @@
 package com.friends.ggiriggiri.util
 
+import android.Manifest
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
+import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import com.valentinilk.shimmer.Shimmer
-import com.valentinilk.shimmer.ShimmerBounds
-import com.valentinilk.shimmer.ShimmerTheme
-import com.valentinilk.shimmer.rememberShimmer
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
-object tools{
+object tools {
 
 
     fun createImageUri(context: Context): Uri {
@@ -37,7 +43,10 @@ object tools{
     fun correctImageOrientation(context: Context, uri: Uri): Uri {
         val inputStream = context.contentResolver.openInputStream(uri) ?: return uri
         val exif = ExifInterface(inputStream)
-        val rotation = when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+        val rotation = when (exif.getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_NORMAL
+        )) {
             ExifInterface.ORIENTATION_ROTATE_90 -> 90f
             ExifInterface.ORIENTATION_ROTATE_180 -> 180f
             ExifInterface.ORIENTATION_ROTATE_270 -> 270f
@@ -63,5 +72,57 @@ object tools{
     @Composable
     fun rememberDefaultShimmer() = com.friends.ggiriggiri.util.rememberDefaultShimmer()
 
+    //푸시알림 보내는 예제
+    fun sendPushNotification(
+        token: String,
+        title: String,
+        body: String,
+        onResult: (Boolean, String) -> Unit
+    ) {
+        val json = JSONObject().apply {
+            put("title", title)
+            put("body", body)
+            put("token", token)
+        }
 
+        val requestBody = json.toString().toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("https://asia-northeast3-ggiriggiri-c33b2.cloudfunctions.net/sendNotification")
+            .post(requestBody)
+            .build()
+
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("FCM", "전송 실패", e)
+                onResult(false, e.message ?: "Unknown error")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val body = response.body?.string() ?: ""
+                Log.d("FCM", "응답: $body")
+                onResult(response.isSuccessful, body)
+            }
+        })
+    }
+
+    //알림 권한 받는 함수
+    //requestNotificationPermissionIfNeeded(this)
+    // import android.Manifest
+    fun requestNotificationPermissionIfNeeded(activity: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permissionCheck = ContextCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    activity,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    1010
+                )
+            }
+        }
+    }
 }

@@ -131,7 +131,7 @@ fun DoRequestContent(
                 CustomAlertDialog(
                     onDismiss = { viewModel.changeShowFailDialog(false) },
                     onConfirmation = { viewModel.changeShowFailDialog(false) },
-                    dialogTitle = "입력 오류",
+                    dialogTitle = "알림",
                     dialogText = "사진과 요청 내용을 모두 입력해주세요.",
                     icon = Icons.Default.Info
                 )
@@ -142,17 +142,7 @@ fun DoRequestContent(
                     onDismiss = { viewModel.changeShowConfirmDialog(false) },
                     onConfirmation = {
                         viewModel.changeShowConfirmDialog(false)
-                        viewModel.uploadImageToStorage(
-                            context = context,
-                            onSuccess = { filename ->
-                                // 업로드 성공
-                                Log.d("Storage", "파일명: $filename")
-                            },
-                            onFailure = { exception ->
-                                // 업로드 실패 처리
-                                Log.e("Storage", "업로드 실패", exception)
-                            }
-                        )
+                        viewModel.uploadImageToStorage(context)
                     },
                     onNegativeText = "취소",
                     onDismissRequest = { viewModel.changeShowConfirmDialog(false) },

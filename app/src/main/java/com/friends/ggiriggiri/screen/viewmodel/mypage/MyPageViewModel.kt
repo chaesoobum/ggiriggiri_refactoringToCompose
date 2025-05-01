@@ -1,6 +1,7 @@
 package com.friends.ggiriggiri.screen.viewmodel.mypage
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.firebase.model.UserModel
 import com.friends.ggiriggiri.firebase.service.GroupService
+import com.friends.ggiriggiri.firebase.service.MyPageService
 import com.friends.ggiriggiri.internaldata.PreferenceManager
 import com.friends.ggiriggiri.util.MainScreenName
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +21,8 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val preferenceManager: PreferenceManager,
-    private val groupService: GroupService
+    private val groupService: GroupService,
+    private val myPageService: MyPageService
 ) : ViewModel() {
     val friendsApplication = context as FriendsApplication
 
@@ -47,7 +50,7 @@ class MyPageViewModel @Inject constructor(
             friendsApplication.loginUserModel = UserModel()
 
             friendsApplication.navHostController.apply {
-                popBackStack(0, true) // 전체 스택 삭제
+                popBackStack(0, true)
                 navigate(MainScreenName.SCREEN_USER_LOGIN.name)
             }
             setLoading(false)
@@ -72,6 +75,15 @@ class MyPageViewModel @Inject constructor(
                 navigate(MainScreenName.SCREEN_USER_GROUP.name)
             }
             setLoading(false)
+        }
+    }
+
+    val profileImageUrl = mutableStateOf<String?>(null)
+
+    fun loadProfileImage(userDocumentId: String) {
+        viewModelScope.launch {
+            val result = myPageService.getProfileImage(userDocumentId)
+            profileImageUrl.value = result
         }
     }
 }

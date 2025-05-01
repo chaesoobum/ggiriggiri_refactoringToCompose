@@ -62,7 +62,7 @@ class DoRequestViewModel @Inject constructor(
     //업로드 진행률
     val uploadProgress = mutableStateOf(0)
 
-    fun uploadImageToStorage(context: Context, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+    fun uploadImageToStorage(context: Context) {
         val uri = requestImage.value ?: return
         viewModelScope.launch {
             try {
@@ -78,10 +78,8 @@ class DoRequestViewModel @Inject constructor(
                 uploadRequestToFirebase(filename)
 
                 Log.d("Storage", "업로드 성공: $filename")
-                onSuccess(filename)
             } catch (e: Exception) {
                 Log.e("Storage", "업로드 실패", e)
-                onFailure(e)
             } finally {
                 isLoading.value = false
             }

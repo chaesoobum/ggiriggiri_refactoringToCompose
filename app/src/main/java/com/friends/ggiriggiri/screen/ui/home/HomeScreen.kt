@@ -33,6 +33,7 @@ import coil.compose.SubcomposeAsyncImage
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.ImageCarousel
+import com.friends.ggiriggiri.component.ImageDialog
 import com.friends.ggiriggiri.component.TopAppBarWithShimmer
 import com.friends.ggiriggiri.screen.ui.home.memberlist.UserMain_MemberList
 import com.friends.ggiriggiri.screen.viewmodel.PublicViewModel
@@ -47,17 +48,22 @@ fun HomeScreen(
 ) {
     // 서버에서 데이터가져오는 부분
     LaunchedEffect(Unit) {
-        // 타이틀 로딩 시뮬레이션(2초)
-        viewModel.getAppBarTitle()
+        viewModel.apply {
+            // 타이틀 로딩 시뮬레이션(2초)
+            getAppBarTitle()
 
-        // 딜레이 후 이미지 로딩 시뮬레이션
-        viewModel.getMemberProfileImage()
+            // 딜레이 후 프로필 이미지 로딩 시뮬레이션
+            getMemberProfileImage()
 
-        //그룹이미지 랜덤 가져오기
-        viewModel.getImageCarousel()
+            //오늘의 질문 이미지 가져오기
+            getQuestionImageUrl()
 
-        //오늘의 질문 이미지 가져오기
-        viewModel.getQuestionImageUrl()
+            //그룹이미지 랜덤 가져오기
+            getImageCarousel()
+
+            //그룹에 활성화된 요청이 있는지 가져오기
+            getRequestStateInGroup()
+        }
     }
 
     HomeContent(
@@ -103,44 +109,29 @@ fun HomeContent(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                UserMain_MemberList(memberImageUrls = viewModel.memberImageUrls.value)
                 val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
                 pvm.setMemberImageUrls(viewModel.memberImageUrls.value)
+                pvm.setRequestImageUrl("request_image_1745989921500_423977867039212.jpg")
+                UserMain_MemberList()
+                UserMain_QuestionOfToday()
 
-
-                UserMain_QuestionOfToday(questionImageUrl = viewModel.questionImageUrl.value)
-                UserMain_ToAsk()
+                if (viewModel.requestState.value == null){
+                    HomeScreenShimmer()
+                } else if(viewModel.requestState.value == true){
+                    UserMain_Response()
+                }else if(viewModel.requestState.value == false){
+                    UserMain_ToAsk()
+                }
 
                 val selectedImageUrl = remember { mutableStateOf<String?>(null) }
-                ImageCarousel(items = viewModel.groupImageUrls.value , onImageClick = { url -> selectedImageUrl.value = url })
+                ImageCarousel(onImageClick = { url -> selectedImageUrl.value = url })
                 if (selectedImageUrl.value != null) {
-                    Dialog(
-                        onDismissRequest = { selectedImageUrl.value = null },
-                        properties = androidx.compose.ui.window.DialogProperties(
-                            dismissOnClickOutside = true,
-                            usePlatformDefaultWidth = false
-                        )
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clickable(
-                                    onClick = { selectedImageUrl.value = null }
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            SubcomposeAsyncImage(
-                                model = selectedImageUrl.value,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .padding(10.dp)
-                                    .clickable(enabled = false) {},
-                                contentScale = ContentScale.Fit
-                            )
+                    ImageDialog(
+                        selectedImageUrl.value,
+                        {
+                            selectedImageUrl.value = null
                         }
-                    }
+                    )
                 }
                 Spacer(modifier = Modifier.height(100.dp))
             }

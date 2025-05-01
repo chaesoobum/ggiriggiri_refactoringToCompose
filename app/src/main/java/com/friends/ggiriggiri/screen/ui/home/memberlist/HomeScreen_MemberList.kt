@@ -47,14 +47,13 @@ import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun UserMain_MemberList(
-    memberImageUrls: List<String>,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
 
-    val isLoading = memberImageUrls.isEmpty()
+    val isLoading = viewModel.memberImageUrls.value.isEmpty()
 
     //멤버가 몇명인지 가져오는데 오래걸린다 일단 4명으로 표기
-    val displayList = if (isLoading) List(4) { "" } else memberImageUrls.take(4)
+    val displayList = if (isLoading) List(4) { "" } else viewModel.memberImageUrls.value.take(4)
 
     Column(
         modifier = Modifier
