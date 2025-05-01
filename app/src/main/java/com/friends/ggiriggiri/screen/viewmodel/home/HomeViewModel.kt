@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.firebase.model.RequestModel
 import com.friends.ggiriggiri.firebase.service.HomeService
+import com.friends.ggiriggiri.util.tools.minutesAndSeconds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -93,21 +94,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    // 요청자 이름
     private val _requesterName = mutableStateOf("")
     val requesterName:State<String> = _requesterName
-
+    // 요청 메세지
     private val _requestMessage = mutableStateOf("")
     val requestMessage:State<String> = _requestMessage
+    // 남은 시간
+    private val _remainingTimeMillis = mutableStateOf<List<Int>>(emptyList())
+    val remainingTimeMillis:State<List<Int>> = _remainingTimeMillis
 
     //요청이 있는상태면 응답화면 구성하기
     suspend fun setRequestInfo(){
         _requesterName.value = homeService.getUserName(requestModel.value?.requestUserDocumentID.toString())
         _requestMessage.value = requestModel.value?.requestMessage.toString()
+        requestModel.value?.requestTime?.let { requestTime ->
+            val (min, sec) = minutesAndSeconds(requestTime)
+            _remainingTimeMillis.value = listOf(min.toInt(), sec.toInt())
+        }
     }
 
+    //요청관련 컴포넌트를 띄울준비가되었는가
     private val _requestState = mutableStateOf<Boolean?>(null)
     val requestState:State<Boolean?> = _requestState
-
     //그룹에 활성화된 요청의 유무에따라 분기한다
     fun classifyRequestState() {
         //그룹에 활성화된 요청이 있다

@@ -17,6 +17,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,11 +39,35 @@ import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomButton
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
+import kotlinx.coroutines.delay
 
 @Composable
 fun UserMain_Response(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+
+    val remainingTime = viewModel.remainingTimeMillis.value
+
+    // 1 상태를 remember로 로컬 카운트다운 상태 만들기
+    var minutes by remember { mutableStateOf(remainingTime.getOrNull(0) ?: 0) }
+    var seconds by remember { mutableStateOf(remainingTime.getOrNull(1) ?: 0) }
+
+    // 2 1초마다 줄어드는 타이머
+    LaunchedEffect(key1 = remainingTime) {
+        while (minutes > 0 || seconds > 0) {
+            delay(1000)
+            if (seconds > 0) {
+                seconds--
+            } else if (minutes > 0) {
+                minutes--
+                seconds = 59
+            }
+        }
+    }
+
+    // 3. 타이머 출력 형식
+    val formattedTime = String.format("%02d:%02d", minutes, seconds)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,9 +129,9 @@ fun UserMain_Response(
                                         Spacer(modifier = Modifier.width(6.dp))
 
                                         Text(
-                                            text = "29:24",
+                                            text = formattedTime,
                                             fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
-                                            fontSize = 15 .sp
+                                            fontSize = 15.sp
                                         )
 
                                     }
