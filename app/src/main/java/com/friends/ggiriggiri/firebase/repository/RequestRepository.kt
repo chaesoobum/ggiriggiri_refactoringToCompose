@@ -54,7 +54,7 @@ class RequestRepository @Inject constructor() {
         // 다운로드 URL
         //imageRef.downloadUrl.await().toString()
 
-        return tempFile.name
+        return imageRef.downloadUrl.await().toString()
     }
 
     //요청vo업로드

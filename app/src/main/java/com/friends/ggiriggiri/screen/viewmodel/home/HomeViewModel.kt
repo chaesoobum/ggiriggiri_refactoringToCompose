@@ -2,20 +2,16 @@ package com.friends.ggiriggiri.screen.viewmodel.home
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.firebase.model.RequestModel
 import com.friends.ggiriggiri.firebase.service.HomeService
-import com.friends.ggiriggiri.util.tools.minutesAndSeconds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -88,7 +84,7 @@ class HomeViewModel @Inject constructor(
             //활성화된 요청이 있다면
             if (_requestModel.value != null){
                 setRequestInfo()
-                Log.d("setRequestInfo","${_requesterName.value},${_requestMessage.value}")
+                //Log.d("setRequestInfo","${_requesterName.value},${_requestMessage.value}")
             }
             classifyRequestState()
         }
@@ -101,18 +97,19 @@ class HomeViewModel @Inject constructor(
     private val _requestMessage = mutableStateOf("")
     val requestMessage:State<String> = _requestMessage
     // 남은 시간
-    private val _remainingTimeMillis = mutableStateOf<List<Int>>(emptyList())
-    val remainingTimeMillis:State<List<Int>> = _remainingTimeMillis
+    private val _remainingTimeFormatted = mutableStateOf("00:00")
+    val remainingTimeFormatted: State<String> = _remainingTimeFormatted
 
     //요청이 있는상태면 응답화면 구성하기
-    suspend fun setRequestInfo(){
+    suspend fun setRequestInfo() {
         _requesterName.value = homeService.getUserName(requestModel.value?.requestUserDocumentID.toString())
         _requestMessage.value = requestModel.value?.requestMessage.toString()
+
         requestModel.value?.requestTime?.let { requestTime ->
-            val (min, sec) = minutesAndSeconds(requestTime)
-            _remainingTimeMillis.value = listOf(min.toInt(), sec.toInt())
+            startRequestCountdownTimer(requestTime)
         }
     }
+
 
     //요청관련 컴포넌트를 띄울준비가되었는가
     private val _requestState = mutableStateOf<Boolean?>(null)
@@ -126,6 +123,31 @@ class HomeViewModel @Inject constructor(
         //그룹에 활성화된 요청이 없다
         else {
             _requestState.value = false
+        }
+    }
+
+    //타이머 함수
+    private var timerJob: Job? = null
+    fun startRequestCountdownTimer(requestTime: Long) {
+        timerJob?.cancel() // 기존 타이머 중지
+        timerJob = viewModelScope.launch {
+            while (true) {
+                val thirtyMinutesLater = requestTime + (30 * 60 * 1000) // 요청 생성 + 30분
+                val now = System.currentTimeMillis()
+                val remainingMillis = thirtyMinutesLater - now
+
+                if (remainingMillis <= 0) {
+                    _remainingTimeFormatted.value = "00:00"
+                    //_requestState.value = false
+                    break
+                }
+
+                val minutes = remainingMillis / (60 * 1000)
+                val seconds = (remainingMillis % (60 * 1000)) / 1000
+                _remainingTimeFormatted.value = String.format("%02d:%02d", minutes, seconds)
+
+                delay(1000)
+            }
         }
     }
 

@@ -69,15 +69,15 @@ class DoRequestViewModel @Inject constructor(
                 isLoading.value = true
                 uploadProgress.value = 0
 
-                val filename = requestService.uploadImage(
+                val downloadUrl = requestService.uploadImage(
                     context = context,
                     uri = uri,
                     onProgress = { progress -> uploadProgress.value = progress }
                 )
 
-                uploadRequestToFirebase(filename)
+                uploadRequestToFirebase(downloadUrl)
 
-                Log.d("Storage", "업로드 성공: $filename")
+                Log.d("Storage", "업로드 성공: $downloadUrl")
             } catch (e: Exception) {
                 Log.e("Storage", "업로드 실패", e)
             } finally {
@@ -86,13 +86,13 @@ class DoRequestViewModel @Inject constructor(
         }
     }
 
-    fun uploadRequestToFirebase(filename:String){
+    fun uploadRequestToFirebase(downloadUrl:String){
         viewModelScope.launch {
             try {
                 val requestModel = RequestModel(
                     requestUserDocumentID = friendsApplication.loginUserModel.userDocumentId,
                     requestMessage = requestText.value,
-                    requestImage = filename,
+                    requestImage = downloadUrl,
                     requestGroupDocumentID = friendsApplication.loginUserModel.userGroupDocumentID
                 )
 

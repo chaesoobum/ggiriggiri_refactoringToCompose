@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomButton
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
@@ -34,7 +35,7 @@ import com.friends.ggiriggiri.util.MainScreenName
 
 @Composable
 fun UserMain_ToAsk(
-//    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     Column(
         modifier = Modifier
@@ -126,9 +127,9 @@ fun UserMain_ToAsk(
                 text = "요청하기",
                 buttonColor = colorResource(id = R.color.white),
                 onClick = {
-//                    viewModel.friendsApplication.navHostController.apply {
-//                        navigate(MainScreenName.SCREEN_DO_RESPONSE.name)
-//                    }
+                    viewModel.friendsApplication.navHostController.apply {
+                        navigate(MainScreenName.SCREEN_DO_REQUEST.name)
+                    }
                 }
             )
 

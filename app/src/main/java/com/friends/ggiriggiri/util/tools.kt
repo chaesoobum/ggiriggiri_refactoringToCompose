@@ -125,20 +125,4 @@ object tools {
             }
         }
     }
-
-    //남은 시간
-    fun minutesAndSeconds(pastTimeMillis: Long): Pair<Long, Long> {
-        val thirtyMinutesLater = pastTimeMillis + (30 * 60 * 1000)
-        val now = System.currentTimeMillis()
-        val remainingMillis = thirtyMinutesLater - now
-
-        return if (remainingMillis > 0) {
-            val minutes = remainingMillis / (60 * 1000)
-            val seconds = (remainingMillis % (60 * 1000)) / 1000
-            Pair(minutes, seconds)
-        } else {
-            Pair(0, 0)
-        }
-    }
-
 }

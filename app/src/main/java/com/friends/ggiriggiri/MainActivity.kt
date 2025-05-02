@@ -1,10 +1,15 @@
 package com.friends.ggiriggiri
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -38,6 +43,8 @@ import com.friends.ggiriggiri.screen.ui.notification.ViewNotificationScreen
 import com.friends.ggiriggiri.screen.viewmodel.userlogin.UserLoginViewModel
 import com.friends.ggiriggiri.ui.theme.GgiriggiriTheme
 import com.friends.ggiriggiri.util.MainScreenName
+import com.google.android.datatransport.runtime.scheduling.persistence.EventStoreModule_PackageNameFactory.packageName
+import com.google.android.gms.common.wrappers.Wrappers.packageManager
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.Call
 import okhttp3.Callback
@@ -48,10 +55,12 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
+import java.security.MessageDigest
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -77,7 +86,6 @@ fun Main(
     val context = LocalContext.current
     val friendsApplication = context.applicationContext as FriendsApplication
     friendsApplication.navHostController = navHostController
-
 
     Log.d("preferenceManager",userLoginViewModel.preferenceManager.isLoggedIn().toString())
 
@@ -186,6 +194,22 @@ fun Main(
         }
     }
 }
+
+//release(this)
+//@RequiresApi(Build.VERSION_CODES.P)
+//fun release(context: Context) {
+//    val packageInfo = context.packageManager.getPackageInfo(
+//        context.packageName,
+//        PackageManager.GET_SIGNING_CERTIFICATES
+//    )
+//    val signatures = packageInfo.signingInfo!!.apkContentsSigners
+//    val messageDigest = MessageDigest.getInstance("SHA")
+//    for (signature in signatures) {
+//        val hash = messageDigest.digest(signature.toByteArray())
+//        val base64Hash = Base64.encodeToString(hash, Base64.NO_WRAP)
+//        Log.d("ReleaseKeyHash", base64Hash)
+//    }
+//}
 
 
 

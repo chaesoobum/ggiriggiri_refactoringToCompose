@@ -46,27 +46,27 @@ fun UserMain_Response(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
 
-    val remainingTime = viewModel.remainingTimeMillis.value
-
-    // 1 상태를 remember로 로컬 카운트다운 상태 만들기
-    var minutes by remember { mutableStateOf(remainingTime.getOrNull(0) ?: 0) }
-    var seconds by remember { mutableStateOf(remainingTime.getOrNull(1) ?: 0) }
-
-    // 2 1초마다 줄어드는 타이머
-    LaunchedEffect(key1 = remainingTime) {
-        while (minutes > 0 || seconds > 0) {
-            delay(1000)
-            if (seconds > 0) {
-                seconds--
-            } else if (minutes > 0) {
-                minutes--
-                seconds = 59
-            }
-        }
-    }
-
-    // 3. 타이머 출력 형식
-    val formattedTime = String.format("%02d:%02d", minutes, seconds)
+//    val remainingTime = viewModel.remainingTimeMillis.value
+//
+//    // 1 상태를 remember로 로컬 카운트다운 상태 만들기
+//    var minutes by remember { mutableStateOf(remainingTime.getOrNull(0) ?: 0) }
+//    var seconds by remember { mutableStateOf(remainingTime.getOrNull(1) ?: 0) }
+//
+//    // 2 1초마다 줄어드는 타이머
+//    LaunchedEffect(key1 = remainingTime) {
+//        while (minutes > 0 || seconds > 0) {
+//            delay(1000)
+//            if (seconds > 0) {
+//                seconds--
+//            } else if (minutes > 0) {
+//                minutes--
+//                seconds = 59
+//            }
+//        }
+//    }
+//
+//    // 3. 타이머 출력 형식
+//    val formattedTime = String.format("%02d:%02d", minutes, seconds)
 
     Column(
         modifier = Modifier
@@ -129,7 +129,7 @@ fun UserMain_Response(
                                         Spacer(modifier = Modifier.width(6.dp))
 
                                         Text(
-                                            text = formattedTime,
+                                            text = viewModel.remainingTimeFormatted.value,
                                             fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
                                             fontSize = 15.sp
                                         )
@@ -164,7 +164,7 @@ fun UserMain_Response(
                                     }
                                     Row(
                                         modifier = Modifier
-                                            .padding(top = 10.dp)
+                                            .padding(top = 5.dp)
                                     ) {
                                         Text(
                                             text = viewModel.requestMessage.value,
