@@ -124,7 +124,7 @@ fun DoRequestContent(
             // 프로그래스바
             CustomProgressDialog(
                 isShowing = viewModel.isLoading.value,
-                uploadProgress = viewModel.uploadProgress.value.takeIf { it in 1..99 } // 진행 중일 때만 표시
+                uploadProgress = viewModel.uploadProgress.value
             )
 
             if (viewModel.showFailDialog.value){

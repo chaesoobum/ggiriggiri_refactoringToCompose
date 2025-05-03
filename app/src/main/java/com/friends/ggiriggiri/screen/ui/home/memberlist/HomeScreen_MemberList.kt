@@ -20,12 +20,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -36,8 +39,10 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.TextButton
+import com.friends.ggiriggiri.screen.viewmodel.PublicViewModel
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
+import com.friends.ggiriggiri.util.findActivity
 import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.ShimmerTheme
@@ -51,10 +56,15 @@ fun UserMain_MemberList(
 ) {
 
     val isLoading = viewModel.memberImageUrls.value.isEmpty()
+    val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
+    if (isLoading ==false){
+        LaunchedEffect(Unit) {
+            pvm.setMemberImageUrls(viewModel.memberImageUrls.value)
+        }
+    }
 
     //멤버가 몇명인지 가져오는데 오래걸린다 일단 4명으로 표기
     val displayList = if (isLoading) List(4) { "" } else viewModel.memberImageUrls.value.take(4)
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -161,8 +171,6 @@ fun UserMain_MemberList(
         }
     }
 }
-
-
 
 
 @Preview(showBackground = true)

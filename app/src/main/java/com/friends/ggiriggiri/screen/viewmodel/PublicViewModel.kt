@@ -2,10 +2,8 @@ package com.friends.ggiriggiri.screen.viewmodel
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import com.friends.ggiriggiri.util.findActivity
+import com.friends.ggiriggiri.firebase.model.RequestModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -44,15 +42,24 @@ class PublicViewModel @Inject constructor() : ViewModel() {
         _groupCode.value = ""
     }
 
-    //요청 이미지 파일명 전달
-    private val _requestImageUrl = mutableStateOf<String?>(null)
-    val requestImageUrl: State<String?> = _requestImageUrl
-    fun setRequestImageUrl(requestImageUrl:String){
-        _requestImageUrl.value = requestImageUrl
+    //요청모델 저장
+    private val _requestModel = mutableStateOf<RequestModel?>(null)
+    val requestModel: State<RequestModel?> = _requestModel
+    fun setRequestModel(requestModel: RequestModel?){
+        _requestModel.value = requestModel
     }
-    fun deleteRequestImageUrl(){
-        _requestImageUrl.value = ""
+    fun deleteRequestModel(){
+        _requestModel.value = null
     }
 
+    // 요청자 이름
+    private val _requesterName = mutableStateOf<String?>(null)
+    val requesterName:State<String?> = _requesterName
 
+    fun setRequesterName(requesterName: String){
+        _requesterName.value = requesterName
+    }
+    fun deleteRequesterName(){
+        _requesterName.value = null
+    }
 }

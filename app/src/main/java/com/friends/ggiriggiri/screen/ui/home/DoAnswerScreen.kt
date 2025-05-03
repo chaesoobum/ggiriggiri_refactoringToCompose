@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
@@ -54,24 +55,33 @@ fun DoAnswerScreen(
     doAnswerViewModel: DoAnswerViewModel = hiltViewModel(),
     navHostController: NavHostController
 ) {
-    DoAnswerContent(doAnswerViewModel, navHostController = navHostController)
+    val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
+    DoAnswerContent(doAnswerViewModel,pvm, navHostController = navHostController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoAnswerContent(
     doAnswerViewModel: DoAnswerViewModel,
-    homeViewModel: HomeViewModel = hiltViewModel(),
+    pvm: PublicViewModel,
     navHostController: NavHostController
 ) {
     //서버의 지연시간을 테스트하기위한 변수와 딜레이
     var isLoading by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
-        delay(2000)
+        //delay(2000)
         isLoading = false
     }
-    val focusManager: FocusManager = LocalFocusManager.current
+    LaunchedEffect(Unit) {
+        val imageUrl = pvm.questionImageUrl.value
+        if (imageUrl.isNotBlank()) {
+            doAnswerViewModel.setQuestionImageUrl(imageUrl)
+            pvm.deleteQuestionImageUrl()
+        }
+    }
 
+
+    val focusManager: FocusManager = LocalFocusManager.current
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -98,12 +108,7 @@ fun DoAnswerContent(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-
-            val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
-            doAnswerViewModel.setQuestionImageUrl(pvm.questionImageUrl.value)
-            pvm.deleteQuestionImageUrl()
             QuestionImage(doAnswerViewModel.questionImageUrl.value)
-
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 modifier = Modifier

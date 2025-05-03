@@ -39,10 +39,6 @@ fun ProfileImage(
                     modifier = Modifier
                         .fillMaxSize()
                         .shimmer(rememberDefaultShimmer())
-                        .background(
-                            Color.LightGray.copy(alpha = 0.7f),
-                            RoundedCornerShape(4.dp)
-                        )
                 )
             }
             is AsyncImagePainter.State.Error -> {

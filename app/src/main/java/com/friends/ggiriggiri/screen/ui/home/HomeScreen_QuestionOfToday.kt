@@ -1,6 +1,7 @@
 package com.friends.ggiriggiri.screen.ui.home
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,12 +41,31 @@ import com.friends.ggiriggiri.util.findActivity
 import com.friends.ggiriggiri.util.rememberDefaultShimmer
 import com.friends.ggiriggiri.util.tools
 import com.valentinilk.shimmer.shimmer
+import kotlinx.coroutines.flow.filter
+
 
 @Composable
 fun UserMain_QuestionOfToday(
-    viewModel: HomeViewModel = hiltViewModel(),
-    //questionImageUrl:String
-) {
+    viewModel: HomeViewModel,
+){
+    val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
+    UserMain_QuestionOfTodayContent(viewModel,pvm)
+}
+
+@Composable
+fun UserMain_QuestionOfTodayContent(
+    viewModel: HomeViewModel,
+    pvm: PublicViewModel
+){
+    LaunchedEffect(viewModel.questionImageUrl.value) {
+        if (viewModel.questionImageUrl.value.isNotBlank()) {
+            pvm.setQuestionImageUrl(viewModel.questionImageUrl.value)
+            Log.d("HomeScreen", "📌 질문 이미지 재설정됨: ${viewModel.questionImageUrl.value}")
+        }
+    }
+
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -88,7 +111,7 @@ fun UserMain_QuestionOfToday(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(10.dp  )
+                                .padding(10.dp)
                                 .fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
@@ -132,18 +155,11 @@ fun UserMain_QuestionOfToday(
                 .weight(1f),
             contentAlignment = Alignment.Center
         ) {
-
-            //데이터를 전역모델에 넣어서 돌려쓰기위한 뷰모델
-            val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
             CustomButton(
                 text = "답변하기",
-                buttonColor = colorResource(id = R.color.white) ,
+                buttonColor = colorResource(id = R.color.white),
                 onClick = {
                     val navController = viewModel.friendsApplication.navHostController
-                    val imageUrl = viewModel.questionImageUrl.value
-
-                    pvm.setQuestionImageUrl(imageUrl)  // 먼저 데이터 세팅
-
                     navController.navigate(MainScreenName.SCREEN_DO_ANSWER.name)  // 데이터 세팅 완료 후 화면 이동
                 }
             )
@@ -152,7 +168,6 @@ fun UserMain_QuestionOfToday(
 
     }
 }
-
 
 
 @Preview(showBackground = true)

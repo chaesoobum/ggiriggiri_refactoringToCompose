@@ -1,17 +1,66 @@
 package com.friends.ggiriggiri.firebase.repository
 
+import android.content.Context
+import android.net.Uri
+import com.friends.ggiriggiri.firebase.model.RequestModel
+import com.friends.ggiriggiri.firebase.model.ResponseModel
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
+import java.io.File
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class ResponseRepository@Inject constructor(
 
 ) {
-    suspend fun getRequestImage(fileName: String): String {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val imageRef = storageRef.child("request/$fileName")
+    private val storage: FirebaseStorage = Firebase.storage
+    //응답이미지업로드
+    suspend fun uploadImageToStorage(
+        context: Context,
+        uri: Uri,
+        onProgress: (Int) -> Unit,
+    ): String {
+        // Uri -> File
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val tempFile = File(context.cacheDir, "response_image_${System.currentTimeMillis()}_${System.nanoTime()}.jpg")
+        inputStream.use { input ->
+            tempFile.outputStream().use { output ->
+                input?.copyTo(output)
+            }
+        }
+
+        // Firebase Storage 참조
+        val imageRef = storage.reference.child("response/${tempFile.name}")
+        val uploadTask = imageRef.putFile(Uri.fromFile(tempFile))
+
+        // 진행률 콜백
+        uploadTask.addOnProgressListener { snapshot ->
+            val progress = (100.0 * snapshot.bytesTransferred / snapshot.totalByteCount).toInt()
+            onProgress(progress)
+        }
+
+        // 업로드 완료 대기
+        uploadTask.await()
 
         return imageRef.downloadUrl.await().toString()
+    }
+
+    //응답vo업로드
+    suspend fun uploadNewResponse(responseModel: ResponseModel) {
+        try {
+            val db = FirebaseFirestore.getInstance()
+            val userCollection = db.collection("_responses")
+
+            val newResponseVO = responseModel.toResponseVO()
+            val docRef = userCollection.add(newResponseVO).await()
+            val responseDocumentId = docRef.id
+
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e else throw e
+        }
     }
 
 }

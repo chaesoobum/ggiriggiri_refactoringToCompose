@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
@@ -65,22 +66,29 @@ class HomeViewModel @Inject constructor(
     private var _questionImageUrl = mutableStateOf<String>("")
     val questionImageUrl: State<String> = _questionImageUrl
 
+    //오늘의 질문 이미지 가져오기 로딩상태
+    private val _isLoadingForGetQuestionImageUrl = mutableStateOf(true)
+    val isLoadingForGetQuestionImageUrl: State<Boolean> = _isLoadingForGetQuestionImageUrl
+
     fun getQuestionImageUrl() {
         viewModelScope.launch {
             delay(500)
             _questionImageUrl.value =
                 "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confounded%20Face.png"
+            _isLoadingForGetQuestionImageUrl.value = false
         }
     }
 
     private val _requestModel = mutableStateOf<RequestModel?>(null)
     val requestModel: State<RequestModel?> = _requestModel
 
+
     //그룹에 활성화된 요청이 있는지 가져오기
     fun getRequestStateInGroup() {
         viewModelScope.launch {
             _requestModel.value =
                 homeService.getActiveRequestInGroup(friendsApplication.loginUserModel.userGroupDocumentID)
+
             //활성화된 요청이 있다면
             if (_requestModel.value != null){
                 setRequestInfo()
@@ -99,11 +107,15 @@ class HomeViewModel @Inject constructor(
     // 남은 시간
     private val _remainingTimeFormatted = mutableStateOf("00:00")
     val remainingTimeFormatted: State<String> = _remainingTimeFormatted
+    // 요청 image Url
+    private val _requestImageUrl = mutableStateOf<String?>(null)
+    val requestImageUrl:State<String?> = _requestImageUrl
 
     //요청이 있는상태면 응답화면 구성하기
     suspend fun setRequestInfo() {
         _requesterName.value = homeService.getUserName(requestModel.value?.requestUserDocumentID.toString())
         _requestMessage.value = requestModel.value?.requestMessage.toString()
+        _requestImageUrl.value = requestModel.value?.requestImage.toString()
 
         requestModel.value?.requestTime?.let { requestTime ->
             startRequestCountdownTimer(requestTime)

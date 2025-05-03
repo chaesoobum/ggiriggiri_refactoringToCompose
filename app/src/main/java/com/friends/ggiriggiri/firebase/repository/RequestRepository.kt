@@ -23,7 +23,7 @@ import org.json.JSONObject
 
 class RequestRepository @Inject constructor() {
     private val storage: FirebaseStorage = Firebase.storage
-    //이미지업로드
+    //요청이미지업로드
     suspend fun uploadImageToStorage(
         context: Context,
         uri: Uri,
