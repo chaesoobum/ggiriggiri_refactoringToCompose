@@ -26,4 +26,9 @@ class HomeService@Inject constructor(
     suspend fun getUserName(userDocumentId: String): String {
         return homeRepository.getUserName(userDocumentId)
     }
+
+    //요청에 내가 응답을 했는지 안했는지
+    suspend fun didIResponse(requestDocumentId: String, userDocumentId: String): Boolean {
+        return homeRepository.didIResponse(requestDocumentId,userDocumentId)
+    }
 }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class HomeRepository@Inject constructor(
+class HomeRepository @Inject constructor(
     val firestore: FirebaseFirestore
 ) {
     //그룹원들의 이미지들을 가져오는 함수
@@ -27,7 +27,8 @@ class HomeRepository@Inject constructor(
                 return@coroutineScope emptyList()
             }
 
-            val groupUserDocumentIDs = groupSnapshot.get("groupUserDocumentID") as? List<String> ?: emptyList()
+            val groupUserDocumentIDs =
+                groupSnapshot.get("groupUserDocumentID") as? List<String> ?: emptyList()
             if (groupUserDocumentIDs.isEmpty()) {
                 return@coroutineScope emptyList()
             }
@@ -122,7 +123,24 @@ class HomeRepository@Inject constructor(
         }
     }
 
-
+    //요청에 내가 응답을 했는지 안했는지
+    suspend fun didIResponse(requestDocumentId: String, userDocumentId: String): Boolean {
+        return try {
+            val snapshot = firestore.collection("_responses")
+                .whereEqualTo("responseRequestDocumentId", requestDocumentId)
+                .whereEqualTo("responseUserDocumentID", userDocumentId)
+                .get()
+                .await()
+            if (snapshot.isEmpty){
+                false
+            }else{
+                true
+            }
+        }catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
 
 
 

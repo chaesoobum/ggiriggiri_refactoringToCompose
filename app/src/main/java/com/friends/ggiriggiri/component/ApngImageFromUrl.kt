@@ -72,10 +72,6 @@ fun ApngImageFromUrl(
                     .fillMaxSize()
                     .clip(CircleShape)
                     .shimmer(rememberDefaultShimmer())
-                    .background(
-                        Color.LightGray.copy(alpha = 0.7f),
-                        RoundedCornerShape(4.dp)
-                    )
             )
         } else {
             AndroidView(

@@ -77,15 +77,10 @@ fun HomeScreen(
         }
         onDispose { }
     }
-
-
-
-
-
-
     HomeContent(
         modifier = modifier,
-        viewModel
+        viewModel,
+        pvm
     )
 }
 
@@ -93,7 +88,8 @@ fun HomeScreen(
 @Composable
 fun HomeContent(
     modifier: Modifier,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    pvm: PublicViewModel
 ) {
     Scaffold(
         modifier = Modifier
@@ -126,13 +122,48 @@ fun HomeContent(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                UserMain_MemberList()
-                UserMain_QuestionOfToday(viewModel)
+                UserMain_MemberList(viewModel, pvm)
+                UserMain_QuestionOfToday(viewModel, pvm)
 
                 if (viewModel.requestState.value == null) {
                     HomeScreenShimmer()
                 } else if (viewModel.requestState.value == true) {
-                    UserMain_Response()
+                    if (viewModel.isMyRequest.value == true) {
+                        UserMain_Response(
+                            title = "내 요청에 친구들이 답하는중",
+                            buttonText = "지금까지 온 응답보기",
+                            button = {
+                                //응답보는화면으로간다
+//                                viewModel.friendsApplication.navHostController.apply {
+//                                    navigate(MainScreenName.SCREEN_DO_RESPONSE.name)
+//                                }
+                            }
+                        )
+                    } else {
+                        //이미응답함
+                        if (viewModel.isResponse.value == true){
+                            UserMain_Response(
+                                title = "응답한 요청",
+                                buttonText = "지금까지 온 응답보기",
+                                button = {
+                                    //응답보러가는화면으로간다
+//                                viewModel.friendsApplication.navHostController.apply {
+//                                    navigate(MainScreenName.SCREEN_DO_RESPONSE.name)
+//                                }
+                                }
+                            )
+                        }else{//응답안함
+                            UserMain_Response(
+                                title = "응답하기",
+                                buttonText = "응답하기",
+                                button = {
+                                    viewModel.friendsApplication.navHostController.apply {
+                                        navigate(MainScreenName.SCREEN_DO_RESPONSE.name)
+                                    }
+                                }
+                            )
+                        }
+                    }
                 } else if (viewModel.requestState.value == false) {
                     UserMain_ToAsk()
                 }

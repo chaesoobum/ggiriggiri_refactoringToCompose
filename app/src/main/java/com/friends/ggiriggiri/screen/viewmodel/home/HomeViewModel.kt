@@ -81,8 +81,6 @@ class HomeViewModel @Inject constructor(
 
     private val _requestModel = mutableStateOf<RequestModel?>(null)
     val requestModel: State<RequestModel?> = _requestModel
-
-
     //그룹에 활성화된 요청이 있는지 가져오기
     fun getRequestStateInGroup() {
         viewModelScope.launch {
@@ -126,15 +124,46 @@ class HomeViewModel @Inject constructor(
     //요청관련 컴포넌트를 띄울준비가되었는가
     private val _requestState = mutableStateOf<Boolean?>(null)
     val requestState:State<Boolean?> = _requestState
+
+    //내가한 요청인가
+    private val _isMyRequest = mutableStateOf<Boolean?>(null)
+    val isMyRequest:State<Boolean?> = _isMyRequest
+
+    //내가한 요청이 아니라면 응답을 했는가 안했는가
+    private val _isResponse = mutableStateOf<Boolean?>(null)
+    val isResponse:State<Boolean?> = _isResponse
+
+
+
     //그룹에 활성화된 요청의 유무에따라 분기한다
     fun classifyRequestState() {
-        //그룹에 활성화된 요청이 있다
-        if (_requestModel.value != null) {
-            _requestState.value = true
-        }
-        //그룹에 활성화된 요청이 없다
-        else {
-            _requestState.value = false
+        viewModelScope.launch {
+            //그룹에 활성화된 요청이 있다
+            if (_requestModel.value != null) {
+                //내가한 요청이라면
+                if (_requestModel.value!!.requestUserDocumentID == friendsApplication.loginUserModel.userDocumentId) {
+                    _isMyRequest.value = true
+                } else {
+                    _isMyRequest.value = false
+                }
+                //내가한 요청이 아니고 응답도 안했다면
+                val didIResponse = homeService.didIResponse(
+                    _requestModel.value!!.requestDocumentId,
+                    friendsApplication.loginUserModel.userGroupDocumentID
+                )
+                //응답한 요청임
+                if (didIResponse) {
+                    _isResponse.value = true
+                } else { //응답안한요청임
+                    _isResponse.value = false
+                }
+                _requestState.value = true
+
+            }
+            //그룹에 활성화된 요청이 없다
+            else {
+                _requestState.value = false
+            }
         }
     }
 

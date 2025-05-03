@@ -52,11 +52,11 @@ import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun UserMain_MemberList(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel,
+    pvm: PublicViewModel
 ) {
 
     val isLoading = viewModel.memberImageUrls.value.isEmpty()
-    val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
     if (isLoading ==false){
         LaunchedEffect(Unit) {
             pvm.setMemberImageUrls(viewModel.memberImageUrls.value)
@@ -162,8 +162,10 @@ fun UserMain_MemberList(
                     text = "전체보기",
                     fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
                     onClick = {
-                        viewModel.friendsApplication.navHostController.apply {
-                            navigate(MainScreenName.SCREEN_MEMBER_LIST_DETAIL.name)
+                        if (!isLoading){
+                            viewModel.friendsApplication.navHostController.apply {
+                                navigate(MainScreenName.SCREEN_MEMBER_LIST_DETAIL.name)
+                            }
                         }
                     },
                 )

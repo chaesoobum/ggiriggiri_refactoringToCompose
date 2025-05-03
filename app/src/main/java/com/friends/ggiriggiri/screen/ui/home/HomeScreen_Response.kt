@@ -44,7 +44,10 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun UserMain_Response(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    title:String,
+    buttonText: String,
+    button: ()-> Unit
 ) {
 
     Column(
@@ -92,7 +95,7 @@ fun UserMain_Response(
                                         verticalAlignment = Alignment.CenterVertically, // 텍스트와 이미지 수직 정렬
                                     ) {
                                         Text(
-                                            text = "응답하기",
+                                            text = title,
                                             fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
                                             fontSize = 18.sp
                                         )
@@ -166,12 +169,10 @@ fun UserMain_Response(
             contentAlignment = Alignment.Center
         ) {
             CustomButton(
-                text = "응답하기",
+                text = buttonText,
                 buttonColor = colorResource(id = R.color.white),
                 onClick = {
-                    viewModel.friendsApplication.navHostController.apply {
-                        navigate(MainScreenName.SCREEN_DO_RESPONSE.name)
-                    }
+                    button()
                 }
             )
 
@@ -183,5 +184,5 @@ fun UserMain_Response(
 @Preview(showBackground = true)
 @Composable
 fun PreviewUserMain_Response() {
-    UserMain_Response()
+    //UserMain_Response()
 }

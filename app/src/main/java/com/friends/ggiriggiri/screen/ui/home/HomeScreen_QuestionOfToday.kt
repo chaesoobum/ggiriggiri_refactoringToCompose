@@ -47,8 +47,8 @@ import kotlinx.coroutines.flow.filter
 @Composable
 fun UserMain_QuestionOfToday(
     viewModel: HomeViewModel,
+    pvm: PublicViewModel
 ){
-    val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
     UserMain_QuestionOfTodayContent(viewModel,pvm)
 }
 
@@ -60,7 +60,6 @@ fun UserMain_QuestionOfTodayContent(
     LaunchedEffect(viewModel.questionImageUrl.value) {
         if (viewModel.questionImageUrl.value.isNotBlank()) {
             pvm.setQuestionImageUrl(viewModel.questionImageUrl.value)
-            Log.d("HomeScreen", "📌 질문 이미지 재설정됨: ${viewModel.questionImageUrl.value}")
         }
     }
 
@@ -135,10 +134,6 @@ fun UserMain_QuestionOfTodayContent(
                                 .fillMaxSize()
                                 .clip(CircleShape)
                                 .shimmer(tools.rememberDefaultShimmer())
-                                .background(
-                                    Color.LightGray.copy(alpha = 0.7f),
-                                    RoundedCornerShape(4.dp)
-                                )
                         )
                     } else {
                         ApngImageFromUrl(
@@ -159,8 +154,10 @@ fun UserMain_QuestionOfTodayContent(
                 text = "답변하기",
                 buttonColor = colorResource(id = R.color.white),
                 onClick = {
-                    val navController = viewModel.friendsApplication.navHostController
-                    navController.navigate(MainScreenName.SCREEN_DO_ANSWER.name)  // 데이터 세팅 완료 후 화면 이동
+                    if(!viewModel.isLoadingForGetQuestionImageUrl.value){
+                        viewModel.friendsApplication.navHostController
+                            .navigate(MainScreenName.SCREEN_DO_ANSWER.name)
+                    }
                 }
             )
 
