@@ -52,16 +52,16 @@ import java.nio.file.WatchEvent
 @Composable
 fun DoRequestScreen(
     viewModel: DoRequestViewModel = hiltViewModel(),
-    navHostController:NavHostController
+    navHostController: NavHostController
 ) {
-    DoRequestContent(viewModel,navHostController)
+    DoRequestContent(viewModel, navHostController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoRequestContent(
     viewModel: DoRequestViewModel,
-    navHostController:NavHostController
+    navHostController: NavHostController
 ) {
     val context = LocalContext.current
     val focusManager: FocusManager = LocalFocusManager.current
@@ -127,7 +127,7 @@ fun DoRequestContent(
                 uploadProgress = viewModel.uploadProgress.value
             )
 
-            if (viewModel.showFailDialog.value){
+            if (viewModel.showFailDialog.value) {
                 CustomAlertDialog(
                     onDismiss = { viewModel.changeShowFailDialog(false) },
                     onConfirmation = { viewModel.changeShowFailDialog(false) },
@@ -137,7 +137,7 @@ fun DoRequestContent(
                 )
             }
 
-            if (viewModel.showConfirmDialog.value){
+            if (viewModel.showConfirmDialog.value) {
                 CustomAlertDialog(
                     onDismiss = { viewModel.changeShowConfirmDialog(false) },
                     onConfirmation = {
@@ -150,6 +150,13 @@ fun DoRequestContent(
                     dialogText = "요청하시겠습니까?",
                     icon = Icons.Default.Info
                 )
+
+                if (viewModel.requestEnd.value) {
+                    viewModel.friendsApplication.navHostController.popBackStack(
+                        MainScreenName.SCREEN_DO_REQUEST.name,
+                        true
+                    )
+                }
             }
         }
     }

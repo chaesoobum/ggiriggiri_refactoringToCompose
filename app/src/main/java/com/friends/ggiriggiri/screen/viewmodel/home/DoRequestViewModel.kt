@@ -3,22 +3,17 @@ package com.friends.ggiriggiri.screen.viewmodel.home
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.firebase.model.RequestModel
 import com.friends.ggiriggiri.firebase.service.RequestService
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -75,7 +70,7 @@ class DoRequestViewModel @Inject constructor(
                     onProgress = { progress -> uploadProgress.value = progress }
                 )
 
-                uploadRequestToFirebase(downloadUrl)
+                uploadRequestToFirebase(context,downloadUrl)
 
                 Log.d("Storage", "업로드 성공: $downloadUrl")
             } catch (e: Exception) {
@@ -86,7 +81,11 @@ class DoRequestViewModel @Inject constructor(
         }
     }
 
-    fun uploadRequestToFirebase(downloadUrl:String){
+
+    private val _requestEnd = mutableStateOf(false)
+    val requestEnd :State<Boolean> = _requestEnd
+
+    fun uploadRequestToFirebase(context: Context,downloadUrl:String){
         viewModelScope.launch {
             try {
                 val requestModel = RequestModel(
@@ -102,8 +101,14 @@ class DoRequestViewModel @Inject constructor(
                 Log.e("UploadRequest", "요청 업로드 실패", e)
             }finally {
                 Log.d("UploadRequest", "요청 업로드 종료")
+                Toast.makeText(context,"요청완료", Toast.LENGTH_SHORT).show()
+                navigate()
             }
         }
+    }
+
+    fun navigate(){
+        friendsApplication.navHostController.popBackStack()
     }
 
 }

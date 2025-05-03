@@ -151,6 +151,7 @@ class HomeViewModel @Inject constructor(
                     _requestModel.value!!.requestDocumentId,
                     friendsApplication.loginUserModel.userGroupDocumentID
                 )
+                Log.d("classfy",didIResponse.toString())
                 //응답한 요청임
                 if (didIResponse) {
                     _isResponse.value = true

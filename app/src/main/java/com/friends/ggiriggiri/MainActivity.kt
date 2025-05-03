@@ -1,11 +1,8 @@
 package com.friends.ggiriggiri
 
-import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -43,19 +40,7 @@ import com.friends.ggiriggiri.screen.ui.notification.ViewNotificationScreen
 import com.friends.ggiriggiri.screen.viewmodel.userlogin.UserLoginViewModel
 import com.friends.ggiriggiri.ui.theme.GgiriggiriTheme
 import com.friends.ggiriggiri.util.MainScreenName
-import com.google.android.datatransport.runtime.scheduling.persistence.EventStoreModule_PackageNameFactory.packageName
-import com.google.android.gms.common.wrappers.Wrappers.packageManager
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import org.json.JSONObject
-import java.io.IOException
-import java.security.MessageDigest
 
 
 @AndroidEntryPoint
