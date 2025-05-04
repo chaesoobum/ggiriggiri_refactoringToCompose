@@ -130,7 +130,7 @@ fun HomeContent(
                 } else if (viewModel.requestState.value == true) {
                     if (viewModel.isMyRequest.value == true) {
                         UserMain_Response(
-                            title = "내 요청에 친구들이 답하는중",
+                            title = "내 요청",
                             buttonText = "지금까지 온 응답보기",
                             button = {
                                 //응답보는화면으로간다

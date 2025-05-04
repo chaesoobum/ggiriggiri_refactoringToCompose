@@ -12,14 +12,14 @@ import androidx.compose.ui.unit.dp
 import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.component.RequestListScreenItem
 import com.friends.ggiriggiri.component.RequestListScreenItemSkeleton
+import com.friends.ggiriggiri.screen.viewmodel.memories.MemoriesViewModel
 import com.friends.ggiriggiri.util.MainScreenName
 
 //MemoriesScreen 에서 리스트를 받아서 아이템을 채워준다
 @Composable
 fun RequestListScreen(
-    list: List<List<String>>,
+    viewModel: MemoriesViewModel,
     isRefreshing: Boolean,
-    app: FriendsApplication
 ) {
     Column(
         modifier = Modifier
@@ -31,11 +31,11 @@ fun RequestListScreen(
                 RequestListScreenItemSkeleton()
             }
         } else {
-            list.forEach {
+            viewModel.listForRequestsListScreen.value.forEach {
                 RequestListScreenItem(
                     it[0], it[1], it[2],
                     onClick = {
-                        app.navHostController.apply {
+                        viewModel.friendsApplication.navHostController.apply {
                             navigate(MainScreenName.SCREEN_VIEW_ONE_REQUEST.name)
                         }
                     }

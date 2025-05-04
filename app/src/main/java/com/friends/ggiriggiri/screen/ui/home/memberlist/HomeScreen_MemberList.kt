@@ -160,7 +160,7 @@ fun UserMain_MemberList(
             ) {
                 TextButton(
                     text = "전체보기",
-                    fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
+                    fontFamily = FontFamily(Font(R.font.nanumsquareextrabold)),
                     onClick = {
                         if (!isLoading){
                             viewModel.friendsApplication.navHostController.apply {

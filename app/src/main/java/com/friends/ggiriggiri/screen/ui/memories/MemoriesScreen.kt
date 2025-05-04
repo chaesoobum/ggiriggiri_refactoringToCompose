@@ -182,9 +182,8 @@ fun MemoriesContent(
                         viewModel.friendsApplication
                     )
                     Memories.Requests -> RequestListScreen(
-                        list,
+                        viewModel,
                         isRefreshing || isLoading,
-                        viewModel.friendsApplication
                     )
                 }
             }

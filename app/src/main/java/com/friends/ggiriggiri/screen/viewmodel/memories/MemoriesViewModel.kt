@@ -31,8 +31,9 @@ class MemoriesViewModel @Inject constructor(
     fun takeInformationForRequestsListScreen() {
         viewModelScope.launch {
             _isLoading.value = true
-            delay(2000) //스켈래톤을 보기위한 임시딜레이
-            _listForRequestsListScreen.value = memoriesService.takeInformationForRequestsListScreen()
+            _listForRequestsListScreen.value = memoriesService.getRequestInfoWithUserName(
+                friendsApplication.loginUserModel.userGroupDocumentID
+            )
             _isLoading.value = false
         }
     }

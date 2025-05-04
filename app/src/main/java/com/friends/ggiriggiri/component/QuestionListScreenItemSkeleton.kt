@@ -41,10 +41,6 @@ fun QuestionListScreenItemSkeleton() {
                         modifier = Modifier
                             .height(16.dp)
                             .weight(1f)
-                            .background(
-                                Color.LightGray.copy(alpha = 0.7f),
-                                RoundedCornerShape(4.dp)
-                            )
                             .shimmer(rememberDefaultShimmer())
                     )
                     Spacer(modifier = Modifier.width(10.dp))
@@ -53,10 +49,6 @@ fun QuestionListScreenItemSkeleton() {
                             .height(16.dp)
                             .weight(4f)
                             .padding(end = 100.dp)
-                            .background(
-                                Color.LightGray.copy(alpha = 0.7f),
-                                RoundedCornerShape(4.dp)
-                            )
                             .shimmer(rememberDefaultShimmer())
                     )
                 }
@@ -67,10 +59,6 @@ fun QuestionListScreenItemSkeleton() {
                         modifier = Modifier
                             .width(80.dp)
                             .height(16.dp)
-                            .background(
-                                Color.LightGray.copy(alpha = 0.7f),
-                                RoundedCornerShape(4.dp)
-                            )
                             .shimmer(rememberDefaultShimmer())
                     )
                 }

@@ -102,12 +102,12 @@ class DoRequestViewModel @Inject constructor(
             }finally {
                 Log.d("UploadRequest", "요청 업로드 종료")
                 Toast.makeText(context,"요청완료", Toast.LENGTH_SHORT).show()
-                navigate()
+                popBackStack()
             }
         }
     }
 
-    fun navigate(){
+    fun popBackStack(){
         friendsApplication.navHostController.popBackStack()
     }
 

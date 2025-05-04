@@ -76,10 +76,7 @@ fun AnswersListItem(
                                 .width(100.dp)
                                 .height(20.sp.value.dp) // 텍스트 크기 기준 높이
                                 .shimmer(rememberDefaultShimmer())
-                                .background(
-                                    Color.LightGray.copy(alpha = 0.7f),
-                                    RoundedCornerShape(4.dp)
-                                )
+
                         )
                     } else {
                         Text(
@@ -105,10 +102,6 @@ fun AnswersListItem(
                                 .width(200.dp)
                                 .height(15.sp.value.dp) // 텍스트 크기 기준 높이
                                 .shimmer(rememberDefaultShimmer())
-                                .background(
-                                    Color.LightGray.copy(alpha = 0.7f),
-                                    RoundedCornerShape(4.dp)
-                                )
                         )
                     } else {
                         Text(
