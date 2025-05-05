@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
@@ -160,9 +161,11 @@ fun UserMain_MemberList(
             ) {
                 TextButton(
                     text = "전체보기",
-                    fontFamily = FontFamily(Font(R.font.nanumsquareextrabold)),
+                    fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
+                    fontSize = 15.sp,
                     onClick = {
                         if (!isLoading){
+                            viewModel.clearHomeState() // 상태 초기화
                             viewModel.friendsApplication.navHostController.apply {
                                 navigate(MainScreenName.SCREEN_MEMBER_LIST_DETAIL.name)
                             }

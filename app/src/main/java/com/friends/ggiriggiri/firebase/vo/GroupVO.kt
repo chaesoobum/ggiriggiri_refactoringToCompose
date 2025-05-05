@@ -22,6 +22,8 @@ class GroupVO {
     var groupQuestionDocumentID: List<String> = listOf()
     // 그룹 갤러리(이미지들)
     var groupGallery: List<String> = listOf()
+    // 그룹내 요청중인 유저가있는가
+    var groupIsRequesting: Boolean = false
 
     fun toGroupModel(groupDocumentId:String) : GroupModel {
         val groupModel = GroupModel()
@@ -41,6 +43,7 @@ class GroupVO {
         groupModel.groupRequestDocumentID = groupRequestDocumentID.toList()
         groupModel.groupQuestionDocumentID = groupQuestionDocumentID.toList()
         groupModel.groupGallery = groupGallery.toList()
+        groupModel.groupIsRequesting = groupIsRequesting
 
         return groupModel
     }

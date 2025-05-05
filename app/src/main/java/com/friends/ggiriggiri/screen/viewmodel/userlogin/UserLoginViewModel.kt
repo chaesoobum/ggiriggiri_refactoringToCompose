@@ -19,10 +19,12 @@ import com.friends.ggiriggiri.firebase.service.NaverLoginService
 import com.friends.ggiriggiri.util.MainScreenName
 import com.friends.ggiriggiri.util.UserSocialLoginState
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -204,6 +206,7 @@ class UserLoginViewModel @Inject constructor(
             userModel.userProfileImage = googleUserInfo.profileImageUrl ?: "unknown"
             userModel.userSocialLogin = UserSocialLoginState.GOOGLE
 
+
             viewModelScope.launch {
                 //로그인이나 회원가입을 하고 데이터를 가져온다
                 val userModelFromDB = loginAndRegisterService.loginOrRegister(userModel)
@@ -245,13 +248,6 @@ class UserLoginViewModel @Inject constructor(
         }
     }
 
-    fun navigateToGroup(activity: Activity) {
-        activity.runOnUiThread {
-            friendsApplication.navHostController.apply {
-                popBackStack(MainScreenName.SCREEN_USER_LOGIN.name, true)
-                navigate(MainScreenName.SCREEN_USER_GROUP.name)
-            }
-        }
-    }
+
 
 }

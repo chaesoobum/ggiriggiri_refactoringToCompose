@@ -22,4 +22,9 @@ class RequestService @Inject constructor(
     suspend fun uploadNewRequest(requestModel: RequestModel){
         requestRepository.uploadNewRequest(requestModel)
     }
+
+    //같은 그룹내의 유저들의 fcm코드를 리스트로가져온다
+    suspend fun getUserFcmList(groupDocumentId: String,userDocumentId: String): List<String> {
+        return requestRepository.getUserFcmList(groupDocumentId,userDocumentId)
+    }
 }

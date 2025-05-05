@@ -3,6 +3,7 @@ package com.friends.ggiriggiri.screen.viewmodel.home
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -75,18 +76,16 @@ class DoResponseViewModel@Inject constructor(
                     onProgress = { progress -> uploadProgress.value = progress }
                 )
 
-                uploadResponseToFirebase(downloadUrl)
+                uploadResponseToFirebase(context,downloadUrl)
 
                 Log.d("Storage", "업로드 성공: $downloadUrl")
             } catch (e: Exception) {
                 Log.e("Storage", "업로드 실패", e)
-            } finally {
-                isLoading.value = false
             }
         }
     }
 
-    fun uploadResponseToFirebase(downloadUrl:String) {
+    fun uploadResponseToFirebase(context: Context,downloadUrl:String) {
         viewModelScope.launch {
             try {
                 val responseModel = ResponseModel(
@@ -98,11 +97,18 @@ class DoResponseViewModel@Inject constructor(
                 doResponseService.uploadNewResponse(responseModel)
 
             }catch (e: Exception){
-                Log.e("UploadRequest", "요청 업로드 실패", e)
+                Log.e("UploadRequest", "응답 업로드 실패", e)
             }finally {
-                Log.d("UploadRequest", "요청 업로드 종료")
+                Log.d("UploadRequest", "응답 업로드 종료")
+                Toast.makeText(context,"응답완료", Toast.LENGTH_SHORT).show()
+                pop()
+                isLoading.value = false
             }
         }
+    }
+
+    fun pop(){
+        friendsApplication.navHostController.popBackStack()
     }
 
 }

@@ -155,6 +155,7 @@ fun UserMain_QuestionOfTodayContent(
                 buttonColor = colorResource(id = R.color.white),
                 onClick = {
                     if(!viewModel.isLoadingForGetQuestionImageUrl.value){
+                        viewModel.clearHomeState() // 상태 초기화
                         viewModel.friendsApplication.navHostController
                             .navigate(MainScreenName.SCREEN_DO_ANSWER.name)
                     }

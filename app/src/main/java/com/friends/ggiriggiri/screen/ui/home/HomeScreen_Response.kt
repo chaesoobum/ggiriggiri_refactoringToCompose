@@ -103,7 +103,7 @@ fun UserMain_Response(
                                         Spacer(modifier = Modifier.width(6.dp)) // 텍스트와 dot 사이 간격
 
                                         Image(
-                                            painter = painterResource(id = R.drawable.ic_dot),
+                                            painter = painterResource(id = R.drawable.ic_dot_green),
                                             contentDescription = null,
                                             modifier = Modifier.size(20.dp)
                                         )

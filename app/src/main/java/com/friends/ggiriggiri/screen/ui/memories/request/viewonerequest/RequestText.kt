@@ -47,10 +47,6 @@ fun RequestText(
                     modifier = Modifier
                         .width(100.dp)
                         .height(20.dp)
-                        .background(
-                            Color.LightGray.copy(alpha = 0.7f),
-                            RoundedCornerShape(4.dp)
-                        )
                         .shimmer(rememberDefaultShimmer())
                         .padding(16.dp)
                 )

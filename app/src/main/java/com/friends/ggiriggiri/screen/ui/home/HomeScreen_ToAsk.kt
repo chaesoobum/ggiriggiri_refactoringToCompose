@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomButton
+import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
 
@@ -130,6 +131,7 @@ fun UserMain_ToAsk(
                     viewModel.friendsApplication.navHostController.apply {
                         navigate(MainScreenName.SCREEN_DO_REQUEST.name)
                     }
+                    viewModel.clearHomeState() // 상태 초기화
                 }
             )
 

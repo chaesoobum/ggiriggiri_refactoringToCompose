@@ -1,5 +1,9 @@
 package com.friends.ggiriggiri.screen.ui.memories.request.viewonerequest
 
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -22,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,41 +36,41 @@ import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.viewmodel.memories.MemoriesViewModel
+import com.friends.ggiriggiri.screen.viewmodel.memories.ViewOneRequestViewModel
 import com.friends.ggiriggiri.util.MainScreenName
 import kotlinx.coroutines.delay
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ViewOneRequestScreen(
-    viewModel: MemoriesViewModel = hiltViewModel()
+    viewModel: ViewOneRequestViewModel = hiltViewModel(),
+    requestDocumentId: String
 ) {
-    ViewOneRequestContent(viewModel)
+    //Log.d("requestDocumentId",requestDocumentId)
+    ViewOneRequestContent(viewModel, requestDocumentId)
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewOneRequestContent(
-    viewModel: MemoriesViewModel
+    viewModel: ViewOneRequestViewModel,
+    requestDocumentId: String
 ) {
-
-    var isLoading by remember { mutableStateOf(true) }
-
-    // 이건 테스트용 - 실제론 데이터 로딩 완료 시점에 false로 바꿔야 함
     LaunchedEffect(Unit) {
-        delay(2000L) // 2초 후 로딩 종료
-        isLoading = false
+        viewModel.getRequest(requestDocumentId)
     }
-
+    val context = LocalContext.current
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
         topBar = {
             TopAppBar(
-                //title = "설정",
                 navigationIconImage = ImageVector.vectorResource(id = R.drawable.arrow_back_ios_24px),
                 navigationIconOnClick = {
                     viewModel.friendsApplication.navHostController.apply {
-                        popBackStack(MainScreenName.SCREEN_VIEW_ONE_REQUEST.name,true)
+                        popBackStack()
                     }
                 }
             )
@@ -75,7 +80,7 @@ fun ViewOneRequestContent(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            if (isLoading == false){
+            //  if (viewModel.isRequestInfoLoading.value == false) {
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
@@ -88,10 +93,11 @@ fun ViewOneRequestContent(
                             .border(1.dp, Color.Gray, RoundedCornerShape(15.dp))
                             .clip(RoundedCornerShape(15.dp))
                             .background(colorResource(id = R.color.mainColor)),
+                        viewModel = viewModel,
+                        requestComponent = true
+                    )
 
-                        )
-
-                    repeat(3) {
+                    for(i in 0 ..< viewModel.responsesMapList.value.size) {
                         RequestItem(
                             modifierItem = Modifier
                                 .fillMaxWidth()
@@ -99,12 +105,15 @@ fun ViewOneRequestContent(
                                 .border(1.dp, Color.Gray, RoundedCornerShape(15.dp))
                                 .clip(RoundedCornerShape(15.dp))
                                 .background(colorResource(id = R.color.white)),
+                            viewModel = viewModel,
+                            requestComponent = false,
+                            responseIndex = i
                         )
                     }
                 }
-            }
+            //}
             // 로딩 중이면 다이얼로그 보여주기
-            CustomProgressDialog(isShowing = isLoading)
+            //CustomProgressDialog(isShowing = viewModel.isRequestInfoLoading.value)
         }
     }
 }

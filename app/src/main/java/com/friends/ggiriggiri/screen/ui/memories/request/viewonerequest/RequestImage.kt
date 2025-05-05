@@ -46,11 +46,6 @@ fun RequestImage(
                         modifier = Modifier
                             .fillMaxSize()
                             .shimmer(rememberDefaultShimmer())
-                            .background(
-                                Color.LightGray.copy(alpha = 0.7f),
-                                RoundedCornerShape(4.dp)
-                            )
-                            .background(Color.Transparent)
                     )
                 }
 

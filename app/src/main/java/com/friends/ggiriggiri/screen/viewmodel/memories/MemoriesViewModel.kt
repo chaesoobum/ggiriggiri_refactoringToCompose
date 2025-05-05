@@ -28,7 +28,7 @@ class MemoriesViewModel @Inject constructor(
     // 요청들 리스트를 갱신할 변수와 함수
     private var _listForRequestsListScreen = mutableStateOf<List<List<String>>>(emptyList())
     val listForRequestsListScreen: State<List<List<String>>> = _listForRequestsListScreen
-    fun takeInformationForRequestsListScreen() {
+    fun getRequestInfoWithUserName() {
         viewModelScope.launch {
             _isLoading.value = true
             _listForRequestsListScreen.value = memoriesService.getRequestInfoWithUserName(
@@ -37,4 +37,5 @@ class MemoriesViewModel @Inject constructor(
             _isLoading.value = false
         }
     }
+
 }

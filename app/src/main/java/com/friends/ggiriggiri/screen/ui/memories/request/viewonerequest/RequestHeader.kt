@@ -72,10 +72,6 @@ fun RequestHeader(
                         modifier = Modifier
                             .fillMaxSize()
                             .shimmer(rememberDefaultShimmer())
-                            .background(
-                                Color.LightGray.copy(alpha = 0.7f),
-                                RoundedCornerShape(4.dp)
-                            )
                     )
                 }
                 is AsyncImagePainter.State.Error -> {
@@ -101,10 +97,6 @@ fun RequestHeader(
                     modifier = Modifier
                         .height(16.dp)
                         .width(80.dp)
-                        .background(
-                            Color.LightGray.copy(alpha = 0.7f),
-                            RoundedCornerShape(4.dp)
-                        )
                         .shimmer(rememberDefaultShimmer())
                 )
                 Spacer(modifier = Modifier.size(6.dp))
@@ -112,10 +104,6 @@ fun RequestHeader(
                     modifier = Modifier
                         .height(14.dp)
                         .width(100.dp)
-                        .background(
-                            Color.LightGray.copy(alpha = 0.7f),
-                            RoundedCornerShape(4.dp)
-                        )
                         .shimmer(rememberDefaultShimmer())
                 )
             } else {

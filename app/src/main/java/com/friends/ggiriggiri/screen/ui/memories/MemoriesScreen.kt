@@ -1,5 +1,7 @@
 package com.friends.ggiriggiri.screen.ui.memories
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +53,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MemoriesScreen(
     modifier: Modifier,
@@ -62,6 +65,7 @@ fun MemoriesScreen(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun MemoriesContent(
@@ -70,7 +74,7 @@ fun MemoriesContent(
 ) {
 
     LaunchedEffect(Unit) {
-        viewModel.takeInformationForRequestsListScreen()
+        viewModel.getRequestInfoWithUserName()
     }
 
     val context = LocalContext.current
@@ -92,8 +96,8 @@ fun MemoriesContent(
         onRefresh = {
             coroutineScope.launch {
                 isRefreshing = true
-                viewModel.takeInformationForRequestsListScreen()
-                delay(2000)//스켈레톤을 보기위한 임시딜레이
+                viewModel.getRequestInfoWithUserName()
+
                 isRefreshing = false
             }
         }

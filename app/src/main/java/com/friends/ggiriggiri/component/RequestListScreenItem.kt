@@ -1,5 +1,7 @@
 package com.friends.ggiriggiri.component
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,8 +21,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.util.tools.formatMillisToDateTime
 
 // date는 포맷팅 된상태로 들어올것
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RequestListScreenItem(
     name: String,
@@ -76,7 +80,7 @@ fun RequestListScreenItem(
             contentAlignment = Alignment.BottomEnd
         ) {
             Text(
-                text = date,
+                text = formatMillisToDateTime(date),
                 modifier = Modifier
                     .padding(20.dp),
                 fontFamily = FontFamily(Font(R.font.nanumsquareregular)),

@@ -103,17 +103,19 @@ class HomeViewModel @Inject constructor(
     private val _requestMessage = mutableStateOf("")
     val requestMessage:State<String> = _requestMessage
     // 남은 시간
-    private val _remainingTimeFormatted = mutableStateOf("00:00")
+    //private val _remainingTimeFormatted = mutableStateOf("00:00")
+    private val _remainingTimeFormatted = mutableStateOf("")
     val remainingTimeFormatted: State<String> = _remainingTimeFormatted
-    // 요청 image Url
-    private val _requestImageUrl = mutableStateOf<String?>(null)
-    val requestImageUrl:State<String?> = _requestImageUrl
+
+//    // 요청 image Url
+//    private val _requestImageUrl = mutableStateOf<String?>(null)
+//    val requestImageUrl:State<String?> = _requestImageUrl
 
     //요청이 있는상태면 응답화면 구성하기
     suspend fun setRequestInfo() {
         _requesterName.value = homeService.getUserName(requestModel.value?.requestUserDocumentID.toString())
         _requestMessage.value = requestModel.value?.requestMessage.toString()
-        _requestImageUrl.value = requestModel.value?.requestImage.toString()
+        //_requestImageUrl.value = requestModel.value?.requestImage.toString()
 
         requestModel.value?.requestTime?.let { requestTime ->
             startRequestCountdownTimer(requestTime)
@@ -149,7 +151,7 @@ class HomeViewModel @Inject constructor(
                 //내가한 요청이 아니고 응답도 안했다면
                 val didIResponse = homeService.didIResponse(
                     _requestModel.value!!.requestDocumentId,
-                    friendsApplication.loginUserModel.userGroupDocumentID
+                    friendsApplication.loginUserModel.userDocumentId
                 )
                 Log.d("classfy",didIResponse.toString())
                 //응답한 요청임
@@ -168,6 +170,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    // 시간이 다됐을때 컴포넌트를 바꾸기위한 함수
+    private val _isTimeOver = mutableStateOf(false)
+    val isTimeOver:State<Boolean> = _isTimeOver
+
     //타이머 함수
     private var timerJob: Job? = null
     fun startRequestCountdownTimer(requestTime: Long) {
@@ -180,7 +186,7 @@ class HomeViewModel @Inject constructor(
 
                 if (remainingMillis <= 0) {
                     _remainingTimeFormatted.value = "00:00"
-                    //_requestState.value = false
+                    _requestState.value = false
                     break
                 }
 
@@ -193,5 +199,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
+    //요청관련 변수들 초기화
+    fun clearHomeState() {
+        _requestModel.value = null
+        _requestState.value = null
+        _isMyRequest.value = null
+        _isResponse.value = null
+        _requesterName.value = ""
+        _requestMessage.value = ""
+        _remainingTimeFormatted.value = "00:00"
+        // _requestImageUrl.value = null //
+        timerJob?.cancel()
+    }
 }

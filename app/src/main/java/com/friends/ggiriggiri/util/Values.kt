@@ -42,7 +42,7 @@ sealed class Group(val route: String,val label: String,val icon: Int){
 
 sealed class Memories(val route: String,val label: String,val icon: Int){
     object Requests : Memories("Requests","요청",R.drawable.exclamation_24px)
-    object Answers : Memories("Answers","답변",R.drawable.question_mark_24px)
+    object Answers : Memories("Answers","오늘의 질문",R.drawable.question_mark_24px)
 }
 //유저 상태값
 enum class UserState(val num: Int, val str:String){

@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -22,8 +23,12 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 object tools {
 
@@ -77,7 +82,7 @@ object tools {
         token: String,
         title: String,
         body: String,
-        onResult: (Boolean, String) -> Unit
+        //onResult: (Boolean, String) -> Unit
     ) {
         val json = JSONObject().apply {
             put("title", title)
@@ -87,24 +92,55 @@ object tools {
 
         val requestBody = json.toString().toRequestBody("application/json".toMediaType())
         val request = Request.Builder()
-            .url("https://asia-northeast3-ggiriggiri-c33b2.cloudfunctions.net/sendNotification")
+            .url("https://sendnotificationtogroup-ly57f6pi7q-du.a.run.app") // ✅ 실제 Cloud Run URL
             .post(requestBody)
             .build()
+
 
         val client = OkHttpClient()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.e("FCM", "전송 실패", e)
-                onResult(false, e.message ?: "Unknown error")
+                //onResult(false, e.message ?: "Unknown error")
             }
 
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body?.string() ?: ""
                 Log.d("FCM", "응답: $body")
-                onResult(response.isSuccessful, body)
+                //onResult(response.isSuccessful, body)
             }
         })
     }
+
+    fun sendPushNotificationToGroup(tokens: List<String>, title: String, body: String) {
+        Log.d("FCM", "푸시 전송 시작: 토큰 ${tokens.size}개")
+
+        val json = JSONObject().apply {
+            put("title", title)
+            put("body", body)
+            put("tokens", JSONArray(tokens))
+        }
+
+        val requestBody = json.toString().toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("https://asia-northeast3-ggiriggiri-c33b2.cloudfunctions.net/sendNotificationToGroup")
+            .post(requestBody)
+            .build()
+
+        OkHttpClient().newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("FCM", "전송 실패", e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseText = response.body?.string()
+                Log.d("FCM", "응답: $responseText")
+            }
+        })
+    }
+
+
+
 
     //알림 권한 받는 함수
     //requestNotificationPermissionIfNeeded(this)
@@ -124,5 +160,14 @@ object tools {
                 )
             }
         }
+    }
+
+    //val formatted = formatMillisToDateTime(System.currentTimeMillis())
+    //println(formatted) // 출력 예: 2025.03.04 14:57
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun formatMillisToDateTime(millis: String): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")
+            .withZone(ZoneId.of("Asia/Seoul")) // 한국 시간대
+        return formatter.format(Instant.ofEpochMilli(millis.toLong()))
     }
 }

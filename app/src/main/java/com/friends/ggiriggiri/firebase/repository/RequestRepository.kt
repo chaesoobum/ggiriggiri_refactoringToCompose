@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.friends.ggiriggiri.firebase.model.RequestModel
+import com.friends.ggiriggiri.firebase.vo.UserVO
+import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
@@ -23,6 +25,7 @@ import org.json.JSONObject
 
 class RequestRepository @Inject constructor() {
     private val storage: FirebaseStorage = Firebase.storage
+    private val db = FirebaseFirestore.getInstance()
     //요청이미지업로드
     suspend fun uploadImageToStorage(
         context: Context,
@@ -60,7 +63,6 @@ class RequestRepository @Inject constructor() {
     //요청vo업로드
     suspend fun uploadNewRequest(requestModel: RequestModel) {
         try {
-            val db = FirebaseFirestore.getInstance()
             val userCollection = db.collection("_requests")
 
             val newRequestVO = requestModel.toRequestVO()
@@ -105,5 +107,29 @@ class RequestRepository @Inject constructor() {
             }
         }
     }
+
+    //같은 그룹내의 유저들의 fcm코드를 리스트로가져온다
+    suspend fun getUserFcmList(groupDocumentId: String, userDocumentId: String): List<String> {
+        val snapshot = FirebaseFirestore.getInstance()
+            .collection("_users")
+            .whereEqualTo("userGroupDocumentID", groupDocumentId)
+            .get()
+            .await()
+
+        val allFcmTokens = mutableListOf<String>()
+
+        for (doc in snapshot.documents) {
+            // 나 자신의 문서인지 확인해서 제외
+            if (doc.id == userDocumentId) continue
+
+            val fcmCodes = doc.get("userFcmCode") as? List<String> ?: emptyList()
+            allFcmTokens.addAll(fcmCodes)
+        }
+
+        return allFcmTokens.filter { it.isNotBlank() }.distinct()
+    }
+
+
+
 
 }

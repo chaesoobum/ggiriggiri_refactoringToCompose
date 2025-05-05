@@ -132,9 +132,9 @@ class HomeRepository @Inject constructor(
                 .get()
                 .await()
             if (snapshot.isEmpty){
-                true
-            }else{
                 false
+            }else{
+                true
             }
         }catch (e: Exception) {
             e.printStackTrace()

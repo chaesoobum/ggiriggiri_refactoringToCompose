@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.firebase.model.UserModel
 import com.friends.ggiriggiri.screen.ui.UserGroupScreen
 import com.friends.ggiriggiri.screen.ui.UserLoginScreen
@@ -63,6 +64,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Main(
     userLoginViewModel: UserLoginViewModel = hiltViewModel(),
@@ -76,6 +78,7 @@ fun Main(
 
 
     var startDestination by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         if (userLoginViewModel.preferenceManager.isLoggedIn()) {
@@ -101,7 +104,11 @@ fun Main(
         } else {
             startDestination = MainScreenName.SCREEN_USER_LOGIN.name
         }
+        isLoading = false
     }
+
+
+    CustomProgressDialog(isShowing = isLoading)
 
 
     // 여기 중요
@@ -136,9 +143,13 @@ fun Main(
                 UserGroupScreen()
             }
 
-            composable(route = MainScreenName.SCREEN_VIEW_ONE_REQUEST.name) {
-                ViewOneRequestScreen()
+            composable(
+                route = "${MainScreenName.SCREEN_VIEW_ONE_REQUEST.name}/{requestDocumentId}"
+            ) { backStackEntry ->
+                val requestDocumentId = backStackEntry.arguments?.getString("requestDocumentId") ?: ""
+                ViewOneRequestScreen(requestDocumentId = requestDocumentId)
             }
+
 
             composable(route = MainScreenName.SCREEN_VIEW_ONE_QUESTION.name) {
                 ViewOneQuestionScreen()
