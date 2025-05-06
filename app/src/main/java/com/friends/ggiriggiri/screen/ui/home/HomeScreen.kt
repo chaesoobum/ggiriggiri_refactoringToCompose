@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri.screen.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,6 +37,7 @@ import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.ImageCarousel
 import com.friends.ggiriggiri.component.ImageDialog
 import com.friends.ggiriggiri.component.TopAppBarWithShimmer
+import com.friends.ggiriggiri.messaging.PushEventBus
 import com.friends.ggiriggiri.screen.ui.home.memberlist.UserMain_MemberList
 import com.friends.ggiriggiri.screen.viewmodel.PublicViewModel
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
@@ -95,6 +97,15 @@ fun HomeScreen(
             pvm.setRequesterName(viewModel.requesterName.value)
         }
         onDispose { }
+    }
+
+    //푸시알림을 감지하고 데이터 리로드
+    LaunchedEffect(Unit) {
+        Log.d("push","LaunchedEffect")
+        PushEventBus.refreshHomeEvent.collect {
+            viewModel.clearHomeState()
+            viewModel.getRequestStateInGroup()
+        }
     }
 
     HomeContent(

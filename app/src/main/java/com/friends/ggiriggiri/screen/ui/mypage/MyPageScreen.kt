@@ -1,6 +1,10 @@
 package com.friends.ggiriggiri.screen.ui.mypage
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -45,6 +49,7 @@ import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.viewmodel.mypage.MyPageViewModel
 import com.friends.ggiriggiri.util.MainScreenName
+import com.friends.ggiriggiri.util.tools.openAppNotificationSettings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -137,7 +142,7 @@ fun MyPageContent(
                 text = "알림설정",
                 imageVector = ImageVector.vectorResource(R.drawable.notification_settings_24px),
                 onMyPageButtonClick = {
-                    Toast.makeText(context, "토스트 메시지입니다!", Toast.LENGTH_SHORT).show()
+                    openAppNotificationSettings(context)
                 }
             )
             MyPageButton(
@@ -148,17 +153,17 @@ fun MyPageContent(
                 }
             )
             MyPageButton(
+                text = "그룹탈퇴",
+                imageVector = ImageVector.vectorResource(R.drawable.close_24px),
+                onMyPageButtonClick = {
+                    viewModel.showLeaveGroupDialogTrue()
+                }
+            )
+            MyPageButton(
                 text = "회원탈퇴",
                 imageVector = ImageVector.vectorResource(R.drawable.disabled_by_default_24px),
                 onMyPageButtonClick = {
                     Toast.makeText(context, "토스트 메시지입니다!", Toast.LENGTH_SHORT).show()
-                }
-            )
-            MyPageButton(
-                text = "그룹탈퇴",
-                imageVector = ImageVector.vectorResource(R.drawable.disabled_by_default_24px),
-                onMyPageButtonClick = {
-                    viewModel.showLeaveGroupDialogTrue()
                 }
             )
             MyPageButton(

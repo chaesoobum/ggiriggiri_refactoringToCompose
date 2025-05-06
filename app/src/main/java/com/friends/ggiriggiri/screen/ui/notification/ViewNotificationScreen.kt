@@ -8,27 +8,34 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
+import com.friends.ggiriggiri.screen.viewmodel.notification.NotificationViewModel
 import com.friends.ggiriggiri.util.MainScreenName
 
 @Composable
 fun ViewNotificationScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: NotificationViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.getNotificationList()
+    }
+    
     ViewNotificationContent(viewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewNotificationContent(
-    viewModel: HomeViewModel
+    viewModel: NotificationViewModel
 ) {
     Scaffold(
         modifier = Modifier
@@ -50,11 +57,14 @@ fun ViewNotificationContent(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            repeat(10) {
-                NotificationItem()
+            viewModel.notificationList.value.forEach { entity ->
+                NotificationItem(entity = entity)
             }
+
         }
     }
+
+    CustomProgressDialog(isShowing = viewModel.isLoading.value)
 }
 
 @Preview(showBackground = true)

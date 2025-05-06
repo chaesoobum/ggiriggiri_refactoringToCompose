@@ -2,8 +2,10 @@ package com.friends.ggiriggiri.util
 
 import android.Manifest
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -11,6 +13,7 @@ import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
@@ -170,4 +173,33 @@ object tools {
             .withZone(ZoneId.of("Asia/Seoul")) // 한국 시간대
         return formatter.format(Instant.ofEpochMilli(millis.toLong()))
     }
+
+    //알림설정화면
+    fun openAppNotificationSettings(context: Context) {
+        val intent = Intent().apply {
+            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            // 아래는 일부 기기에서 필요
+            putExtra("app_package", context.packageName)
+            putExtra("app_uid", context.applicationInfo.uid)
+        }
+
+        try {
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            // 구형 기기 대응: 앱 상세 설정 화면으로 이동
+            val fallbackIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.parse("package:${context.packageName}")
+            }
+            context.startActivity(fallbackIntent)
+        }
+    }
+
+    //System.currentTimeMillis()의 포맷변환
+    fun formatMillisToDateTime(millis: Long): String {
+        val sdf = java.text.SimpleDateFormat("yyyy.MM.dd HH:mm", java.util.Locale.getDefault())
+        return sdf.format(java.util.Date(millis))
+    }
+
+
 }

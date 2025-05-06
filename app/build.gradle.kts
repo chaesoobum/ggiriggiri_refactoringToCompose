@@ -167,6 +167,11 @@ dependencies {
 
     implementation ("androidx.core:core-splashscreen:1.0.1")
 
+    //room
+    implementation("androidx.room:room-runtime:2.7.1")
+    kapt("androidx.room:room-compiler:2.7.1")
+
+
 }
 kapt {
     correctErrorTypes = true

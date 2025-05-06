@@ -12,6 +12,7 @@ import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.firebase.model.RequestModel
 import com.friends.ggiriggiri.firebase.model.ResponseModel
 import com.friends.ggiriggiri.firebase.service.ResponseService
+import com.friends.ggiriggiri.util.tools.sendPushNotificationToGroup
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -101,11 +102,38 @@ class DoResponseViewModel@Inject constructor(
             }finally {
                 Log.d("UploadRequest", "응답 업로드 종료")
                 Toast.makeText(context,"응답완료", Toast.LENGTH_SHORT).show()
+                sendNotificationToGroup()
                 pop()
                 isLoading.value = false
             }
         }
     }
+
+    //그룹원에게 알림을 보낸다
+    fun sendNotificationToGroup() {
+        viewModelScope.launch {
+            try {
+                val groupFCMList = doResponseService.getUserFcmList(
+                    friendsApplication.loginUserModel.userGroupDocumentID,
+                    friendsApplication.loginUserModel.userDocumentId
+                )
+                Log.d("FCM", "groupFCMList size: ${groupFCMList.size}")
+
+                if (groupFCMList.isNotEmpty()) {
+                    sendPushNotificationToGroup(
+                        groupFCMList,
+                        title = "${requestModel.value?.requestMessage}에대한 ${friendsApplication.loginUserModel.userName}의 응답 도착!",
+                        body = responseText.value
+                    )
+                } else {
+                    Log.d("FCM", "FCM 리스트가 비어 있음, 알림 전송하지 않음")
+                }
+            } catch (e: Exception) {
+                Log.e("FCM", "알림 전송 중 예외 발생", e)
+            }
+        }
+    }
+
 
     fun pop(){
         friendsApplication.navHostController.popBackStack()

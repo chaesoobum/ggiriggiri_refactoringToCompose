@@ -1,5 +1,7 @@
 package com.friends.ggiriggiri
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -21,11 +23,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.firebase.model.UserModel
+import com.friends.ggiriggiri.room.database.NotificationDatabase
 import com.friends.ggiriggiri.screen.ui.UserGroupScreen
 import com.friends.ggiriggiri.screen.ui.UserLoginScreen
 import com.friends.ggiriggiri.screen.ui.UserMainScreen
@@ -42,6 +46,9 @@ import com.friends.ggiriggiri.screen.viewmodel.userlogin.UserLoginViewModel
 import com.friends.ggiriggiri.ui.theme.GgiriggiriTheme
 import com.friends.ggiriggiri.util.MainScreenName
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @AndroidEntryPoint
@@ -58,9 +65,21 @@ class MainActivity : ComponentActivity() {
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
         setContent {
             GgiriggiriTheme {
-                Main()
+                Main(destination = intent.getStringExtra("navigateTo"))
             }
         }
+
+        lifecycleScope.launch {
+            val list = withContext(Dispatchers.IO) {
+                NotificationDatabase.getInstance(this@MainActivity)
+                    .notificationDao()
+                    .getAll()
+            }
+            if (list.isNotEmpty()) {
+                Log.d("room", list[0].title)
+            }
+        }
+
     }
 }
 
@@ -68,6 +87,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Main(
     userLoginViewModel: UserLoginViewModel = hiltViewModel(),
+    destination: String? = null // ← 인텐트로 받은 목적지
 ) {
     val navHostController = rememberNavController()
     val context = LocalContext.current
@@ -106,6 +126,23 @@ fun Main(
         }
         isLoading = false
     }
+
+    LaunchedEffect(startDestination) {
+        if (destination == "GoHomeScreen" &&
+            startDestination == MainScreenName.SCREEN_USER_MAIN.name &&
+            navHostController.currentDestination?.route != MainScreenName.SCREEN_USER_MAIN.name
+        ) {
+            navHostController.navigate(MainScreenName.SCREEN_USER_MAIN.name) {
+                popUpTo(MainScreenName.SCREEN_USER_MAIN.name) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        }
+    }
+
+
+
 
 
     CustomProgressDialog(isShowing = isLoading)
