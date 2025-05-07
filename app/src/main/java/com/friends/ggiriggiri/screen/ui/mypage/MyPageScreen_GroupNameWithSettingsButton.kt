@@ -2,8 +2,10 @@ package com.friends.ggiriggiri.screen.ui.mypage
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -18,11 +20,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
+import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun GroupNameWithSettingsButton(
     groupName: String = "그룹명",
     onGroupNameClick: () -> Unit = {},
+    loadingGroupName: Boolean
 ) {
     Row(
         modifier = Modifier
@@ -31,12 +36,21 @@ fun GroupNameWithSettingsButton(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = groupName,
-            fontSize = 20.sp,
-            color = Color.Black,
-            textDecoration = TextDecoration.Underline
-        )
+        if (loadingGroupName) {
+            Box(
+                modifier = Modifier
+                    .height(20.sp.value.dp)
+                    .width(80.dp)
+                    .shimmer(rememberDefaultShimmer()),
+            )
+        } else {
+            Text(
+                text = groupName,
+                fontSize = 20.sp,
+                color = Color.Black,
+                textDecoration = TextDecoration.Underline
+            )
+        }
 
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.settings_24px),

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -23,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +59,10 @@ fun MyPageScreen(
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.loadGroupName()
+    }
+
     MyPageContent(modifier, viewModel)
 }
 
@@ -102,19 +108,13 @@ fun MyPageContent(
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            var imageUri by remember { mutableStateOf<Uri?>(null) }
-            val imageUrl = imageUri?.toString()
-                ?: "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26"
-            ProfileImageButton(
-                imageUrl = imageUrl,
-                onImageSelected = { uri -> imageUri = uri }
-            )
-
+            //프로필 이미지 변경버튼
+            ProfileImageButton()
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp),
-                text = "채수범",
+                text = viewModel.friendsApplication.loginUserModel.userName,
                 fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center
@@ -130,11 +130,12 @@ fun MyPageContent(
             )
             Spacer(modifier = Modifier.height(5.dp))
             GroupNameWithSettingsButton(
-                groupName = "그룹명",
+                groupName = viewModel.groupName.value,
                 onGroupNameClick = {
-                    // 그룹명 클릭 시 처리
-                    Toast.makeText(context, "토스트 메시지입니다!", Toast.LENGTH_SHORT).show()
-                }
+                    viewModel.friendsApplication.navHostController.
+                    navigate("${MainScreenName.SCREEN_SETTING_GROUP.name}/${viewModel.groupName.value}")
+                },
+                loadingGroupName = viewModel.loadingGroupName.value
             )
             Spacer(modifier = Modifier.height(20.dp))
             Divider()

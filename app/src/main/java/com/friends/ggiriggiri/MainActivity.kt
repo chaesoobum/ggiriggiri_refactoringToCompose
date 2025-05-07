@@ -1,7 +1,5 @@
 package com.friends.ggiriggiri
 
-import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -187,6 +185,13 @@ fun Main(
                 ViewOneRequestScreen(requestDocumentId = requestDocumentId)
             }
 
+            composable(
+                route = "${MainScreenName.SCREEN_SETTING_GROUP.name}/{groupName}")
+            { backStackEntry->
+                val groupName = backStackEntry.arguments?.getString("groupName") ?: ""
+                SettingGroupScreen(navHostController = navHostController, groupName = groupName)
+            }
+
 
             composable(route = MainScreenName.SCREEN_VIEW_ONE_QUESTION.name) {
                 ViewOneQuestionScreen()
@@ -206,10 +211,6 @@ fun Main(
 
             composable(route = MainScreenName.SCREEN_NOTIFICATION.name) {
                 ViewNotificationScreen()
-            }
-
-            composable(route = MainScreenName.SCREEN_SETTING_GROUP.name) {
-                SettingGroupScreen()
             }
 
             composable(route = MainScreenName.SCREEN_LEGAL.name) {
