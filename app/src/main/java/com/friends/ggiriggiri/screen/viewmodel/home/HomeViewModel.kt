@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
+import com.friends.ggiriggiri.firebase.model.QuestionListModel
 import com.friends.ggiriggiri.firebase.model.RequestModel
 import com.friends.ggiriggiri.firebase.service.HomeService
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -62,23 +63,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    //오늘의 질문 이미지 가져오기
-    private var _questionImageUrl = mutableStateOf<String>("")
-    val questionImageUrl: State<String> = _questionImageUrl
-
-    //오늘의 질문 이미지 가져오기 로딩상태
-    private val _isLoadingForGetQuestionImageUrl = mutableStateOf(true)
-    val isLoadingForGetQuestionImageUrl: State<Boolean> = _isLoadingForGetQuestionImageUrl
-
-    fun getQuestionImageUrl() {
-        viewModelScope.launch {
-            delay(500)
-            _questionImageUrl.value =
-                "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confounded%20Face.png"
-            _isLoadingForGetQuestionImageUrl.value = false
-        }
-    }
-
     private val _requestModel = mutableStateOf<RequestModel?>(null)
     val requestModel: State<RequestModel?> = _requestModel
     //그룹에 활성화된 요청이 있는지 가져오기
@@ -106,16 +90,15 @@ class HomeViewModel @Inject constructor(
     //private val _remainingTimeFormatted = mutableStateOf("00:00")
     private val _remainingTimeFormatted = mutableStateOf("")
     val remainingTimeFormatted: State<String> = _remainingTimeFormatted
-
-//    // 요청 image Url
-//    private val _requestImageUrl = mutableStateOf<String?>(null)
-//    val requestImageUrl:State<String?> = _requestImageUrl
+    // 요청 image Url
+    private val _requestImageUrl = mutableStateOf<String?>(null)
+    val requestImageUrl:State<String?> = _requestImageUrl
 
     //요청이 있는상태면 응답화면 구성하기
     suspend fun setRequestInfo() {
         _requesterName.value = homeService.getUserName(requestModel.value?.requestUserDocumentID.toString())
         _requestMessage.value = requestModel.value?.requestMessage.toString()
-        //_requestImageUrl.value = requestModel.value?.requestImage.toString()
+        _requestImageUrl.value = requestModel.value?.requestImage.toString()
 
         requestModel.value?.requestTime?.let { requestTime ->
             startRequestCountdownTimer(requestTime)
@@ -201,15 +184,44 @@ class HomeViewModel @Inject constructor(
 
     //요청관련 변수들 초기화
     fun clearHomeState() {
-        _requestModel.value = null
-        _requestState.value = null
-        _isMyRequest.value = null
-        _isResponse.value = null
-        _requesterName.value = ""
-        _requestMessage.value = ""
-        _remainingTimeFormatted.value = "00:00"
-        // _requestImageUrl.value = null //
-        timerJob?.cancel()
+        viewModelScope.launch {
+            _requestModel.value = null
+            _requestState.value = null
+            _isMyRequest.value = null
+            _isResponse.value = null
+            _requesterName.value = ""
+            _requestMessage.value = ""
+            _remainingTimeFormatted.value = "00:00"
+            _requestImageUrl.value = null
+            timerJob?.cancel()
+        }
+    }
+
+
+
+
+
+    //오늘의 질문 이미지 가져오기 모델가져오기
+    private var _questionImageUrl = mutableStateOf<String>("")
+    val questionImageUrl: State<String> = _questionImageUrl
+
+    private val _questionModel = mutableStateOf<QuestionListModel?>(null)
+    val questionModel:State<QuestionListModel?> = _questionModel
+
+    //오늘의 질문 이미지 가져오기 로딩상태
+    private val _isLoadingForGetQuestionImageUrl = mutableStateOf(true)
+    val isLoadingForGetQuestionImageUrl: State<Boolean> = _isLoadingForGetQuestionImageUrl
+
+    //그날 그룹에 해당하는 질문가져오기
+    fun getQuestionModel() {
+        viewModelScope.launch {
+
+            _questionModel.value = homeService.getQuestionModel(friendsApplication.loginUserModel.userGroupDocumentID)
+
+            _questionImageUrl.value = questionModel.value!!.questionImg
+
+            _isLoadingForGetQuestionImageUrl.value = false
+        }
     }
 
 }

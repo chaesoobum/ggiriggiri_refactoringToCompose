@@ -1,8 +1,7 @@
-package com.friends.ggiriggiri
+package com.friends.ggiriggiri.module
 
 import android.content.Context
 import com.friends.ggiriggiri.internaldata.PreferenceManager
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,7 +11,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object FriendsAppModule {
+object AppModule {
 
     @Provides
     @Singleton
@@ -20,9 +19,4 @@ object FriendsAppModule {
         return PreferenceManager(context)
     }
 
-    @Provides
-    @Singleton
-    fun provideFirestore(): FirebaseFirestore {
-        return FirebaseFirestore.getInstance()
-    }
 }

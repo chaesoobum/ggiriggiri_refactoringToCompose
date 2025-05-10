@@ -4,13 +4,17 @@ import android.app.Activity
 import android.util.Log
 import com.friends.ggiriggiri.firebase.socialdataclass.KakaoUserInfo
 import com.friends.ggiriggiri.internaldata.PreferenceManager
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.auth.model.Prompt
 import com.kakao.sdk.user.UserApiClient
 import javax.inject.Inject
 
 class KakaoLoginRepository @Inject constructor(
-    private val prefManager: PreferenceManager
+    val prefManager: PreferenceManager,
+    val firestore: FirebaseFirestore,
+    val storage: FirebaseStorage
 ) {
     fun loginWithKakaoTalk(
         activity: Activity,

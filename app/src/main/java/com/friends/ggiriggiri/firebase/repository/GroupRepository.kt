@@ -9,7 +9,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class GroupRepository@Inject constructor(
-    private val firestore: FirebaseFirestore
+    val firestore: FirebaseFirestore
 ) {
     //그룹코드와 비밀번호에 맞는 그룹모델을 가져온다 없으면 null이다
     suspend fun getGroupModel(groupCode: String, groupPw: String): GroupModel? {

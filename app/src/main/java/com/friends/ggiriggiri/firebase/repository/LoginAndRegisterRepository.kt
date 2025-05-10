@@ -5,16 +5,19 @@ import com.friends.ggiriggiri.firebase.model.UserModel
 import com.friends.ggiriggiri.firebase.vo.UserVO
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-class LoginAndRegisterRepository @Inject constructor() {
+class LoginAndRegisterRepository @Inject constructor(
+    val firestore: FirebaseFirestore,
+    val storage: FirebaseStorage
+) {
     //로그인하거나 가입하거나
     suspend fun loginOrRegister(userModel: UserModel): UserModel {
         try {
-            val db = FirebaseFirestore.getInstance()
-            val userCollection = db.collection("_users")
+            val userCollection = firestore.collection("_users")
 
             val querySnapshot = userCollection
                 .whereEqualTo("userId", userModel.userId)
@@ -73,8 +76,7 @@ class LoginAndRegisterRepository @Inject constructor() {
     //유저문서아이디로 유저모델을 가져온다
     suspend fun getUserModelByDocumentId(userDocumentId: String): UserModel {
         try {
-            val db = FirebaseFirestore.getInstance()
-            val userCollection = db.collection("_users")
+            val userCollection = firestore.collection("_users")
             val userDocRef = userCollection.document(userDocumentId)
 
             val documentSnapshot = userDocRef.get().await()

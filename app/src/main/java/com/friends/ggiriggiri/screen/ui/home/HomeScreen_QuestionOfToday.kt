@@ -1,6 +1,5 @@
 package com.friends.ggiriggiri.screen.ui.home
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,18 +10,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -30,18 +26,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.ApngImageFromUrl
 import com.friends.ggiriggiri.component.CustomButton
 import com.friends.ggiriggiri.screen.viewmodel.PublicViewModel
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
-import com.friends.ggiriggiri.util.findActivity
 import com.friends.ggiriggiri.util.rememberDefaultShimmer
 import com.friends.ggiriggiri.util.tools
 import com.valentinilk.shimmer.shimmer
-import kotlinx.coroutines.flow.filter
+import java.net.URLEncoder
 
 
 @Composable
@@ -57,11 +51,6 @@ fun UserMain_QuestionOfTodayContent(
     viewModel: HomeViewModel,
     pvm: PublicViewModel
 ){
-    LaunchedEffect(viewModel.questionImageUrl.value) {
-        if (viewModel.questionImageUrl.value.isNotBlank()) {
-            pvm.setQuestionImageUrl(viewModel.questionImageUrl.value)
-        }
-    }
 
 
 
@@ -110,16 +99,24 @@ fun UserMain_QuestionOfTodayContent(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(10.dp)
                                 .fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = "친구의 애인의 도대체 애랑 왜 만나는지 궁금했던적이 있다",
-                                textAlign = TextAlign.Center,
-                                fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
-                                fontSize = 12.sp
-                            )
+                            if (viewModel.questionModel.value == null){
+                                Box (
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(36.sp.value.dp)
+                                        .shimmer(rememberDefaultShimmer())
+                                ){}
+                            }else{
+                                Text(
+                                    text = viewModel.questionModel.value!!.questionContent,
+                                    textAlign = TextAlign.Center,
+                                    fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
+                                    fontSize = 12.sp
+                                )
+                            }
                         }
                     }
                 }
@@ -128,7 +125,7 @@ fun UserMain_QuestionOfTodayContent(
                     modifier = Modifier.size(100.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (viewModel.questionImageUrl.value.isBlank()) {
+                    if (viewModel.questionModel.value == null) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -156,8 +153,15 @@ fun UserMain_QuestionOfTodayContent(
                 onClick = {
                     if(!viewModel.isLoadingForGetQuestionImageUrl.value){
                         viewModel.clearHomeState() // 상태 초기화
-                        viewModel.friendsApplication.navHostController
-                            .navigate(MainScreenName.SCREEN_DO_ANSWER.name)
+
+                        val encodedImageUrl = URLEncoder.encode(viewModel.questionModel.value?.questionImg ?: "", "UTF-8")
+                        val questionNumber = viewModel.questionModel.value?.questionNumber ?: 0
+                        val encodedQuestionContent = URLEncoder.encode(viewModel.questionModel.value?.questionContent ?: "", "UTF-8")
+
+                        viewModel.friendsApplication.navHostController.navigate(
+                            "${MainScreenName.SCREEN_DO_ANSWER.name}/$encodedImageUrl/$questionNumber/$encodedQuestionContent"
+                        )
+
                     }
                 }
             )

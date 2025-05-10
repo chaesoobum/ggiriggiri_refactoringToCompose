@@ -12,7 +12,8 @@ data class RequestVO(
     var requestImage: String = "",
     var responseList: List<ResponseModel> = emptyList(),
     var requestGroupDocumentID: String = "",
-    var scheduledUpdate: Long? = System.currentTimeMillis() + (30 * 60 * 1000)
+    var scheduledUpdate: Long? = System.currentTimeMillis() + (30 * 60 * 1000),
+    var requestLikeCount:Int? = 0
 ){
     fun toRequestModel(requestDocumentId: String): RequestModel {
         return RequestModel(
@@ -24,7 +25,8 @@ data class RequestVO(
             requestImage = this.requestImage,
             responseList = this.responseList,
             requestGroupDocumentID = this.requestGroupDocumentID,
-            scheduledUpdate = this.scheduledUpdate
+            scheduledUpdate = this.scheduledUpdate,
+            requestLikeCount = this.requestLikeCount
         )
     }
 }

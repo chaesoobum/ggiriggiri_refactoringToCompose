@@ -26,6 +26,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.ui.groupsubscreen.JoinGroupScreen
@@ -39,6 +40,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserGroupScreen(
+    navHostController: NavHostController,
     homeViewModel: HomeViewModel = hiltViewModel(),
     userLoginViewModel: UserLoginViewModel = hiltViewModel()
 ) {

@@ -12,15 +12,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PublicViewModel @Inject constructor() : ViewModel() {
-    //오늘의 질문 이모지 png 전달(다른네비게이션으로)
-    private val _questionImageUrl = mutableStateOf("")
-    val questionImageUrl: State<String> = _questionImageUrl
-    fun setQuestionImageUrl(questionImageUrl:String){
-        _questionImageUrl.value = questionImageUrl
-    }
-    fun deleteQuestionImageUrl(){
-        _questionImageUrl.value = ""
-    }
 
     //그룹원 이미지 리스트전달
     private var _memberImageUrls = mutableStateOf<List<String>>(emptyList())

@@ -22,9 +22,11 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.firebase.model.UserModel
 import com.friends.ggiriggiri.room.database.NotificationDatabase
@@ -47,6 +49,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.URLDecoder
 
 
 @AndroidEntryPoint
@@ -152,37 +155,40 @@ fun Main(
             navController = navHostController,
             startDestination = startDestination!!,
             enterTransition = {
-                fadeIn(tween(300)) +
+                fadeIn(tween(100)) +
                         slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(300))
             },
             popExitTransition = {
-                fadeOut(tween(300)) +
+                fadeOut(tween(100)) +
                         slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(300))
             },
             exitTransition = {
-                fadeOut(tween(300))
+                fadeOut(tween(100))
             },
             popEnterTransition = {
-                fadeIn(tween(300))
+                fadeIn(tween(100))
             }
         ) {
             composable(route = MainScreenName.SCREEN_USER_LOGIN.name) {
-                UserLoginScreen()
+                UserLoginScreen(navHostController = navHostController)
             }
 
             composable(route = MainScreenName.SCREEN_USER_MAIN.name) {
-                UserMainScreen()
+                UserMainScreen(navHostController = navHostController)
             }
 
             composable(route = MainScreenName.SCREEN_USER_GROUP.name) {
-                UserGroupScreen()
+                UserGroupScreen(navHostController = navHostController)
             }
 
             composable(
                 route = "${MainScreenName.SCREEN_VIEW_ONE_REQUEST.name}/{requestDocumentId}"
             ) { backStackEntry ->
                 val requestDocumentId = backStackEntry.arguments?.getString("requestDocumentId") ?: ""
-                ViewOneRequestScreen(requestDocumentId = requestDocumentId)
+                ViewOneRequestScreen(
+                    navHostController = navHostController,
+                    requestDocumentId = requestDocumentId
+                )
             }
 
             composable(
@@ -194,15 +200,31 @@ fun Main(
 
 
             composable(route = MainScreenName.SCREEN_VIEW_ONE_QUESTION.name) {
-                ViewOneQuestionScreen()
+                ViewOneQuestionScreen(navHostController = navHostController)
             }
 
             composable(route = MainScreenName.SCREEN_DO_REQUEST.name) {
                 DoRequestScreen(navHostController = navHostController)
             }
 
-            composable(route = MainScreenName.SCREEN_DO_ANSWER.name) {
-                DoAnswerScreen(navHostController = navHostController)
+            composable(
+                route = "${MainScreenName.SCREEN_DO_ANSWER.name}/{imageUrl}/{questionNumber}/{questionContent}",
+
+                //Hilt/Navigation Compose에서 해당 경로 파라미터 "questionNumber"를 Int 타입으로 처리하겠다는 명시적인 선언
+                arguments = listOf(
+                    navArgument("questionNumber") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val imageUrl = URLDecoder.decode(backStackEntry.arguments?.getString("imageUrl") ?: "", "UTF-8")
+                val questionNumber = backStackEntry.arguments?.getInt("questionNumber") ?: 0
+                val questionContent = URLDecoder.decode(backStackEntry.arguments?.getString("questionContent") ?: "", "UTF-8")
+
+                DoAnswerScreen(
+                    navHostController = navHostController,
+                    imageUrl = imageUrl,
+                    questionNumber = questionNumber,
+                    questionContent = questionContent
+                )
             }
 
             composable(route = MainScreenName.SCREEN_DO_RESPONSE.name) {
@@ -210,7 +232,7 @@ fun Main(
             }
 
             composable(route = MainScreenName.SCREEN_NOTIFICATION.name) {
-                ViewNotificationScreen()
+                ViewNotificationScreen(navHostController = navHostController)
             }
 
             composable(route = MainScreenName.SCREEN_LEGAL.name) {

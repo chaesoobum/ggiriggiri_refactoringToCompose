@@ -23,9 +23,10 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
-class RequestRepository @Inject constructor() {
-    private val storage: FirebaseStorage = Firebase.storage
-    private val db = FirebaseFirestore.getInstance()
+class RequestRepository @Inject constructor(
+    val firestore: FirebaseFirestore,
+    val storage: FirebaseStorage
+) {
     //요청이미지업로드
     suspend fun uploadImageToStorage(
         context: Context,
@@ -63,7 +64,7 @@ class RequestRepository @Inject constructor() {
     //요청vo업로드
     suspend fun uploadNewRequest(requestModel: RequestModel) {
         try {
-            val userCollection = db.collection("_requests")
+            val userCollection = firestore.collection("_requests")
 
             val newRequestVO = requestModel.toRequestVO()
             val docRef = userCollection.add(newRequestVO).await()
@@ -110,7 +111,7 @@ class RequestRepository @Inject constructor() {
 
     //같은 그룹내의 유저들의 fcm코드를 리스트로가져온다
     suspend fun getUserFcmList(groupDocumentId: String, userDocumentId: String): List<String> {
-        val snapshot = FirebaseFirestore.getInstance()
+        val snapshot = firestore
             .collection("_users")
             .whereEqualTo("userGroupDocumentID", groupDocumentId)
             .get()

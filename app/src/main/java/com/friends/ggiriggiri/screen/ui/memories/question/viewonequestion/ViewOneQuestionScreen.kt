@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.viewmodel.memories.MemoriesViewModel
@@ -28,6 +29,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun ViewOneQuestionScreen(
+    navHostController: NavHostController,
     viewModel: MemoriesViewModel = hiltViewModel()
 ) {
     ViewOneQuestionContent(viewModel)
@@ -88,5 +90,5 @@ fun ViewOneQuestionContent(
 @Preview(showBackground = true)
 @Composable
 fun PreviewViewOneQuestionScreen() {
-    ViewOneQuestionScreen()
+    //ViewOneQuestionScreen()
 }

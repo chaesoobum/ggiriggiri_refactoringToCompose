@@ -9,6 +9,7 @@ data class ResponseModel(
     var responseImage: String = "", // 응답 이미지 URL
     var responseMessage: String = "", // 응답 메시지
     var responseUserDocumentID: String = "", // 응답한 사용자 ID
+    var requestLikeCount:Int? = null
 ){
     fun toResponseVO(): ResponseVO{
         val responseVO = ResponseVO()
@@ -18,6 +19,7 @@ data class ResponseModel(
         responseVO.responseImage = responseImage
         responseVO.responseMessage = responseMessage
         responseVO.responseUserDocumentID = responseUserDocumentID
+        responseVO.requestLikeCount = requestLikeCount
 
         return responseVO
     }

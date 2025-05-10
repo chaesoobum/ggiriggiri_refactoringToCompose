@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri.firebase.service
 
+import com.friends.ggiriggiri.firebase.model.QuestionListModel
 import com.friends.ggiriggiri.firebase.model.RequestModel
 import com.friends.ggiriggiri.firebase.repository.HomeRepository
 import javax.inject.Inject
@@ -30,5 +31,10 @@ class HomeService@Inject constructor(
     //요청에 내가 응답을 했는지 안했는지
     suspend fun didIResponse(requestDocumentId: String, userDocumentId: String): Boolean {
         return homeRepository.didIResponse(requestDocumentId,userDocumentId)
+    }
+
+    //그날 그룹에 해당하는 질문가져오기
+    suspend fun getQuestionModel(groupDocumentID:String): QuestionListModel?{
+        return homeRepository.getQuestionModel(groupDocumentID)
     }
 }

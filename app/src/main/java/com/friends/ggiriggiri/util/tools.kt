@@ -2,6 +2,7 @@ package com.friends.ggiriggiri.util
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Context
@@ -95,7 +96,7 @@ object tools {
 
         val requestBody = json.toString().toRequestBody("application/json".toMediaType())
         val request = Request.Builder()
-            .url("https://sendnotificationtogroup-ly57f6pi7q-du.a.run.app") // ✅ 실제 Cloud Run URL
+            .url("https://sendnotificationtogroup-ly57f6pi7q-du.a.run.app")
             .post(requestBody)
             .build()
 
@@ -164,6 +165,32 @@ object tools {
             }
         }
     }
+
+    fun showNotificationPermissionDialog(activity: Activity) {
+        AlertDialog.Builder(activity)
+            .setTitle("알림 권한이 필요합니다")
+            .setMessage("앱에서 알림을 받기 위해 설정에서 알림 권한을 허용해주세요.")
+            .setPositiveButton("설정으로 이동") { _, _ ->
+                val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, activity.packageName)
+                }
+                activity.startActivity(intent)
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    fun isNotificationPermissionGranted(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true // Android 12 이하는 알림 권한 필요 없음
+        }
+    }
+
 
     //val formatted = formatMillisToDateTime(System.currentTimeMillis())
     //println(formatted) // 출력 예: 2025.03.04 14:57

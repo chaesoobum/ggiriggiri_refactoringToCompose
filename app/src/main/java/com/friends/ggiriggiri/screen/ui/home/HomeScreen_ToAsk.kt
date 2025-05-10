@@ -106,7 +106,7 @@ fun UserMain_ToAsk(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "오늘 요청가능 횟수: 1",
+                                        text = "요청시 30분간\n응답을 받을 수 있습니다",
                                         textAlign = TextAlign.Center,
                                         fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
                                         fontSize = 14.sp

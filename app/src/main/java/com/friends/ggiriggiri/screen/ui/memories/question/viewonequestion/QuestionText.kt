@@ -41,10 +41,6 @@ fun QuestionText(
                 modifier = Modifier
                     .width(200.dp)
                     .height(20.sp.value.dp)
-                    .background(
-                        Color.LightGray.copy(alpha = 0.7f),
-                        RoundedCornerShape(4.dp)
-                    )
                     .shimmer(rememberDefaultShimmer())
                     .padding(16.dp)
             )

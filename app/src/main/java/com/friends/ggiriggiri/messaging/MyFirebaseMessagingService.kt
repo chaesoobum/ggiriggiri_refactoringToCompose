@@ -3,7 +3,6 @@ package com.friends.ggiriggiri.messaging
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
@@ -15,7 +14,9 @@ import com.friends.ggiriggiri.room.entity.NotificationEntity
 import com.friends.ggiriggiri.util.tools.formatMillisToDateTime
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -29,28 +30,38 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         Log.d("FCM", "메시지 수신: ${message.notification?.title}, ${message.notification?.body}")
 
+        val title = message.notification?.title ?: message.data["title"] ?: return
+        val body = message.notification?.body ?: message.data["body"] ?: return
 
-        PushEventBus.refreshHomeEvent.tryEmit(Unit) // 푸시로 갱신 요청
-
-
-        val title = message.notification?.title ?: return
-        val body = message.notification?.body ?: return
+        //홈 스크린(요청) 갱신
+        PushEventBus.refreshHomeEvent.tryEmit(Unit)
+        
         showNotification(title, body)
         // 백그라운드에서 Room 저장
-        kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            saveRoom(title, body)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                saveRoom(title, body)
+            } catch (e: Exception) {
+                Log.e("RoomInsert", "Room 저장 실패", e)
+            }
         }
     }
 
-    private suspend fun saveRoom(title:String, body:String){
-        var newNotification = NotificationEntity(
-            title = title,
-            content = body,
-            time = formatMillisToDateTime(System.currentTimeMillis())
-        )
-        val db = NotificationDatabase.getInstance(applicationContext)
-        db!!.notificationDao().insert(newNotification)
+    private suspend fun saveRoom(title: String, body: String) {
+        try {
+            val newNotification = NotificationEntity(
+                title = title,
+                content = body,
+                time = formatMillisToDateTime(System.currentTimeMillis())
+            )
+            val db = NotificationDatabase.getInstance(applicationContext)
+            db.notificationDao().insert(newNotification)
+            Log.d("RoomInsert", "Room 저장 성공: $title")
+        } catch (e: Exception) {
+            Log.e("RoomInsert", "Room 저장 실패", e)
+        }
     }
+
 
     private fun showNotification(title: String, body: String) {
         val channelId = "default_channel_id"

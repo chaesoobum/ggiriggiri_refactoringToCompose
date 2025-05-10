@@ -8,6 +8,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.firebase.socialdataclass.GoogleUserInfo
 import com.friends.ggiriggiri.firebase.model.UserModel

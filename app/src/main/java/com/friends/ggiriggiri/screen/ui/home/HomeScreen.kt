@@ -67,8 +67,8 @@ fun HomeScreen(
             // 딜레이 후 프로필 이미지 로딩 시뮬레이션
             getMemberProfileImage()
 
-            //오늘의 질문 이미지 가져오기
-            getQuestionImageUrl()
+            //그날 그룹에 해당하는 질문가져오기
+            getQuestionModel()
 
             //그룹이미지 랜덤 가져오기
             getImageCarousel()
@@ -101,7 +101,6 @@ fun HomeScreen(
 
     //푸시알림을 감지하고 데이터 리로드
     LaunchedEffect(Unit) {
-        Log.d("push","LaunchedEffect")
         PushEventBus.refreshHomeEvent.collect {
             viewModel.clearHomeState()
             viewModel.getRequestStateInGroup()
@@ -156,6 +155,7 @@ fun HomeContent(
             ) {
                 UserMain_MemberList(viewModel, pvm)
                 UserMain_QuestionOfToday(viewModel, pvm)
+
 
                 if (viewModel.requestState.value == null) {
                     HomeScreenShimmer()

@@ -4,6 +4,8 @@ import android.app.Activity
 import android.util.Log
 import com.friends.ggiriggiri.firebase.socialdataclass.NaverUserInfo
 import com.friends.ggiriggiri.internaldata.PreferenceManager
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
@@ -17,7 +19,9 @@ import java.io.IOException
 import javax.inject.Inject
 
 class NaverLoginRepository @Inject constructor(
-    private val prefManager: PreferenceManager
+    val prefManager: PreferenceManager,
+    val firestore: FirebaseFirestore,
+    val storage: FirebaseStorage
 ) {
     private val client = OkHttpClient()
 

@@ -14,9 +14,9 @@ import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 class ResponseRepository@Inject constructor(
-
+    val firestore: FirebaseFirestore,
+    val storage: FirebaseStorage
 ) {
-    private val storage: FirebaseStorage = Firebase.storage
     //응답이미지업로드
     suspend fun uploadImageToStorage(
         context: Context,
@@ -51,8 +51,7 @@ class ResponseRepository@Inject constructor(
     //응답vo업로드
     suspend fun uploadNewResponse(responseModel: ResponseModel) {
         try {
-            val db = FirebaseFirestore.getInstance()
-            val userCollection = db.collection("_responses")
+            val userCollection = firestore.collection("_responses")
 
             val newResponseVO = responseModel.toResponseVO()
             val docRef = userCollection.add(newResponseVO).await()

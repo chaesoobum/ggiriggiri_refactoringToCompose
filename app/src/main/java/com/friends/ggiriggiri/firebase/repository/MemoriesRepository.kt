@@ -6,15 +6,18 @@ import com.friends.ggiriggiri.firebase.vo.UserVO
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import okhttp3.internal.wait
 import javax.inject.Inject
 
-class MemoriesRepository @Inject constructor() {
+class MemoriesRepository @Inject constructor(
+    val firestore: FirebaseFirestore,
+    val storage: FirebaseStorage
+) {
 
     suspend fun getRequestInfoWithUserName(groupDocumentId: String): List<List<String>> {
-        val db = FirebaseFirestore.getInstance()
-        val requestSnapshot = db.collection("_requests")
+        val requestSnapshot = firestore.collection("_requests")
             .whereEqualTo("requestGroupDocumentID", groupDocumentId)
             .get()
             .await()
@@ -27,7 +30,7 @@ class MemoriesRepository @Inject constructor() {
             val requestTime = document.get("requestTime")?.toString() ?: ""
 
             // _users 컬렉션에서 userName가져오기
-            val userSnapshot = db.collection("_users")
+            val userSnapshot = firestore.collection("_users")
                 .document(requestUserId)
                 .get()
                 .await()

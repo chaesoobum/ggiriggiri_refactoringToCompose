@@ -1,7 +1,6 @@
 package com.friends.ggiriggiri.firebase.repository
 
 import android.util.Log
-import com.friends.ggiriggiri.firebase.model.RequestModel
 import com.friends.ggiriggiri.firebase.model.ResponseModel
 import com.friends.ggiriggiri.firebase.vo.RequestVO
 import com.friends.ggiriggiri.firebase.vo.ResponseVO
@@ -10,12 +9,13 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
-class ViewOneRequestRepository @Inject constructor() {
-    val db = FirebaseFirestore.getInstance()
+class ViewOneRequestRepository @Inject constructor(
+    val firestore: FirebaseFirestore
+) {
     suspend fun getRequest(requestDocumentId: String): Map<String, String> {
 
         return try {
-            val snapshot = db.collection("_requests")
+            val snapshot = firestore.collection("_requests")
                 .document(requestDocumentId)
                 .get()
                 .await()
@@ -31,7 +31,7 @@ class ViewOneRequestRepository @Inject constructor() {
 
 
             val requestUserDocumentID = snapshot.getString("requestUserDocumentID")
-            val userSnapshot = db.collection("_users")
+            val userSnapshot = firestore.collection("_users")
                 .document(requestUserDocumentID.toString())
                 .get()
                 .await()
@@ -55,7 +55,7 @@ class ViewOneRequestRepository @Inject constructor() {
 
     suspend fun getResponses(requestDocumentId: String): List<Map<String,String>> {
         return try {
-            val snapshot = db.collection("_responses")
+            val snapshot = firestore.collection("_responses")
                 .whereEqualTo("responseRequestDocumentId", requestDocumentId)
                 .get()
                 .await()
@@ -71,7 +71,7 @@ class ViewOneRequestRepository @Inject constructor() {
             val resultList = mutableListOf<Map<String,String>>()
 
             list.forEach {
-                val userSnapshot = db.collection("_users")
+                val userSnapshot = firestore.collection("_users")
                     .document(it.responseUserDocumentID)
                     .get()
                     .await()

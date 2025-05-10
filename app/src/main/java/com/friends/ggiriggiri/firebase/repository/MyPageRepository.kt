@@ -11,13 +11,13 @@ import java.io.File
 import javax.inject.Inject
 
 
-class MyPageRepository @Inject constructor() {
-    val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-    val storage: FirebaseStorage = Firebase.storage
+class MyPageRepository @Inject constructor(
+    val firestore: FirebaseFirestore,
+    val storage: FirebaseStorage
+) {
 
     suspend fun getProfileImage(userDocumentId: String): String {
-        val db = FirebaseFirestore.getInstance()
-        val document = db.collection("_users")
+        val document = firestore.collection("_users")
             .document(userDocumentId)
             .get()
             .await()

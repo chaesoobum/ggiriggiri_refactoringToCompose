@@ -24,6 +24,8 @@ class GroupVO {
     var groupGallery: List<String> = listOf()
     // 그룹내 요청중인 유저가있는가
     var groupIsRequesting: Boolean = false
+    // 그룹이 만들어진지 며칠됐는가
+    var groupDayFromCreate: Int? = 1
 
     fun toGroupModel(groupDocumentId:String) : GroupModel {
         val groupModel = GroupModel()
@@ -44,6 +46,7 @@ class GroupVO {
         groupModel.groupQuestionDocumentID = groupQuestionDocumentID.toList()
         groupModel.groupGallery = groupGallery.toList()
         groupModel.groupIsRequesting = groupIsRequesting
+        groupModel.groupDayFromCreate = groupDayFromCreate
 
         return groupModel
     }

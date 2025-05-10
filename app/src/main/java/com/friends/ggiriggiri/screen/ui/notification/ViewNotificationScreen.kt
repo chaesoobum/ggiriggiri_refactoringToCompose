@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.component.TopAppBar
@@ -23,6 +24,7 @@ import com.friends.ggiriggiri.util.MainScreenName
 
 @Composable
 fun ViewNotificationScreen(
+    navHostController: NavHostController,
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
@@ -70,5 +72,5 @@ fun ViewNotificationContent(
 @Preview(showBackground = true)
 @Composable
 fun PreviewViewNotificationContent() {
-    ViewNotificationScreen()
+    //ViewNotificationScreen()
 }

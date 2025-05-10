@@ -1,6 +1,8 @@
 package com.friends.ggiriggiri.firebase.repository
 
+import com.friends.ggiriggiri.firebase.model.QuestionListModel
 import com.friends.ggiriggiri.firebase.model.RequestModel
+import com.friends.ggiriggiri.firebase.vo.QuestionListVO
 import com.friends.ggiriggiri.firebase.vo.RequestVO
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -16,7 +18,6 @@ class HomeRepository @Inject constructor(
     //그룹원들의 이미지들을 가져오는 함수
     suspend fun gettingUserProfileImage(groupDocumentId: String): List<String> = coroutineScope {
         try {
-            val firestore = FirebaseFirestore.getInstance()
 
             val groupSnapshot = firestore.collection("_groups")
                 .document(groupDocumentId)
@@ -68,7 +69,6 @@ class HomeRepository @Inject constructor(
     //그룹명을 가져온다
     suspend fun gettingGroupName(groupDocumentId: String): String {
         return try {
-            //val firestore = FirebaseFirestore.getInstance()
 
             val groupSnapshot = firestore.collection("_groups")
                 .document(groupDocumentId)
@@ -139,6 +139,34 @@ class HomeRepository @Inject constructor(
         }catch (e: Exception) {
             e.printStackTrace()
             false
+        }
+    }
+
+    //그날 그룹에 해당하는 질문가져오기
+    suspend fun getQuestionModel(groupDocumentID:String): QuestionListModel?{
+        return try {
+            val userSnapshot = firestore.collection("_groups")
+                .document(groupDocumentID)
+                .get()
+                .await()
+
+            var groupDayFromCreate = 0
+            if (userSnapshot.exists()) {
+                groupDayFromCreate = (userSnapshot.getLong("groupDayFromCreate") ?: 0L).toInt()
+            }
+
+            val snapshot = firestore.collection("QuestionList")
+                .whereEqualTo("questionNumber",groupDayFromCreate)
+                .get()
+                .await()
+
+            val document = snapshot.documents.firstOrNull()
+
+            val questionListVO = document!!.toObject(QuestionListVO::class.java)
+
+            questionListVO!!.toQuestionListModel()
+        }catch (e: Exception){
+            null
         }
     }
 

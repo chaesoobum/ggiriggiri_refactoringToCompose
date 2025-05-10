@@ -59,6 +59,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomButton
 import com.friends.ggiriggiri.component.CustomProgressDialog
@@ -70,6 +71,7 @@ import com.friends.ggiriggiri.screen.viewmodel.userlogin.UserLoginViewModel
 
 @Composable
 fun UserLoginScreen(
+    navHostController: NavHostController,
     userLoginViewModel: UserLoginViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current

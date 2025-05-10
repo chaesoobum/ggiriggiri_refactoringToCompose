@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -21,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
@@ -37,26 +38,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.component.CustomAlertDialog
+import com.friends.ggiriggiri.component.CustomButton
+import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.component.OutlinedTextField
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion.QuestionImage
 import com.friends.ggiriggiri.screen.viewmodel.PublicViewModel
 import com.friends.ggiriggiri.screen.viewmodel.home.DoAnswerViewModel
-import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
 import com.friends.ggiriggiri.util.findActivity
-import kotlinx.coroutines.delay
 
 @Composable
 fun DoAnswerScreen(
     doAnswerViewModel: DoAnswerViewModel = hiltViewModel(),
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    imageUrl: String,
+    questionNumber: Int,
+    questionContent: String
 ) {
     val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
-    DoAnswerContent(doAnswerViewModel,pvm, navHostController = navHostController)
+    DoAnswerContent(doAnswerViewModel,pvm, navHostController = navHostController,imageUrl,questionNumber,questionContent)
+    Log.d("questionNumber",questionNumber.toString())
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,7 +70,10 @@ fun DoAnswerScreen(
 fun DoAnswerContent(
     doAnswerViewModel: DoAnswerViewModel,
     pvm: PublicViewModel,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    imageUrl: String,
+    questionNumber: Int,
+    questionContent: String
 ) {
     //서버의 지연시간을 테스트하기위한 변수와 딜레이
     var isLoading by remember { mutableStateOf(true) }
@@ -72,15 +81,8 @@ fun DoAnswerContent(
         //delay(2000)
         isLoading = false
     }
-    LaunchedEffect(Unit) {
-        val imageUrl = pvm.questionImageUrl.value
-        if (imageUrl.isNotBlank()) {
-            doAnswerViewModel.setQuestionImageUrl(imageUrl)
-            pvm.deleteQuestionImageUrl()
-        }
-    }
 
-
+    val context = LocalContext.current
     val focusManager: FocusManager = LocalFocusManager.current
     Scaffold(
         modifier = Modifier
@@ -96,7 +98,7 @@ fun DoAnswerContent(
                 title = "답변하기",
                 navigationIconImage = ImageVector.vectorResource(id = R.drawable.arrow_back_ios_24px),
                 navigationIconOnClick = {
-                    navHostController.popBackStack(MainScreenName.SCREEN_DO_ANSWER.name, true)
+                    navHostController.popBackStack()
                 },
                 isDivider = false
             )
@@ -108,7 +110,7 @@ fun DoAnswerContent(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            QuestionImage(doAnswerViewModel.questionImageUrl.value)
+            QuestionImage(imageUrl)
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 modifier = Modifier
@@ -116,7 +118,7 @@ fun DoAnswerContent(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "친구의 애인의 도대체 애랑 왜 만나는지 궁금했던적이 있다",
+                    text = questionContent,
                     fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
                     fontSize = 20.sp,
                     color = Color.Black,
@@ -129,10 +131,51 @@ fun DoAnswerContent(
                 paddingEnd = 20.dp,
                 label = "답변하기",
                 singleLine = true,
-
-                )
+                textFieldValue = doAnswerViewModel.answerText
+            )
+            CustomButton(
+                text = "답변하기",
+                paddingTop = 20.dp,
+                paddingStart = 20.dp,
+                paddingEnd = 20.dp,
+                onClick = {
+                    doAnswerViewModel.saveAnswerValid()
+                }
+            )
         }
     }
+
+    if (doAnswerViewModel.showFailDialog.value) {
+        CustomAlertDialog(
+            onDismiss = { doAnswerViewModel.changeShowFailDialog(false) },
+            onConfirmation = { doAnswerViewModel.changeShowFailDialog(false) },
+            dialogTitle = "알림",
+            dialogText = "답변을 입력해주세요",
+            icon = Icons.Default.Info
+        )
+    }
+
+    if (doAnswerViewModel.showConfirmDialog.value) {
+        CustomAlertDialog(
+            onDismiss = { doAnswerViewModel.changeShowConfirmDialog(false) },
+            onConfirmation = {
+                doAnswerViewModel.changeShowConfirmDialog(false)
+                doAnswerViewModel.saveAnswerProcess(questionNumber)
+            },
+            onNegativeText = "취소",
+            onDismissRequest = { doAnswerViewModel.changeShowConfirmDialog(false) },
+            dialogTitle = "확인",
+            dialogText = "답변하시겠습니까?",
+            icon = Icons.Default.Info
+        )
+
+        if (doAnswerViewModel.answerEnd.value) {
+            navHostController.popBackStack()
+        }
+    }
+
+    CustomProgressDialog(isShowing = doAnswerViewModel.isLoading.value)
+
 }
 
 @Preview(showBackground = true)

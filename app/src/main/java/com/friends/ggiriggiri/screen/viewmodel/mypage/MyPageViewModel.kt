@@ -25,9 +25,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
     @ApplicationContext context: Context,
-    private val preferenceManager: PreferenceManager,
-    private val groupService: GroupService,
-    private val myPageService: MyPageService
+    val preferenceManager: PreferenceManager,
+    val groupService: GroupService,
+    val myPageService: MyPageService
 ) : ViewModel() {
     val friendsApplication = context as FriendsApplication
 

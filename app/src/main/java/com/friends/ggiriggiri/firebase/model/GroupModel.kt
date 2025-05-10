@@ -25,7 +25,9 @@ data class GroupModel (
     // 그룹 갤러리(이미지들)
     var groupGallery: List<String> = listOf(),
     // 그룹내 요청중인 유저가있는가
-    var groupIsRequesting: Boolean = false
+    var groupIsRequesting: Boolean = false,
+    // 그룹이 만들어진지 며칠됐는가
+    var groupDayFromCreate: Int? = null
 ){
     fun toGroupVO() : GroupVO {
         val groupVO = GroupVO()
@@ -39,6 +41,7 @@ data class GroupModel (
         groupVO.groupRequestDocumentID = groupRequestDocumentID
         groupVO.groupQuestionDocumentID = groupQuestionDocumentID
         groupVO.groupGallery = groupGallery
+        groupVO.groupDayFromCreate = groupDayFromCreate
 
         return groupVO
     }
