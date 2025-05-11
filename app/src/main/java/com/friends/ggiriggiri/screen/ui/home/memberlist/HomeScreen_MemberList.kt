@@ -166,6 +166,7 @@ fun UserMain_MemberList(
                     onClick = {
                         if (!isLoading){
                             viewModel.clearHomeState() // 상태 초기화
+                            viewModel.clearAnswerState()
                             viewModel.friendsApplication.navHostController.apply {
                                 navigate(MainScreenName.SCREEN_MEMBER_LIST_DETAIL.name)
                             }

@@ -8,9 +8,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
+import com.friends.ggiriggiri.firebase.model.AnswerModel
 import com.friends.ggiriggiri.firebase.model.QuestionListModel
 import com.friends.ggiriggiri.firebase.model.RequestModel
 import com.friends.ggiriggiri.firebase.service.HomeService
+import com.friends.ggiriggiri.firebase.vo.AnswerVO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
@@ -221,6 +223,38 @@ class HomeViewModel @Inject constructor(
             _questionImageUrl.value = questionModel.value!!.questionImg
 
             _isLoadingForGetQuestionImageUrl.value = false
+        }
+    }
+
+    private val _userAnswerModel = mutableStateOf<AnswerModel?>(null)
+    val userAnswerModel:State<AnswerModel?> = _userAnswerModel
+
+    private val _getAnswerLoading = mutableStateOf(true)
+    val getAnswerLoading: State<Boolean> = _getAnswerLoading
+
+    //해당 유저가 오늘의 질문에 답했는지 가져오기
+    fun getUserAnswerState(){
+        viewModelScope.launch {
+            _userAnswerModel.value = homeService.getUserAnswer(
+                friendsApplication.loginUserModel.userDocumentId,
+                friendsApplication.loginUserModel.userGroupDocumentID
+            )
+
+            if (_userAnswerModel.value == null){
+                Log.d("getUserAnswerState","null")
+            }else{
+                Log.d("getUserAnswerState","not-null")
+            }
+            _getAnswerLoading.value = false
+        }
+
+    }
+
+    //오늘의 질문 관련 변수들 초기화
+    fun clearAnswerState() {
+        viewModelScope.launch {
+            _userAnswerModel.value = null
+            _getAnswerLoading.value = true
         }
     }
 

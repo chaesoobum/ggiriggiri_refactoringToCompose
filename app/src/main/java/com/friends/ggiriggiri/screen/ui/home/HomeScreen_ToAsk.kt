@@ -132,6 +132,7 @@ fun UserMain_ToAsk(
                         navigate(MainScreenName.SCREEN_DO_REQUEST.name)
                     }
                     viewModel.clearHomeState() // 상태 초기화
+                    viewModel.clearAnswerState()
                 }
             )
 

@@ -41,15 +41,19 @@ import java.net.URLEncoder
 @Composable
 fun UserMain_QuestionOfToday(
     viewModel: HomeViewModel,
-    pvm: PublicViewModel
+    pvm: PublicViewModel,
+    buttonText:String,
+    onClick:()->Unit
 ){
-    UserMain_QuestionOfTodayContent(viewModel,pvm)
+    UserMain_QuestionOfTodayContent(viewModel,pvm,buttonText,onClick)
 }
 
 @Composable
 fun UserMain_QuestionOfTodayContent(
     viewModel: HomeViewModel,
-    pvm: PublicViewModel
+    pvm: PublicViewModel,
+    buttonText:String,
+    onClick:()->Unit
 ){
 
 
@@ -148,21 +152,10 @@ fun UserMain_QuestionOfTodayContent(
             contentAlignment = Alignment.Center
         ) {
             CustomButton(
-                text = "답변하기",
+                text = buttonText,
                 buttonColor = colorResource(id = R.color.white),
                 onClick = {
-                    if(!viewModel.isLoadingForGetQuestionImageUrl.value){
-                        viewModel.clearHomeState() // 상태 초기화
-
-                        val encodedImageUrl = URLEncoder.encode(viewModel.questionModel.value?.questionImg ?: "", "UTF-8")
-                        val questionNumber = viewModel.questionModel.value?.questionNumber ?: 0
-                        val encodedQuestionContent = URLEncoder.encode(viewModel.questionModel.value?.questionContent ?: "", "UTF-8")
-
-                        viewModel.friendsApplication.navHostController.navigate(
-                            "${MainScreenName.SCREEN_DO_ANSWER.name}/$encodedImageUrl/$questionNumber/$encodedQuestionContent"
-                        )
-
-                    }
+                    onClick()
                 }
             )
 

@@ -4,6 +4,7 @@ import com.friends.ggiriggiri.firebase.vo.AnswerVO
 
 
 data class AnswerModel (
+    val documentID:String ="",
     var userDocumentID: String,
     var groupDocumentID: String,
     var answerContent:String,

@@ -44,6 +44,7 @@ import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
 import com.friends.ggiriggiri.util.findActivity
 import kotlinx.coroutines.delay
+import java.net.URLEncoder
 
 @Composable
 fun HomeScreen(
@@ -75,6 +76,9 @@ fun HomeScreen(
 
             //그룹에 활성화된 요청이 있는지 가져오기
             getRequestStateInGroup()
+
+            //해당 유저가 오늘의 질문에 답했는지 가져오기
+            getUserAnswerState()
         }
     }
 
@@ -83,6 +87,7 @@ fun HomeScreen(
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 viewModel.getRequestStateInGroup() // 다시 로딩
+                viewModel.getUserAnswerState() // 다시 로딩
             }
         }
         currentLifecycle?.addObserver(observer)
@@ -137,6 +142,7 @@ fun HomeContent(
                                 navigate(MainScreenName.SCREEN_NOTIFICATION.name)
                             }
                             viewModel.clearHomeState() // 상태 초기화
+                            viewModel.clearAnswerState()
                         }
                     )
                 },
@@ -154,7 +160,51 @@ fun HomeContent(
                     .verticalScroll(rememberScrollState())
             ) {
                 UserMain_MemberList(viewModel, pvm)
-                UserMain_QuestionOfToday(viewModel, pvm)
+
+                if (viewModel.getAnswerLoading.value) {
+                    HomeScreenShimmer()
+                } else {
+                    if (viewModel.userAnswerModel.value != null) {
+                        UserMain_QuestionOfToday(
+                            viewModel,
+                            pvm,
+                            "친구들의 답변 보러가기",
+                            {
+                                if (!viewModel.isLoadingForGetQuestionImageUrl.value) {
+
+                                }
+                            }
+                        )
+                    } else {
+                        UserMain_QuestionOfToday(
+                            viewModel,
+                            pvm,
+                            "답변하기",
+                            {
+                                if (!viewModel.isLoadingForGetQuestionImageUrl.value) {
+                                    viewModel.clearHomeState() // 상태 초기화
+                                    viewModel.clearAnswerState()
+
+                                    val encodedImageUrl = URLEncoder.encode(
+                                        viewModel.questionModel.value?.questionImg ?: "", "UTF-8"
+                                    )
+                                    val questionNumber =
+                                        viewModel.questionModel.value?.questionNumber ?: 0
+                                    val encodedQuestionContent = URLEncoder.encode(
+                                        viewModel.questionModel.value?.questionContent ?: "",
+                                        "UTF-8"
+                                    )
+
+                                    viewModel.friendsApplication.navHostController.navigate(
+                                        "${MainScreenName.SCREEN_DO_ANSWER.name}/$encodedImageUrl/$questionNumber/$encodedQuestionContent"
+                                    )
+
+                                }
+                            }
+                        )
+                    }
+
+                }
 
 
                 if (viewModel.requestState.value == null) {
@@ -170,6 +220,7 @@ fun HomeContent(
                                     navigate("${MainScreenName.SCREEN_VIEW_ONE_REQUEST.name}/${viewModel.requestModel.value?.requestDocumentId}")
                                 }
                                 viewModel.clearHomeState() // 상태 초기화
+                                viewModel.clearAnswerState()
                             }
                         )
                     } else {
@@ -184,6 +235,7 @@ fun HomeContent(
                                         navigate("${MainScreenName.SCREEN_VIEW_ONE_REQUEST.name}/${viewModel.requestModel.value?.requestDocumentId}")
                                     }
                                     viewModel.clearHomeState() // 상태 초기화
+                                    viewModel.clearAnswerState()
                                 }
                             )
                         } else {//응답안함
@@ -195,6 +247,7 @@ fun HomeContent(
                                         navigate(MainScreenName.SCREEN_DO_RESPONSE.name)
                                     }
                                     viewModel.clearHomeState() // 상태 초기화
+                                    viewModel.clearAnswerState()
                                 }
                             )
                         }

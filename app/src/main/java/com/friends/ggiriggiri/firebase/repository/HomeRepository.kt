@@ -1,7 +1,10 @@
 package com.friends.ggiriggiri.firebase.repository
 
+import android.util.Log
+import com.friends.ggiriggiri.firebase.model.AnswerModel
 import com.friends.ggiriggiri.firebase.model.QuestionListModel
 import com.friends.ggiriggiri.firebase.model.RequestModel
+import com.friends.ggiriggiri.firebase.vo.AnswerVO
 import com.friends.ggiriggiri.firebase.vo.QuestionListVO
 import com.friends.ggiriggiri.firebase.vo.RequestVO
 import com.google.firebase.firestore.FieldPath
@@ -168,6 +171,38 @@ class HomeRepository @Inject constructor(
         }catch (e: Exception){
             null
         }
+    }
+
+    //해당 유저가 오늘의 질문에 답했는지 가져오기
+    suspend fun getUserAnswer (userDocumentID:String, groupDocumentID:String, ): AnswerModel? {
+        return try {
+            val snapshot = firestore.collection("_groups")
+                .document(groupDocumentID)
+                .get()
+                .await()
+
+
+            val groupDayFromCreate = snapshot.get("groupDayFromCreate")
+
+            val answerSnapshot = firestore.collection("_answers")
+                .whereEqualTo("userDocumentID",userDocumentID)
+                .whereEqualTo("groupDocumentID",groupDocumentID)
+                .whereEqualTo("questionNumber",groupDayFromCreate)
+                .get()
+                .await()
+
+            val document = answerSnapshot.documents.firstOrNull()
+            if (document != null){
+               val answerVO =  document.toObject(AnswerVO::class.java)
+                answerVO?.toAnswerModel(document.id)
+            }else{
+                null
+            }
+        }catch (e:Exception){
+            Log.d("getUserAnswerState",e.toString())
+        } as AnswerModel?
+
+
     }
 
 
