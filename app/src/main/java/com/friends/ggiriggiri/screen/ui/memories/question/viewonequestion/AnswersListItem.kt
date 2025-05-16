@@ -38,7 +38,9 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.ProfileImage
+import com.friends.ggiriggiri.screen.viewmodel.memories.ViewOneQuestionViewModel
 import com.friends.ggiriggiri.util.tools.rememberDefaultShimmer
+import com.kakao.sdk.user.model.Profile
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.ShimmerTheme
@@ -47,7 +49,10 @@ import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun AnswersListItem(
-    imageUrl: String,
+    name:String,
+    answerContent:String,
+    profile: String,
+    time:String,
     isLoading: Boolean,
 ) {
     Row(
@@ -82,7 +87,7 @@ fun AnswersListItem(
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            text = "채수범",
+                            text = name,
                             textAlign = TextAlign.End,
                             fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
                             fontSize = 20.sp,
@@ -107,7 +112,7 @@ fun AnswersListItem(
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            text = "관식이ㅠㅠ",
+                            text = answerContent,
                             textAlign = TextAlign.End,
                             fontFamily = FontFamily(Font(R.font.nanumsquareregular)),
                             fontSize = 15.sp,
@@ -130,7 +135,7 @@ fun AnswersListItem(
                     .background(Color.White)
                     .border(1.dp, Color.Gray, CircleShape),
                 ContentScale.Crop,
-                imageUrl,
+                profile,
             )
         }
     }

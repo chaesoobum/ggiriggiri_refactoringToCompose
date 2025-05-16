@@ -61,10 +61,12 @@ fun UserMainScreen(
                 .fillMaxSize()
         ) {
             composable(Screen.Home.route) {
-                HomeScreen(Modifier.padding(innerPadding),navBackStackEntry)
+                HomeScreen(Modifier.padding(innerPadding),navBackStackEntry,navHostController)
             }
             composable(Screen.Memories.route) {
-                MemoriesScreen(Modifier.padding(innerPadding))
+                MemoriesScreen(
+                    Modifier.padding(innerPadding),
+                    navHostController)
             }
             composable(Screen.MyPage.route) {
                 MyPageScreen(Modifier.padding(innerPadding))

@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,8 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.viewmodel.memories.MemoriesViewModel
+import com.friends.ggiriggiri.screen.viewmodel.memories.ViewOneQuestionViewModel
 import com.friends.ggiriggiri.util.MainScreenName
 import kotlinx.coroutines.delay
 
@@ -30,23 +33,28 @@ import kotlinx.coroutines.delay
 @Composable
 fun ViewOneQuestionScreen(
     navHostController: NavHostController,
-    viewModel: MemoriesViewModel = hiltViewModel()
+    questionNumber: String,
+    viewModel: ViewOneQuestionViewModel = hiltViewModel(),
 ) {
-    ViewOneQuestionContent(viewModel)
+    Log.d("ViewOneQuestionScreen", "questionNumber: ${questionNumber}")
+    ViewOneQuestionContent(navHostController, questionNumber, viewModel)
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewOneQuestionContent(
-    viewModel: MemoriesViewModel
+    navHostController: NavHostController,
+    questionNumber: String,
+    viewModel: ViewOneQuestionViewModel
 ) {
-    //서버의 지연시간을 테스트하기위한 변수와 딜레이
     var isLoading by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
-        delay(2000)
+        viewModel.getOneQuestionAndAnswers(questionNumber)
         isLoading = false
     }
+
+    //CustomProgressDialog(isShowing = isLoading)
 
     Scaffold(
         modifier = Modifier
@@ -55,9 +63,7 @@ fun ViewOneQuestionContent(
             TopAppBar(
                 navigationIconImage = ImageVector.vectorResource(id = R.drawable.arrow_back_ios_24px),
                 navigationIconOnClick = {
-                    viewModel.friendsApplication.navHostController.apply {
-                        popBackStack(MainScreenName.SCREEN_VIEW_ONE_QUESTION.name,true)
-                    }
+                    navHostController.popBackStack()
                 }
             )
         }
@@ -70,17 +76,16 @@ fun ViewOneQuestionContent(
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState())
             ) {
-                QuestionImage("https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Confounded%20Face.png")
-                QuestionText(
-                    "진짜 감동받았던 순간은?",
-                    isLoading
-                )
-
-                AnswersList(
-                    "https://firebasestorage.googleapis.com/v0/b/ggiriggiri-c33b2.firebasestorage.app/o/request_images%2F1740013756884.jpg?alt=media&token=16229d84-ea3f-4a27-9861-89dd3de97f26",
-                    isLoading
-                )
-
+                if(!isLoading){
+                    QuestionImage(viewModel.questionListModel.value?.questionImg ?:"dummy")
+                    QuestionText(
+                        viewModel.questionListModel.value?.questionContent ?: null,
+                    )
+                    AnswersList(
+                        viewModel,
+                        isLoading
+                    )
+                }
 
             }
         }

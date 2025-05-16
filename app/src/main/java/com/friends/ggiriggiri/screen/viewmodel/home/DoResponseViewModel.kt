@@ -12,6 +12,7 @@ import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.firebase.model.RequestModel
 import com.friends.ggiriggiri.firebase.model.ResponseModel
 import com.friends.ggiriggiri.firebase.service.ResponseService
+import com.friends.ggiriggiri.util.NotificationCategory
 import com.friends.ggiriggiri.util.tools.sendPushNotificationToGroup
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -123,7 +124,8 @@ class DoResponseViewModel@Inject constructor(
                     sendPushNotificationToGroup(
                         groupFCMList,
                         title = "${requestModel.value?.requestMessage}에대한 ${friendsApplication.loginUserModel.userName}의 응답 도착!",
-                        body = responseText.value
+                        body = responseText.value,
+                        category = NotificationCategory.REQUEST.str
                     )
                 } else {
                     Log.d("FCM", "FCM 리스트가 비어 있음, 알림 전송하지 않음")

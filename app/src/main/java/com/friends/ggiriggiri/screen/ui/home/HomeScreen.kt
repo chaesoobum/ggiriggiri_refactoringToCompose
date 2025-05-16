@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomIconButton
@@ -43,13 +44,19 @@ import com.friends.ggiriggiri.screen.viewmodel.PublicViewModel
 import com.friends.ggiriggiri.screen.viewmodel.home.HomeViewModel
 import com.friends.ggiriggiri.util.MainScreenName
 import com.friends.ggiriggiri.util.findActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.net.URLEncoder
 
 @Composable
 fun HomeScreen(
     modifier: Modifier,
     navBackStackEntry: State<NavBackStackEntry?>,
+    navHostController: NavHostController,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     //공용 뷰모델에 요청정보를 저장한다
@@ -62,23 +69,30 @@ fun HomeScreen(
     //서버에서 데이터가져오는 부분
     LaunchedEffect(Unit) {
         viewModel.apply {
-            // 타이틀 로딩 시뮬레이션(2초)
-            getAppBarTitle()
+            val job1 = async {// 타이틀 로딩
+                getAppBarTitle()
+            }
 
-            // 딜레이 후 프로필 이미지 로딩 시뮬레이션
-            getMemberProfileImage()
+            val job2 = async {// 딜레이 후 프로필 이미지 로딩
+                getMemberProfileImage()
+            }
 
-            //그날 그룹에 해당하는 질문가져오기
-            getQuestionModel()
+            val job3 = async {//그날 그룹에 해당하는 질문가져오기
+                getQuestionModel()
+            }
 
-            //그룹이미지 랜덤 가져오기
-            getImageCarousel()
+            val job4 = async {//그룹이미지 랜덤 가져오기
+                getImageCarousel()
+            }
 
-            //그룹에 활성화된 요청이 있는지 가져오기
-            getRequestStateInGroup()
+            val job5 = async {//그룹에 활성화된 요청이 있는지 가져오기
+                getRequestStateInGroup()
+            }
 
-            //해당 유저가 오늘의 질문에 답했는지 가져오기
-            getUserAnswerState()
+            val job6 = async {//해당 유저가 오늘의 질문에 답했는지 가져오기
+                getUserAnswerState()
+            }
+            job1.join(); job2.join(); job3.join(); job4.join(); job5.join(); job6.join();
         }
     }
 
@@ -86,8 +100,10 @@ fun HomeScreen(
     DisposableEffect(currentLifecycle) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                viewModel.getRequestStateInGroup() // 다시 로딩
-                viewModel.getUserAnswerState() // 다시 로딩
+                CoroutineScope(Dispatchers.Main).launch {
+                    viewModel.getRequestStateInGroup() // 다시 로딩
+                    viewModel.getUserAnswerState() // 다시 로딩
+                }
             }
         }
         currentLifecycle?.addObserver(observer)
@@ -104,18 +120,28 @@ fun HomeScreen(
         onDispose { }
     }
 
-    //푸시알림을 감지하고 데이터 리로드
-    LaunchedEffect(Unit) {
-        PushEventBus.refreshHomeEvent.collect {
-            viewModel.clearHomeState()
-            viewModel.getRequestStateInGroup()
-        }
-    }
+//    //푸시알림을 감지하고 데이터 리로드
+//    LaunchedEffect(Unit) {
+//        PushEventBus.refreshRequestEvent.collect {
+//            viewModel.clearHomeState()
+//            viewModel.getRequestStateInGroup()
+//        }
+//    }
+//
+//    //푸시알림을 감지하고 데이터 리로드
+//    LaunchedEffect(Unit) {
+//        PushEventBus.refreshQuestionEvent.collect {
+//            viewModel.clearAnswerState()
+//            viewModel.getQuestionModel()
+//            viewModel.getUserAnswerState()
+//        }
+//    }
 
     HomeContent(
         modifier = modifier,
         viewModel,
-        pvm
+        pvm,
+        navHostController
     )
 }
 
@@ -124,7 +150,8 @@ fun HomeScreen(
 fun HomeContent(
     modifier: Modifier,
     viewModel: HomeViewModel,
-    pvm: PublicViewModel
+    pvm: PublicViewModel,
+    navHostController: NavHostController
 ) {
     Scaffold(
         modifier = Modifier
@@ -171,7 +198,9 @@ fun HomeContent(
                             "친구들의 답변 보러가기",
                             {
                                 if (!viewModel.isLoadingForGetQuestionImageUrl.value) {
-
+                                    val questionNumber =
+                                        viewModel.questionModel.value!!.questionNumber.toString()
+                                    navHostController.navigate("${MainScreenName.SCREEN_VIEW_ONE_QUESTION.name}/$questionNumber")
                                 }
                             }
                         )

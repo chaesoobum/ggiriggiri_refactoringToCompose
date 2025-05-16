@@ -41,6 +41,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomIconButton
 import com.friends.ggiriggiri.component.TopAppBar
@@ -57,10 +58,16 @@ import kotlinx.coroutines.launch
 @Composable
 fun MemoriesScreen(
     modifier: Modifier,
+    navHostController: NavHostController,
     viewModel: MemoriesViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.getListInfo()
+    }
+
     MemoriesContent(
         modifier,
+        navHostController,
         viewModel
     )
 }
@@ -70,12 +77,9 @@ fun MemoriesScreen(
 @Composable
 fun MemoriesContent(
     modifier: Modifier,
+    navHostController: NavHostController,
     viewModel: MemoriesViewModel
 ) {
-
-    LaunchedEffect(Unit) {
-        viewModel.getRequestInfoWithUserName()
-    }
 
     val context = LocalContext.current
     val selectedColor = Color(ContextCompat.getColor(context, R.color.mainColor))
@@ -96,8 +100,7 @@ fun MemoriesContent(
         onRefresh = {
             coroutineScope.launch {
                 isRefreshing = true
-                viewModel.getRequestInfoWithUserName()
-
+                viewModel.getListInfo()
                 isRefreshing = false
             }
         }
@@ -177,13 +180,12 @@ fun MemoriesContent(
                 modifier = Modifier
                     .fillMaxSize()
             ) { page ->
-                val list = viewModel.listForRequestsListScreen.value
                 val isLoading = viewModel.isLoading.value
                 when (memoriesTabs[page]) {
                     Memories.Answers -> QuestionListScreen(
-                        list,
+                        viewModel,
                         isRefreshing || isLoading,
-                        viewModel.friendsApplication
+                        navHostController
                     )
                     Memories.Requests -> RequestListScreen(
                         viewModel,

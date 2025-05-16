@@ -141,19 +141,14 @@ fun Main(
             }
         }
     }
-
-
-
-
-
     CustomProgressDialog(isShowing = isLoading)
-
 
     // 여기 중요
     if (startDestination != null) {
         NavHost(
             navController = navHostController,
             startDestination = startDestination!!,
+            //startDestination = "test",
             enterTransition = {
                 fadeIn(tween(100)) +
                         slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(300))
@@ -199,8 +194,14 @@ fun Main(
             }
 
 
-            composable(route = MainScreenName.SCREEN_VIEW_ONE_QUESTION.name) {
-                ViewOneQuestionScreen(navHostController = navHostController)
+            composable(
+                route = "${MainScreenName.SCREEN_VIEW_ONE_QUESTION.name}/{questionNumber}"
+            ) { backStackEntry ->
+                val questionNumber = backStackEntry.arguments?.getString("questionNumber") ?: "0"
+                ViewOneQuestionScreen(
+                    navHostController = navHostController,
+                    questionNumber = questionNumber
+                )
             }
 
             composable(route = MainScreenName.SCREEN_DO_REQUEST.name) {

@@ -73,3 +73,9 @@ enum class GroupState(val num: Int, val str:String){
     ACTIVE(1,"활성화"),
     INACTIVE(2,"비활성화")
 }
+
+// 알림 category
+enum class NotificationCategory(val num: Int, val str:String){
+    REQUEST(1,"요청"),
+    QUESTIONS(2,"오늘의 질문"),
+}

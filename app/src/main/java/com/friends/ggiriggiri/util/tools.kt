@@ -116,12 +116,13 @@ object tools {
         })
     }
 
-    fun sendPushNotificationToGroup(tokens: List<String>, title: String, body: String) {
+    fun sendPushNotificationToGroup(tokens: List<String>, title: String, body: String, category:String) {
         Log.d("FCM", "푸시 전송 시작: 토큰 ${tokens.size}개")
 
         val json = JSONObject().apply {
             put("title", title)
             put("body", body)
+            put("category",category)
             put("tokens", JSONArray(tokens))
         }
 

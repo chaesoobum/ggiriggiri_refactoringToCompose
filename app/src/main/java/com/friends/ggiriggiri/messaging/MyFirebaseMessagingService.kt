@@ -11,6 +11,7 @@ import com.friends.ggiriggiri.MainActivity
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.room.database.NotificationDatabase
 import com.friends.ggiriggiri.room.entity.NotificationEntity
+import com.friends.ggiriggiri.util.NotificationCategory
 import com.friends.ggiriggiri.util.tools.formatMillisToDateTime
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -28,16 +29,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onMessageReceived(message: RemoteMessage) {
-        Log.d("FCM", "메시지 수신: ${message.notification?.title}, ${message.notification?.body}")
+        Log.d("FCM", "메시지 수신 (data): ${message.data}")
 
-        val title = message.notification?.title ?: message.data["title"] ?: return
-        val body = message.notification?.body ?: message.data["body"] ?: return
+        val title = message.data["title"] ?: return
+        val body = message.data["body"] ?: return
+        val category = message.data["category"] ?: "기본값"
 
-        //홈 스크린(요청) 갱신
-        PushEventBus.refreshHomeEvent.tryEmit(Unit)
-        
+        if (category == NotificationCategory.REQUEST.str) {
+            Log.d("onMessageReceived","refreshRequestEvent")
+            PushEventBus.refreshRequestEvent.tryEmit(Unit)
+        } else {
+            Log.d("onMessageReceived","refreshQuestionEvent")
+            PushEventBus.refreshQuestionEvent.tryEmit(Unit)
+        }
+
         showNotification(title, body)
-        // 백그라운드에서 Room 저장
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 saveRoom(title, body)

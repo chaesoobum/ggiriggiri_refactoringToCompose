@@ -24,7 +24,7 @@ fun QuestionListScreenItemSkeleton() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(80.dp)
     ) {
         Box(
             modifier = Modifier
@@ -53,15 +53,6 @@ fun QuestionListScreenItemSkeleton() {
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
-                Row{
-                    Spacer(modifier = Modifier.weight(1f)) // 왼쪽 공간 밀기
-                    Box(
-                        modifier = Modifier
-                            .width(80.dp)
-                            .height(16.dp)
-                            .shimmer(rememberDefaultShimmer())
-                    )
-                }
             }
         }
     }

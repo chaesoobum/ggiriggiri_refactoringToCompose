@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,15 +26,14 @@ import com.friends.ggiriggiri.R
 
 @Composable
 fun QuestionListScreenItem(
-    questionNumber: String = "#001",
-    questionTitle: String = "이 그룹에서 제로 콜라 안마실거 같은 사람은?",
-    questionDate: String = "2025.02.07",
+    questionNumber: String,
+    questionTitle: String,
     onClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(80.dp)
             .clickable {
                 onClick()
             }
@@ -50,7 +50,7 @@ fun QuestionListScreenItem(
             ) {
                 Row {
                     Text(
-                        text = questionNumber,
+                        text = "#${questionNumber}",
                         fontSize = 15.sp,
                         maxLines = 1,
                         fontFamily = FontFamily(Font(R.font.nanumsquarebold))
@@ -59,22 +59,12 @@ fun QuestionListScreenItem(
                     Text(
                         text = questionTitle,
                         fontSize = 14.sp,
-                        maxLines = 1,
+                        overflow = TextOverflow.Visible,
                         modifier = Modifier.weight(1f),
                         fontFamily = FontFamily(Font(R.font.nanumsquarebold))
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
-                Row {
-                    Text(
-                        text = questionDate,
-                        fontSize = 12.sp,
-                        fontFamily = FontFamily(Font(R.font.nanumsquareregular)),
-                        textAlign = TextAlign.End,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
             }
         }
     }
@@ -83,5 +73,5 @@ fun QuestionListScreenItem(
 @Preview(showBackground = true)
 @Composable
 fun previews() {
-    QuestionListScreenItem()
+    //QuestionListScreenItem()
 }

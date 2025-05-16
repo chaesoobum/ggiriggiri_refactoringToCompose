@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
 import com.friends.ggiriggiri.firebase.model.RequestModel
 import com.friends.ggiriggiri.firebase.service.RequestService
+import com.friends.ggiriggiri.util.NotificationCategory
 import com.friends.ggiriggiri.util.tools.sendPushNotification
 import com.friends.ggiriggiri.util.tools.sendPushNotificationToGroup
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -125,7 +126,8 @@ class DoRequestViewModel @Inject constructor(
                     sendPushNotificationToGroup(
                         groupFCMList,
                         title = "끼리끼리 요청!",
-                        body = requestText.value
+                        body = requestText.value,
+                        category = NotificationCategory.REQUEST.str
                     )
                 } else {
                     Log.d("FCM", "FCM 리스트가 비어 있음, 알림 전송하지 않음")

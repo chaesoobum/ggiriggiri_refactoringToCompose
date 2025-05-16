@@ -3,9 +3,12 @@ package com.friends.ggiriggiri.firebase.repository
 import android.util.Log
 import com.friends.ggiriggiri.firebase.model.UserModel
 import com.friends.ggiriggiri.firebase.vo.UserVO
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
@@ -73,40 +76,39 @@ class LoginAndRegisterRepository @Inject constructor(
         }
     }
 
-    //유저문서아이디로 유저모델을 가져온다
-    suspend fun getUserModelByDocumentId(userDocumentId: String): UserModel {
+    suspend fun getUserModelByDocumentId(userDocumentId: String): UserModel = coroutineScope {
         try {
-            val userCollection = firestore.collection("_users")
-            val userDocRef = userCollection.document(userDocumentId)
+            val userDocRef = firestore.collection("_users").document(userDocumentId)
 
-            val documentSnapshot = userDocRef.get().await()
+            val tokenDeferred = async { FirebaseMessaging.getInstance().token.await() }
+            val snapshotDeferred = async { userDocRef.get().await() }
 
-            if (documentSnapshot.exists()) {
-                val userVO = documentSnapshot.toObject(UserVO::class.java)!!
-                val currentFcmToken = FirebaseMessaging.getInstance().token.await()
+            val currentFcmToken = tokenDeferred.await()
+            val documentSnapshot = snapshotDeferred.await()
 
-                // 기존 FCM 토큰 리스트 확인
-                val existingFcmTokens = documentSnapshot.get("userFcmCode") as? List<String> ?: emptyList()
-
-                if (!existingFcmTokens.contains(currentFcmToken)) {
-                    val updatedTokens = existingFcmTokens.toMutableList().apply { add(currentFcmToken) }
-                    userDocRef.update("userFcmCode", updatedTokens).await()
-                    Log.d("GetUserModel", "FCM 토큰 자동로그인 중 추가됨")
-                } else {
-                    Log.d("GetUserModel", "FCM 토큰 이미 존재")
-                }
-
-                // 최신 상태에서 다시 한 번 로드해도 되고, 기존 userVO를 써도 무방
-                return userVO.toUserModel(documentSnapshot.id)
-            } else {
-                throw IllegalArgumentException("해당 userDocumentId에 해당하는 문서가 없습니다: $userDocumentId")
+            if (!documentSnapshot.exists()) {
+                throw IllegalArgumentException("해당 문서 없음: $userDocumentId")
             }
+
+            val userVO = documentSnapshot.toObject(UserVO::class.java)!!
+            val existingFcmTokens = documentSnapshot.get("userFcmCode") as? List<String> ?: emptyList()
+
+            if (!existingFcmTokens.contains(currentFcmToken)) {
+                userDocRef.update("userFcmCode", FieldValue.arrayUnion(currentFcmToken)).await()
+                Log.d("GetUserModel", "FCM 토큰 자동로그인 중 추가됨")
+            } else {
+                Log.d("GetUserModel", "FCM 토큰 이미 존재")
+            }
+
+            return@coroutineScope userVO.toUserModel(documentSnapshot.id)
+
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             Log.e("GetUserModel", "유저 조회 실패", e)
             throw e
         }
     }
+
 
 
 }

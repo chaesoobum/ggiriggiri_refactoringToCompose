@@ -6,10 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.friends.ggiriggiri.screen.viewmodel.memories.ViewOneQuestionViewModel
 
 @Composable
 fun AnswersList(
-    imageUrl: String,
+    viewModel: ViewOneQuestionViewModel,
     isLoading: Boolean,
 ) {
     Column(
@@ -19,11 +20,18 @@ fun AnswersList(
     ) {
         if (isLoading) {
             repeat(5) {
-                AnswersListItem(imageUrl, isLoading)
+
+
             }
         } else {
-            repeat(20) {
-                AnswersListItem(imageUrl, isLoading)
+            viewModel.answerDisplayModelList.value.forEach{
+                AnswersListItem(
+                    name = it!!.userName,
+                    answerContent = it!!.answerContent,
+                    profile = it!!.userProfileImage,
+                    time = it!!.answerResponseTime.toString(),
+                    isLoading
+                )
             }
         }
     }
