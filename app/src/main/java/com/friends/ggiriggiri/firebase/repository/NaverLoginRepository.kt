@@ -30,8 +30,8 @@ class NaverLoginRepository @Inject constructor(
         onSuccess: (token: String, userInfo: NaverUserInfo) -> Unit,
         onFailure: (Throwable) -> Unit,
     ) {
-//        // 테스트용 로그아웃 (나중에 제거 가능)
-//        NaverIdLoginSDK.logout()
+        // 테스트용 로그아웃 (나중에 제거 가능)
+        NaverIdLoginSDK.logout()
 
         logout{
             NaverIdLoginSDK.authenticate(activity, object : OAuthLoginCallback {

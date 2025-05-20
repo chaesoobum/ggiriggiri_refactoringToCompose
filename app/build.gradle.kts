@@ -15,12 +15,21 @@ android {
         applicationId = "com.friends.ggiriggiri"
         minSdk = 25
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 22
+        versionName = "1.22.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("keystore.jks") // Keystore 파일 경로
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "990602"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "my-key-alias"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "990602"
         }
     }
 
@@ -31,6 +40,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release") // 서명 설정 추가
         }
     }
     compileOptions {

@@ -7,8 +7,11 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
@@ -18,7 +21,7 @@ class LoginAndRegisterRepository @Inject constructor(
     val storage: FirebaseStorage
 ) {
     //로그인하거나 가입하거나
-    suspend fun loginOrRegister(userModel: UserModel): UserModel {
+    suspend fun register(userModel: UserModel): UserModel? {
         try {
             val userCollection = firestore.collection("_users")
 
@@ -39,6 +42,32 @@ class LoginAndRegisterRepository @Inject constructor(
                 Log.e("LoginOrRegister", documentRef.id)
                 newUserVO.toUserModel(documentRef.id) // 생성된 문서 ID를 넘겨서 UserModel 변환
             } else {
+                // 이미 회원이면 null반환
+                null
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException) {
+                throw e
+            } else {
+                Log.e("LoginOrRegister", "로그인 또는 회원가입 실패", e)
+                throw e
+            }
+        }
+    }
+
+    //유저가 있으면 로그인하고 없으면 유저에게 알린다
+    suspend fun userExistCheck(userModel:UserModel): UserModel?{
+        try {
+            val userCollection = firestore.collection("_users")
+
+            val querySnapshot = userCollection
+                .whereEqualTo("userId", userModel.userId)
+                .get()
+                .await()
+
+            return if (querySnapshot.isEmpty) {
+                null
+            }else{
                 // 이미 회원이면 첫 번째 문서 가져오기
                 val document = querySnapshot.documents.first()
                 val documentId = document.id
@@ -66,11 +95,11 @@ class LoginAndRegisterRepository @Inject constructor(
                 val updatedUserVO = updatedDocument.toObject(UserVO::class.java)!!
                 return updatedUserVO.toUserModel(documentId)
             }
-        } catch (e: Exception) {
+        }catch (e: Exception){
             if (e is CancellationException) {
                 throw e
             } else {
-                Log.e("LoginOrRegister", "로그인 또는 회원가입 실패", e)
+                Log.e("LoginOrRegister", "로그인조회실패", e)
                 throw e
             }
         }

@@ -27,6 +27,14 @@ enum class MainScreenName{
     SCREEN_MEMBER_LIST_DETAIL,
     //요청에 답하는 화면
     SCREEN_DO_RESPONSE,
+
+    //새로운 화면
+    //로그인화면
+    LOGIN,
+    //회원가입1화면
+    REGISTER1,
+    //회원가입2화면
+    REGISTER2
 }
 
 sealed class Screen(val route: String, val label: String, val icon: Int) {

@@ -100,7 +100,7 @@ fun MemoriesContent(
         onRefresh = {
             coroutineScope.launch {
                 isRefreshing = true
-                viewModel.getListInfo()
+                viewModel.getListInfo(forceReload = true) // 강제 새로고침
                 isRefreshing = false
             }
         }

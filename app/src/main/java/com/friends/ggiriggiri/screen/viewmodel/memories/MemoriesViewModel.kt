@@ -36,24 +36,28 @@ class MemoriesViewModel @Inject constructor(
     private var _listForQuestionsListScreen = mutableStateOf<List<List<String>>>(emptyList())
     val listForQuestionsListScreen: State<List<List<String>>> = _listForQuestionsListScreen
 
+    // 처음 한 번만 로드 여부 체크
+    // 변수의 읽기는 외부에서 허용하지만, 쓰기(수정)는 내부에서만 가능
+    var hasLoadedOnce = false
+    private set
 
-    fun getListInfo() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            val requestsList = async (Dispatchers.IO){
-                memoriesService.getRequestInfoWithGroupDocumentID(
-                    friendsApplication.loginUserModel.userGroupDocumentID
-                )
-            }
-            val questionsList = async (Dispatchers.IO){
-                memoriesService.getQuestionsInfoWithGroupName(
-                    friendsApplication.loginUserModel.userGroupDocumentID
-                )
-            }
-            _listForRequestsListScreen.value = requestsList.await()
-            _listForQuestionsListScreen.value = questionsList.await()
-            _listForQuestionsListScreen.value = _listForQuestionsListScreen.value.sortedBy { it[0].toInt() }
-            _isLoading.value = false
-        }
+
+    suspend fun getListInfo(forceReload: Boolean = false) {
+        // 이미 불러왔고 강제 새로고침이 아니면 무시
+        if (hasLoadedOnce && !forceReload) return
+
+        _isLoading.value = true
+        val requestsList = memoriesService.getRequestInfoWithGroupDocumentID(
+            friendsApplication.loginUserModel.userGroupDocumentID
+        )
+        val questionsList = memoriesService.getQuestionsInfoWithGroupName(
+            friendsApplication.loginUserModel.userGroupDocumentID
+        )
+
+        _listForRequestsListScreen.value = requestsList
+        _listForQuestionsListScreen.value = questionsList.sortedBy { it[0].toInt() }
+
+        _isLoading.value = false
+        hasLoadedOnce = true // 최초 로드 완료 표시
     }
 }

@@ -3,131 +3,138 @@ package com.friends.ggiriggiri.screen.viewmodel.userlogin
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.provider.ContactsContract
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.FriendsApplication
-import com.friends.ggiriggiri.firebase.socialdataclass.GoogleUserInfo
+import com.friends.ggiriggiri.MainActivity
 import com.friends.ggiriggiri.firebase.model.UserModel
-import com.friends.ggiriggiri.internaldata.PreferenceManager
 import com.friends.ggiriggiri.firebase.service.GoogleLoginService
 import com.friends.ggiriggiri.firebase.service.KakaoLoginService
 import com.friends.ggiriggiri.firebase.service.LoginAndRegisterService
 import com.friends.ggiriggiri.firebase.service.NaverLoginService
-import com.friends.ggiriggiri.firebase.socialdataclass.KakaoUserInfo
-import com.friends.ggiriggiri.util.MainScreenName
+import com.friends.ggiriggiri.firebase.socialdataclass.GoogleUserInfo
+import com.friends.ggiriggiri.internaldata.PreferenceManager
+import com.friends.ggiriggiri.screen.viewmodel.userlogin.UserLoginViewModel.LoginNavigationEvent
 import com.friends.ggiriggiri.util.UserSocialLoginState
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class UserLoginViewModel @Inject constructor(
+class RegisterStep2ViewModel @Inject constructor(
     @ApplicationContext context: Context,
     val kakaoLoginService: KakaoLoginService,
     val naverLoginService: NaverLoginService,
     val googleLoginService: GoogleLoginService,
     val loginAndRegisterService: LoginAndRegisterService,
     val preferenceManager: PreferenceManager,
-) : ViewModel() {
+): ViewModel() {
     val friendsApplication = context as FriendsApplication
 
+    // 소셜 로그인 다이얼로그
+    val showSocialLoginDialog = mutableStateOf(false)
+    // 소셜 로그인 다이얼로그 텍스트
+    private val _socialLoginDialogText = mutableStateOf("")
+    val socialLoginDialogText: State<String> = _socialLoginDialogText
+
+    //이미존재하는 소셜계정
+    val showAccountExistAlready = mutableStateOf(false)
+
     // 프로그래스바
-    val isLoading = MutableStateFlow(false) // 로딩 상태
+    val isLoading = MutableStateFlow(false)
 
-    // 로그인 실패 다이얼로그 표시
-    val showLoginFailDialog = mutableStateOf(false)
-
-    // 화면이동
-    sealed class LoginNavigationEvent {
-        object NavigateToGroup : LoginNavigationEvent()
-        object NavigateToMain : LoginNavigationEvent()
+    fun resetSocialLoginDialogText(){
+        _socialLoginDialogText.value = ""
     }
 
-    val loginNavigationEvent = MutableSharedFlow<LoginNavigationEvent>()
+    // 다음 단계로
+    val loginNavigationEvent = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
 
-    //로그인 유저 불러오기
-    suspend fun loadUserModel(userDocumentId: String): UserModel {
-        return loginAndRegisterService.getUserModelByDocumentId(userDocumentId)
+
+    fun connectToKakao(){
+        _socialLoginDialogText.value = UserSocialLoginState.KAKAO.str
+        showSocialLoginDialog.value = true
+    }
+    fun connectToNaver(){
+        _socialLoginDialogText.value = UserSocialLoginState.NAVER.str
+        showSocialLoginDialog.value = true
+    }
+    fun connectToGoogle(){
+        _socialLoginDialogText.value = UserSocialLoginState.GOOGLE.str
+        showSocialLoginDialog.value = true
     }
 
-    fun kakaoLogin(activity: Activity) {
+    fun kakaoRegisterProcess(activity: Activity,nickname: String){
         viewModelScope.launch {
             isLoading.value = true
             try {
                 val (token, kakaoUserInfo) = kakaoLoginService.loginWithKakaoTalkSuspend(activity)
                 val userModel = UserModel().apply {
                     userId = kakaoUserInfo.email ?: "unknown"
-                    userName = kakaoUserInfo.nickname ?: "unknown"
+                    userName = nickname
                     userProfileImage = kakaoUserInfo.profileImageUrl ?: "unknown"
                     userSocialLogin = UserSocialLoginState.KAKAO
                 }
-                val userModelFromDB = loginAndRegisterService.userExistCheck(userModel)
+                val newUserModel = loginAndRegisterService.register(userModel)
 
-                // 로그인 성공
-                if (userModelFromDB != null) {
-
+                //이미존재하는소셜계정
+                if (newUserModel == null){
+                    showAccountExistAlready.value = true
+                    isLoading.value = false
+                }else{
+                    // 회원가입 후 네비게이션
                     onLoginSuccess(
-                        userModelFromDB,
+                        newUserModel,
                         UserSocialLoginState.KAKAO,
                         token.toString()
                     )
-
-                } else {// 유저 없음 - 알림 표시
-                    showLoginFailDialog.value = true
-                    isLoading.value = false
                 }
-
-            } catch (e: Exception) {
+            }catch (e: Exception) {
                 Log.e("kakaoLogin", "로그인 실패", e)
                 isLoading.value = false
             }
+
         }
     }
 
-    fun NaverLogin(activity: Activity) {
+    fun naverRegisterProcess(activity: Activity,nickname: String){
         viewModelScope.launch {
             isLoading.value = true
             try {
                 val (token, naverUserInfo) = naverLoginService.loginWithNaverTalkSuspend(activity)
                 val userModel = UserModel()
                 userModel.userId = naverUserInfo.email ?: "unknown"
-                userModel.userName = naverUserInfo.name ?: "unknown"
+                userModel.userName = nickname
                 userModel.userProfileImage = naverUserInfo.profileImageUrl ?: "unknown"
                 userModel.userSocialLogin = UserSocialLoginState.NAVER
 
-                val userModelFromDB = loginAndRegisterService.userExistCheck(userModel)
+                val newUserModel = loginAndRegisterService.register(userModel)
 
-                // 로그인 성공
-                if (userModelFromDB != null) {
-
+                //이미존재하는소셜계정
+                if (newUserModel == null){
+                    showAccountExistAlready.value = true
+                    isLoading.value = false
+                }else{
+                    // 회원가입 후 네비게이션
                     onLoginSuccess(
-                        userModelFromDB,
+                        newUserModel,
                         UserSocialLoginState.NAVER,
                         token.toString()
                     )
-
-                } else {// 유저 없음 - 알림 표시
-                    showLoginFailDialog.value = true
-                    isLoading.value = false
                 }
-
-            } catch (e: Exception) {
-                Log.e("NaverLogin", "로그인 실패", e)
+            }catch (e: Exception) {
+                Log.e("kakaoLogin", "로그인 실패", e)
                 isLoading.value = false
             }
+
         }
     }
 
@@ -141,7 +148,7 @@ class UserLoginViewModel @Inject constructor(
         }
     }
 
-    fun handleGoogleSignInResult(result: Intent?) {
+    fun handleGoogleSignInResult(result: Intent?,nickname: String) {
         isLoading.value = true
         val task = GoogleSignIn.getSignedInAccountFromIntent(result)
         try {
@@ -155,27 +162,25 @@ class UserLoginViewModel @Inject constructor(
 
                 val userModel = UserModel()
                 userModel.userId = googleUserInfo.email ?: "unknown"
-                userModel.userName = googleUserInfo.name ?: "unknown"
+                userModel.userName = nickname
                 userModel.userProfileImage = googleUserInfo.profileImageUrl ?: "unknown"
                 userModel.userSocialLogin = UserSocialLoginState.GOOGLE
 
 
                 viewModelScope.launch {
+                    val newUserModel = loginAndRegisterService.register(userModel)
 
-                    val userModelFromDB = loginAndRegisterService.userExistCheck(userModel)
-
-                    // 로그인 성공
-                    if (userModelFromDB != null) {
-
+                    //이미존재하는소셜계정
+                    if (newUserModel == null){
+                        showAccountExistAlready.value = true
+                        isLoading.value = false
+                    }else{
+                        // 회원가입 성공
                         onLoginSuccess(
-                            userModelFromDB,
+                            newUserModel,
                             UserSocialLoginState.GOOGLE,
                             account.idToken.toString()
                         )
-
-                    } else { // 유저 없음 - 알림 표시
-                        showLoginFailDialog.value = true
-                        isLoading.value = false
                     }
                 }
             } else {
@@ -200,11 +205,9 @@ class UserLoginViewModel @Inject constructor(
         )
         friendsApplication.loginUserModel = userModelFromDB
 
+        //처음가입유저는 소속그룹이 없기때문에 그룹생성화면으로간다
         if (userModelFromDB.userGroupDocumentID.isEmpty()) {
-            loginNavigationEvent.emit(LoginNavigationEvent.NavigateToGroup)
-        } else {
-            preferenceManager.changeIsGroupInTrue()
-            loginNavigationEvent.emit(LoginNavigationEvent.NavigateToMain)
+            loginNavigationEvent.emit(Unit)
         }
     }
 }

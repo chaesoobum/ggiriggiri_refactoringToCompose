@@ -34,7 +34,8 @@ fun QuestionText(
     Row (
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
+            .wrapContentHeight()
+            .padding(start = 10.dp, end = 10.dp),
         horizontalArrangement = Arrangement.Center
     ){
         if (text == null) {

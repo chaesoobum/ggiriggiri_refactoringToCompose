@@ -272,23 +272,25 @@ class HomeViewModel @Inject constructor(
         observePushQuestionEvent()
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private fun observePushRequestEvent() {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch {
             PushEventBus.refreshRequestEvent.collect {
                 clearHomeState()
-                getRequestStateInGroup()
+                withContext(Dispatchers.IO) {
+                    getRequestStateInGroup()
+                }
             }
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private fun observePushQuestionEvent() {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch {
             PushEventBus.refreshQuestionEvent.collect {
                 clearAnswerState()
-                getQuestionModel()
-                getUserAnswerState()
+                withContext(Dispatchers.IO) {
+                    getQuestionModel()
+                    getUserAnswerState()
+                }
             }
         }
     }
