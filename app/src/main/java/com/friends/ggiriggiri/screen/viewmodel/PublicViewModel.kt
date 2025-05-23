@@ -14,9 +14,9 @@ import javax.inject.Inject
 class PublicViewModel @Inject constructor() : ViewModel() {
 
     //그룹원 이미지 리스트전달
-    private var _memberImageUrls = mutableStateOf<List<Pair<String, String>>>(emptyList())
-    val memberImageUrls: State<List<Pair<String, String>>> = _memberImageUrls
-    fun setMemberImageUrls(memberImageUrls:List<Pair<String, String>>){
+    private var _memberImageUrls = mutableStateOf<List<String>>(emptyList())
+    val memberImageUrls: State<List<String>> = _memberImageUrls
+    fun setMemberImageUrls(memberImageUrls:List<String>){
         _memberImageUrls.value = memberImageUrls
     }
     fun deleteMemberImageUrls(){

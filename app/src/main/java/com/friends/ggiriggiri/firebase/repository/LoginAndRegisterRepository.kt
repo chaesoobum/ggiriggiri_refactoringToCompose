@@ -20,7 +20,7 @@ class LoginAndRegisterRepository @Inject constructor(
     val firestore: FirebaseFirestore,
     val storage: FirebaseStorage
 ) {
-    //가입
+    //로그인하거나 가입하거나
     suspend fun register(userModel: UserModel): UserModel? {
         try {
             val userCollection = firestore.collection("_users")
@@ -32,7 +32,7 @@ class LoginAndRegisterRepository @Inject constructor(
             return if (querySnapshot.isEmpty) {
                 //fcm토큰을 추가
                 val fcmToken = FirebaseMessaging.getInstance().token.await()
-                userModel.userFcmCode = fcmToken
+                userModel.userFcmCode = mutableListOf(fcmToken)
 
                 // 회원이 없으면 새로 등록
                 val newUserVO = userModel.toUserVO()
@@ -74,10 +74,13 @@ class LoginAndRegisterRepository @Inject constructor(
                 // 현재 로그인 기기의 FCM 토큰 받아오기
                 val currentFcmToken = FirebaseMessaging.getInstance().token.await()
                 // 기존 userFcmCode 배열 가져오기 (nullable 방지)
-                val existingFcmToken = document.getString("userFcmCode")
+                val existingFcmTokens = document.get("userFcmCode") as? List<String> ?: emptyList()
                 // FCM 토큰이 없으면 추가
-                if (existingFcmToken != currentFcmToken) {
-                    val updatedTokens = currentFcmToken
+                if (!existingFcmTokens.contains(currentFcmToken)) {
+                    val updatedTokens = existingFcmTokens.toMutableList().apply {
+                        add(currentFcmToken)
+                    }
+
                     // firestore 업데이트 먼저 수행
                     userCollection.document(documentId)
                         .update("userFcmCode", updatedTokens)
@@ -117,13 +120,10 @@ class LoginAndRegisterRepository @Inject constructor(
             }
 
             val userVO = documentSnapshot.toObject(UserVO::class.java)!!
-            val existingFcmTokens = documentSnapshot.getString("userFcmCode")
+            val existingFcmTokens = documentSnapshot.get("userFcmCode") as? List<String> ?: emptyList()
 
-            if (existingFcmTokens!=currentFcmToken) {
-                userDocRef
-                    .update("userFcmCode", currentFcmToken)
-                    .await() // ← 중요: 먼저 업데이트 후에 다시 가져오기
-
+            if (!existingFcmTokens.contains(currentFcmToken)) {
+                userDocRef.update("userFcmCode", FieldValue.arrayUnion(currentFcmToken)).await()
                 Log.d("GetUserModel", "FCM 토큰 자동로그인 중 추가됨")
             } else {
                 Log.d("GetUserModel", "FCM 토큰 이미 존재")

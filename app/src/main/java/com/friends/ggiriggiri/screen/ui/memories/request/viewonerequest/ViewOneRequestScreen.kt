@@ -68,8 +68,7 @@ fun ViewOneRequestContent(
                     }
                 }
             )
-        },
-        containerColor = Color.White,
+        }
 
     ) { innerPadding ->
         Box(

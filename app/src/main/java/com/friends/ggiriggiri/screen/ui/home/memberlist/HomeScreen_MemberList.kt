@@ -58,7 +58,6 @@ fun UserMain_MemberList(
 ) {
 
     val isLoading = viewModel.memberImageUrls.value.isEmpty()
-
     if (isLoading ==false){
         LaunchedEffect(Unit) {
             pvm.setMemberImageUrls(viewModel.memberImageUrls.value)
@@ -66,7 +65,7 @@ fun UserMain_MemberList(
     }
 
     //멤버가 몇명인지 가져오는데 오래걸린다 일단 4명으로 표기
-    val displayList = if (isLoading) List(4) { "" to "" } else viewModel.memberImageUrls.value.take(4)
+    val displayList = if (isLoading) List(4) { "" } else viewModel.memberImageUrls.value.take(4)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,8 +89,7 @@ fun UserMain_MemberList(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    displayList.forEach { pair->
-                        val imageUrl = pair.second
+                    displayList.forEach { imageUrl ->
                         Box(
                             modifier = Modifier.weight(1f),
                             contentAlignment = Alignment.Center

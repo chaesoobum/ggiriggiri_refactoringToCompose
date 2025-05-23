@@ -2,128 +2,62 @@ package com.friends.ggiriggiri.screen.viewmodel.memories
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.*
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.friends.ggiriggiri.FriendsApplication
-import com.friends.ggiriggiri.firebase.model.QuestionInfo
-import com.friends.ggiriggiri.firebase.model.RequestInfo
+import com.friends.ggiriggiri.firebase.model.QuestionListModel
 import com.friends.ggiriggiri.firebase.service.MemoriesService
-import com.google.firebase.firestore.DocumentSnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MemoriesViewModel @Inject constructor(
     @ApplicationContext context: Context,
-    private val memoriesService: MemoriesService
+    val memoriesService: MemoriesService
 ) : ViewModel() {
+    val friendsApplication = context as FriendsApplication
 
-    val app = context as FriendsApplication
+    //처음로딩될때 스캘레톤을 띄우기위한 변수
+    private val _isLoading = mutableStateOf(true) // 기본값 true: 처음 들어왔을 땐 로딩 중
+    val isLoading: State<Boolean> = _isLoading
 
-    // ------------------ 요청 (RequestInfo) ------------------
+    // 요청들 리스트를 갱신할 변수와 함수
+    private var _listForRequestsListScreen = mutableStateOf<List<List<String>>>(emptyList())
+    val listForRequestsListScreen: State<List<List<String>>> = _listForRequestsListScreen
 
-    private val _requestList = mutableStateListOf<RequestInfo>()
-    val requestList: List<RequestInfo> = _requestList
+    //오늘의 질문 리스트를 갱신할 변수와 함수
+    private var _listForQuestionsListScreen = mutableStateOf<List<List<String>>>(emptyList())
+    val listForQuestionsListScreen: State<List<List<String>>> = _listForQuestionsListScreen
 
-    private var lastVisibleRequestDoc: DocumentSnapshot? = null
-    var isLoadingRequests by mutableStateOf(false)
-        private set
-    var isEndReachedRequests by mutableStateOf(false)
-        private set
+    // 처음 한 번만 로드 여부 체크
+    // 변수의 읽기는 외부에서 허용하지만, 쓰기(수정)는 내부에서만 가능
+    var hasLoadedOnce = false
+    private set
 
-    fun loadNextRequestPage(pageSize: Int = 7) {
-        if (isLoadingRequests || isEndReachedRequests) return
 
-        viewModelScope.launch {
-            isLoadingRequests = true
+    suspend fun getListInfo(forceReload: Boolean = false) {
+        // 이미 불러왔고 강제 새로고침이 아니면 무시
+        if (hasLoadedOnce && !forceReload) return
 
-            val (newItems, lastDoc) = memoriesService.getRequestInfoPage(
-                groupDocumentId = app.loginUserModel.userGroupDocumentID,
-                lastVisibleDocument = lastVisibleRequestDoc,
-                pageSize = pageSize
-            )
+        _isLoading.value = true
+        val requestsList = memoriesService.getRequestInfoWithGroupDocumentID(
+            friendsApplication.loginUserModel.userGroupDocumentID
+        )
+        val questionsList = memoriesService.getQuestionsInfoWithGroupName(
+            friendsApplication.loginUserModel.userGroupDocumentID
+        )
 
-            // 새로운 데이터 추가
-            _requestList.addAll(newItems)
-            lastVisibleRequestDoc = lastDoc
+        _listForRequestsListScreen.value = requestsList
+        _listForQuestionsListScreen.value = questionsList.sortedBy { it[0].toInt() }
 
-            //    가져온 데이터가 pageSize보다 작으면 더 이상 없음
-            isEndReachedRequests = newItems.size < pageSize
-
-            isLoadingRequests = false
-
-            Log.d("loadNextRequestPage", "로딩됨: ${_requestList.size}, isEnd: $isEndReachedRequests")
-        }
-    }
-
-    // ------------------ 질문 (QuestionInfo) ------------------
-
-    private val _questionList = mutableStateListOf<QuestionInfo>()
-    val questionList: List<QuestionInfo> = _questionList
-
-    private var nextStartAfterQuestionNumber: Long? = null
-    var isLoadingQuestions by mutableStateOf(false)
-        private set
-    var isEndReachedQuestions by mutableStateOf(false)
-        private set
-
-    //그룹 생성날짜와 매핑
-    var maxQuestionCount = 0
-
-    fun loadNextQuestionPage(pageSize: Int = 10) {
-        if (isLoadingQuestions || isEndReachedQuestions) return
-
-        // 불러올 수 있는 최대 개수 도달 시 바로 return
-        if (_questionList.size >= maxQuestionCount) {
-            isEndReachedQuestions = true
-            return
-        }
-
-        viewModelScope.launch {
-            isLoadingQuestions = true
-
-            val (newItems, nextStart) = memoriesService.getQuestionListPage(
-                startAfterNumber = nextStartAfterQuestionNumber,
-                pageSize = pageSize
-            )
-
-            val remaining = maxQuestionCount - _questionList.size
-            val limitedItems = newItems.take(remaining)
-
-            _questionList.addAll(limitedItems)
-            nextStartAfterQuestionNumber = nextStart
-
-            // 종료 처리
-            if (_questionList.size >= maxQuestionCount || limitedItems.size < pageSize) {
-                isEndReachedQuestions = true
-            }
-
-            Log.d(
-                "loadNextQuestionPage",
-                "로딩됨: ${_questionList.size}, isEnd: $isEndReachedQuestions"
-            )
-
-            isLoadingQuestions = false
-        }
-    }
-
-    // ------------------ 초기 로딩 시 호출 ------------------
-
-    fun loadFirstPagesIfNeeded() {
-        viewModelScope.launch {
-            //maxQuestionCount를 먼저 설정한다
-            val setMaxQuestionCount = async(Dispatchers.IO) {
-                maxQuestionCount = memoriesService.getGroupDayFromCreate(app.loginUserModel.userGroupDocumentID)
-                        .toInt()
-            }
-            setMaxQuestionCount.join()
-            if (_requestList.isEmpty()) loadNextRequestPage()
-            if (_questionList.isEmpty()) loadNextQuestionPage()
-        }
+        _isLoading.value = false
+        hasLoadedOnce = true // 최초 로드 완료 표시
     }
 }

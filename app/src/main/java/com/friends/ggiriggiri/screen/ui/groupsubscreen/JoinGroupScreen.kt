@@ -1,12 +1,9 @@
 package com.friends.ggiriggiri.screen.ui.groupsubscreen
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
@@ -14,7 +11,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -56,11 +52,9 @@ fun JoinGroupContent(viewModel: JoinGroupViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
             .pointerInput(Unit) {
                 detectTapGestures { focusManager.clearFocus() }
             }
-            .verticalScroll(rememberScrollState())
     ) {
         OutlinedTextField(
             textFieldValue = viewModel.textFieldJoinGroupCodeValue,

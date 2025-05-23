@@ -88,8 +88,7 @@ fun UserGroupScreen(
                                 .height(5.dp),
                             color = selectedColor
                         )
-                    },
-                    containerColor = Color.White,
+                    }
                 ) {
                     groupTabs.forEachIndexed { index, group ->
                         val selected = pagerState.currentPage == index
@@ -119,8 +118,7 @@ fun UserGroupScreen(
                     }
                 }
             }
-        },
-        containerColor = Color.White
+        }
     ) { innerPadding ->
         HorizontalPager(
             state = pagerState,

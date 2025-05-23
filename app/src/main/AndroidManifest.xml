@@ -61,10 +61,6 @@
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="kakao9b56cf2a46f31844633c56522029525c" />
-
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="@string/default_notification_channel_id" />
     </application>
 
 </manifest>

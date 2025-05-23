@@ -10,7 +10,7 @@ class UserVO {
     var userName: String = ""
     var userState: Int = 0
     var userJoinTime: Long = 0L
-    var userFcmCode: String = ""
+    var userFcmCode: List<String> = emptyList()
     var userProfileImage: String = ""
     var userPhoneNumber: String = ""
     var userGroupDocumentID: String = ""
@@ -33,7 +33,7 @@ class UserVO {
         }
 
         userModel.userJoinTime = userJoinTime
-        userModel.userFcmCode = userFcmCode
+        userModel.userFcmCode = userFcmCode.toMutableList()
         userModel.userProfileImage = userProfileImage
         userModel.userPhoneNumber = userPhoneNumber
         userModel.userGroupDocumentID = userGroupDocumentID

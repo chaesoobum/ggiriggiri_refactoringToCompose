@@ -13,16 +13,15 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class HomeRepository @Inject constructor(
     val firestore: FirebaseFirestore
 ) {
     //그룹원들의 이미지들을 가져오는 함수
-    suspend fun gettingUserProfileImageWithName(groupDocumentId: String): List<Pair<String, String>> = coroutineScope {
+    suspend fun gettingUserProfileImage(groupDocumentId: String): List<String> = coroutineScope {
         try {
-            val startTime = System.nanoTime()
+
             val groupSnapshot = firestore.collection("_groups")
                 .document(groupDocumentId)
                 .get()
@@ -40,7 +39,7 @@ class HomeRepository @Inject constructor(
 
             val chunks = groupUserDocumentIDs.chunked(10)
 
-            // 병렬 처리로 _users 문서 가져오기
+            // 병렬 처리
             val deferredList = chunks.map { chunk ->
                 async {
                     firestore.collection("_users")
@@ -52,57 +51,23 @@ class HomeRepository @Inject constructor(
 
             val querySnapshots = deferredList.awaitAll()
 
-            val userProfiles = mutableListOf<Pair<String, String>>() // Pair<userName, userProfileImage>
+            val userProfileImages = mutableListOf<String>()
 
             for (querySnapshot in querySnapshots) {
                 for (document in querySnapshot.documents) {
-                    val userName = document.getString("userName") ?: continue
-                    val userProfileImage = document.getString("userProfileImage") ?: continue
-                    userProfiles.add(Pair(userName, userProfileImage))
+                    val profileImage = document.getString("userProfileImage")
+                    if (!profileImage.isNullOrEmpty()) {
+                        userProfileImages.add(profileImage)
+                    }
                 }
             }
-//            val endTime = System.nanoTime()
-//            val durationMillis = TimeUnit.NANOSECONDS.toMillis(endTime - startTime)
-//            Log.d("FirestoreProfileFetch", "소요 시간: $durationMillis ms")
 
-            userProfiles
+            userProfileImages
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
         }
     }
-
-    suspend fun gettingUserProfileImageWithName2(groupDocumentId: String): List<Pair<String, String>>{
-        try {
-            val startTime = System.nanoTime()
-            val groupSnapshot = firestore.collection("_groups")
-                .document(groupDocumentId)
-                .get()
-                .await()
-            val groupUserDocumentIDs = groupSnapshot.get("groupUserDocumentID") as? List<String> ?: emptyList()
-
-            val userProfiles = mutableListOf<Pair<String, String>>()
-
-            groupUserDocumentIDs.forEach {
-                val snapShot = firestore.collection("_users")
-                    .document(it)
-                    .get()
-                    .await()
-                val userName = snapShot.getString("userName") ?: ""
-                val userProfileImage = snapShot.getString("userProfileImage") ?: ""
-                userProfiles.add(Pair(userName, userProfileImage))
-            }
-//            val endTime = System.nanoTime()
-//            val durationMillis = TimeUnit.NANOSECONDS.toMillis(endTime - startTime)
-//            Log.d("FirestoreProfileFetch", "소요 시간: $durationMillis ms")
-
-            return userProfiles
-        }catch (e: Exception){
-            e.printStackTrace()
-            return emptyList()
-        }
-    }
-
 
     //그룹명을 가져온다
     suspend fun gettingGroupName(groupDocumentId: String): String {

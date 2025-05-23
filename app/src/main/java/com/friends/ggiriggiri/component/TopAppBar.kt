@@ -39,12 +39,6 @@ fun TopAppBar(
         CenterAlignedTopAppBar(
             modifier = Modifier
                 .background(Color.White),
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = Color.White,
-                titleContentColor = Color.Black,
-                navigationIconContentColor = Color.Black,
-                actionIconContentColor = Color.Black
-            ),
             // 타이틀
             title = {
                 Text(
