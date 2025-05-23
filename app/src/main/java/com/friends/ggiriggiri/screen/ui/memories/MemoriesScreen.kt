@@ -107,74 +107,69 @@ fun MemoriesContent(
     )
 
     Scaffold(
+        containerColor = Color.White,
         topBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .background(Color.White)
-            ) {
-                TopAppBar(
-                    title = "추억들",
-                    isDivider = false,
-                    menuItems = {
-                        CustomIconButton(
-                            icon = ImageVector.vectorResource(R.drawable.notifications_24px),
-                            iconButtonOnClick = {
-                                viewModel.friendsApplication.navHostController.apply {
-                                    navigate(MainScreenName.SCREEN_NOTIFICATION.name)
-                                }
+            TopAppBar(
+                title = "추억들",
+                isDivider = false,
+                menuItems = {
+                    CustomIconButton(
+                        icon = ImageVector.vectorResource(R.drawable.notifications_24px),
+                        iconButtonOnClick = {
+                            viewModel.friendsApplication.navHostController.apply {
+                                navigate(MainScreenName.SCREEN_NOTIFICATION.name)
                             }
-                        )
-                    },
-                )
-                TabRow(
-                    selectedTabIndex = pagerState.currentPage,
-                    indicator = { tabPositions ->
-                        TabRowDefaults.Indicator(
-                            modifier = Modifier
-                                .tabIndicatorOffset(tabPositions[pagerState.currentPage])
-                                .height(5.dp),
-                            color = selectedColor
-                        )
-                    }
-                ) {
-                    memoriesTabs.forEachIndexed { index, group ->
-                        val selected = pagerState.currentPage == index
-                        Tab(
-                            selected = selected,
-                            onClick = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(index)
-                                }
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(id = group.icon),
-                                    contentDescription = null,
-                                    tint = if (selected) Color(0xFF000000) else Color.Gray
-                                )
-                            },
-                            text = {
-                                Text(
-                                    text = group.label,
-                                    color = if (selected) Color(0xFF000000) else Color.Gray
-                                )
-                            },
-                            selectedContentColor = selectedColor,
-                            unselectedContentColor = Color.Gray
-                        )
-                    }
-                }
-            }
+                        }
+                    )
+                },
+            )
         }
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .pullRefresh(pullRefreshState)
                 .fillMaxSize()
         ) {
+            TabRow(
+                selectedTabIndex = pagerState.currentPage,
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        modifier = Modifier
+                            .tabIndicatorOffset(tabPositions[pagerState.currentPage])
+                            .height(5.dp),
+                        color = selectedColor
+                    )
+                },
+                containerColor = Color.White
+            ) {
+                memoriesTabs.forEachIndexed { index, group ->
+                    val selected = pagerState.currentPage == index
+                    Tab(
+                        selected = selected,
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = group.icon),
+                                contentDescription = null,
+                                tint = if (selected) Color(0xFF000000) else Color.Gray
+                            )
+                        },
+                        text = {
+                            Text(
+                                text = group.label,
+                                color = if (selected) Color(0xFF000000) else Color.Gray
+                            )
+                        },
+                        selectedContentColor = selectedColor,
+                        unselectedContentColor = Color.Gray
+                    )
+                }
+            }
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
@@ -187,6 +182,7 @@ fun MemoriesContent(
                         isRefreshing || isLoading,
                         navHostController
                     )
+
                     Memories.Requests -> RequestListScreen(
                         viewModel,
                         isRefreshing || isLoading,
@@ -195,11 +191,11 @@ fun MemoriesContent(
             }
 
             // 새로고침 인디케이터
-            PullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
+//            PullRefreshIndicator(
+//                refreshing = isRefreshing,
+//                state = pullRefreshState,
+//                modifier = Modifier.align(Alignment.TopCenter as Alignment.Horizontal)
+//            )
 
         }
 

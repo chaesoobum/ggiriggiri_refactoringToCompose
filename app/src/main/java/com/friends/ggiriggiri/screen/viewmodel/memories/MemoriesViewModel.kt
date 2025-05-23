@@ -41,7 +41,8 @@ class MemoriesViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             val requestsList = async (Dispatchers.IO){
-                memoriesService.getRequestInfoWithGroupDocumentID(
+                delay(5000)
+                _listForRequestsListScreen.value = memoriesService.getRequestInfoWithGroupDocumentID(
                     friendsApplication.loginUserModel.userGroupDocumentID
                 )
             }
@@ -50,7 +51,7 @@ class MemoriesViewModel @Inject constructor(
                     friendsApplication.loginUserModel.userGroupDocumentID
                 )
             }
-            _listForRequestsListScreen.value = requestsList.await()
+            requestsList.join()
             _listForQuestionsListScreen.value = questionsList.await()
             _listForQuestionsListScreen.value = _listForQuestionsListScreen.value.sortedBy { it[0].toInt() }
             _isLoading.value = false
