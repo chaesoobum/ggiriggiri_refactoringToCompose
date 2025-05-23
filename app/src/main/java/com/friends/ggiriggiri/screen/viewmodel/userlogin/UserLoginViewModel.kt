@@ -17,20 +17,15 @@ import com.friends.ggiriggiri.firebase.service.GoogleLoginService
 import com.friends.ggiriggiri.firebase.service.KakaoLoginService
 import com.friends.ggiriggiri.firebase.service.LoginAndRegisterService
 import com.friends.ggiriggiri.firebase.service.NaverLoginService
-import com.friends.ggiriggiri.firebase.socialdataclass.KakaoUserInfo
 import com.friends.ggiriggiri.util.MainScreenName
 import com.friends.ggiriggiri.util.UserSocialLoginState
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,90 +39,144 @@ class UserLoginViewModel @Inject constructor(
 ) : ViewModel() {
     val friendsApplication = context as FriendsApplication
 
+    // 아이디 입력 요소
+    val textFieldUserLoginIdValue = mutableStateOf("")
+
+    // 비밀번호 입력 요소
+    val textFieldUserLoginPasswordValue = mutableStateOf("")
+
     // 프로그래스바
     val isLoading = MutableStateFlow(false) // 로딩 상태
 
-    // 로그인 실패 다이얼로그 표시
-    val showLoginFailDialog = mutableStateOf(false)
 
-    // 화면이동
-    sealed class LoginNavigationEvent {
-        object NavigateToGroup : LoginNavigationEvent()
-        object NavigateToMain : LoginNavigationEvent()
-    }
-
-    val loginNavigationEvent = MutableSharedFlow<LoginNavigationEvent>()
-
-    //로그인 유저 불러오기
     suspend fun loadUserModel(userDocumentId: String): UserModel {
         return loginAndRegisterService.getUserModelByDocumentId(userDocumentId)
     }
 
-    fun kakaoLogin(activity: Activity) {
+    fun onKakaoLoginClicked(activity: Activity) {
         viewModelScope.launch {
             isLoading.value = true
-            try {
-                val (token, kakaoUserInfo) = kakaoLoginService.loginWithKakaoTalkSuspend(activity)
-                val userModel = UserModel().apply {
-                    userId = kakaoUserInfo.email ?: "unknown"
-                    userName = kakaoUserInfo.nickname ?: "unknown"
-                    userProfileImage = kakaoUserInfo.profileImageUrl ?: "unknown"
-                    userSocialLogin = UserSocialLoginState.KAKAO
-                }
-                val userModelFromDB = loginAndRegisterService.userExistCheck(userModel)
 
-                // 로그인 성공
-                if (userModelFromDB != null) {
-
-                    onLoginSuccess(
-                        userModelFromDB,
-                        UserSocialLoginState.KAKAO,
-                        token.toString()
+            kakaoLoginService.loginWithKakaoTalk(
+                activity = activity,
+                onSuccess = { token, userInfo ->
+                    Log.d("kakaoLogin", "토큰: $token")
+                    Log.d(
+                        "kakaoLogin",
+                        "사용자 정보: ${userInfo.nickname}, ${userInfo.email}, ${userInfo.profileImageUrl}"
                     )
+                    Log.d("kakaoLogin", "사용자 정보: ${userInfo}")
+                    // TODO: 이후 사용자 정보를 서버로 보내거나 앱 내부에 저장
+                    val userModel = UserModel()
+                    userModel.userId = userInfo.email ?: "unknown"
+                    userModel.userName = userInfo.nickname ?: "unknown"
+                    userModel.userProfileImage = userInfo.profileImageUrl ?: "unknown"
+                    userModel.userSocialLogin = UserSocialLoginState.KAKAO
 
-                } else {// 유저 없음 - 알림 표시
-                    showLoginFailDialog.value = true
-                    isLoading.value = false
+
+
+                    viewModelScope.launch {
+                        //로그인이나 회원가입을 하고 데이터를 가져온다
+                        val userModelFromDB = loginAndRegisterService.loginOrRegister(userModel)
+                        //자동로그인 저장
+                        preferenceManager.saveLoginInfo(
+                            UserSocialLoginState.KAKAO.name,
+                            userInfo.email.toString(),
+                            userModelFromDB.userDocumentId,
+                            token
+                        )
+
+                        //로그인 유저 저장
+                        friendsApplication.loginUserModel = userModelFromDB
+
+                        //유저가 그룹에 가입되어있지않다면 SCREEN_USER_GROUP으로간다
+                        if (userModelFromDB.userGroupDocumentID.isEmpty()) {
+                            friendsApplication.navHostController.apply {
+                                popBackStack(MainScreenName.SCREEN_USER_LOGIN.name, true)
+                                navigate(MainScreenName.SCREEN_USER_GROUP.name)
+                                isLoading.value = false
+                            }
+                        }
+                        //유저가 그룹에 가입되어있다면 SCREEN_USER_MAIN으로간다
+                        else {
+                            friendsApplication.navHostController.apply {
+                                preferenceManager.changeIsGroupInTrue()
+                                popBackStack(MainScreenName.SCREEN_USER_LOGIN.name, true)
+                                navigate(MainScreenName.SCREEN_USER_MAIN.name)
+                                isLoading.value = false
+                            }
+                        }
+                    }
+                },
+                onFailure = { error ->
+                    Log.e("kakaoLogin", "로그인 실패", error)
                 }
+            )
+            isLoading.value = false
 
-            } catch (e: Exception) {
-                Log.e("kakaoLogin", "로그인 실패", e)
-                isLoading.value = false
-            }
+
         }
     }
 
-    fun NaverLogin(activity: Activity) {
+    fun onNaverLoginClicked(activity: Activity) {
         viewModelScope.launch {
             isLoading.value = true
-            try {
-                val (token, naverUserInfo) = naverLoginService.loginWithNaverTalkSuspend(activity)
-                val userModel = UserModel()
-                userModel.userId = naverUserInfo.email ?: "unknown"
-                userModel.userName = naverUserInfo.name ?: "unknown"
-                userModel.userProfileImage = naverUserInfo.profileImageUrl ?: "unknown"
-                userModel.userSocialLogin = UserSocialLoginState.NAVER
-
-                val userModelFromDB = loginAndRegisterService.userExistCheck(userModel)
-
-                // 로그인 성공
-                if (userModelFromDB != null) {
-
-                    onLoginSuccess(
-                        userModelFromDB,
-                        UserSocialLoginState.NAVER,
-                        token.toString()
+            naverLoginService.loginWithNaver(
+                activity = activity,
+                onSuccess = { token, userInfo ->
+                    Log.d("naverLogin", "토큰: $token")
+                    Log.d(
+                        "naverLogin",
+                        "사용자 정보: ${userInfo.nickname}, ${userInfo.email}, ${userInfo.profileImageUrl}"
                     )
+                    Log.d("naverLogin", "사용자 정보: ${userInfo.name}")
 
-                } else {// 유저 없음 - 알림 표시
-                    showLoginFailDialog.value = true
-                    isLoading.value = false
+                    val userModel = UserModel()
+                    userModel.userId = userInfo.email ?: "unknown"
+                    userModel.userName = userInfo.name ?: "unknown"
+                    userModel.userProfileImage = userInfo.profileImageUrl ?: "unknown"
+                    userModel.userSocialLogin = UserSocialLoginState.NAVER
+
+                    viewModelScope.launch {
+                        //로그인이나 회원가입을 하고 데이터를 가져온다
+                        val userModelFromDB = loginAndRegisterService.loginOrRegister(userModel)
+
+                        //자동로그인 저장
+                        preferenceManager.saveLoginInfo(
+                            platform = UserSocialLoginState.NAVER.name,
+                            userId = userInfo.email,
+                            userDocumentId = userModelFromDB.userDocumentId,
+                            accessToken = token
+                        )
+
+                        //로그인 유저 저장
+                        friendsApplication.loginUserModel = userModelFromDB
+
+                        //유저가 그룹에 가입되어있지않다면 SCREEN_USER_GROUP으로간다
+                        if (userModelFromDB.userGroupDocumentID.isEmpty()) {
+                            friendsApplication.navHostController.apply {
+                                popBackStack(MainScreenName.SCREEN_USER_LOGIN.name, true)
+                                navigate(MainScreenName.SCREEN_USER_GROUP.name)
+                                isLoading.value = false
+                            }
+                        }
+                        //유저가 그룹에 가입되어있다면 SCREEN_USER_MAIN으로간다
+                        else {
+                            friendsApplication.navHostController.apply {
+                                preferenceManager.changeIsGroupInTrue()
+                                popBackStack(MainScreenName.SCREEN_USER_LOGIN.name, true)
+                                navigate(MainScreenName.SCREEN_USER_MAIN.name)
+                                isLoading.value = false
+                            }
+                        }
+                    }
+
+                },
+                onFailure = { error ->
+                    Log.e("naverLogin", "로그인 실패", error)
                 }
-
-            } catch (e: Exception) {
-                Log.e("NaverLogin", "로그인 실패", e)
-                isLoading.value = false
-            }
+            )
+            //isLoading.value = false
         }
     }
 
@@ -144,67 +193,62 @@ class UserLoginViewModel @Inject constructor(
     fun handleGoogleSignInResult(result: Intent?) {
         isLoading.value = true
         val task = GoogleSignIn.getSignedInAccountFromIntent(result)
-        try {
-            if (task.isSuccessful) {
-                val account = task.result
-                val googleUserInfo = GoogleUserInfo.from(account)
+        if (task.isSuccessful) {
+            val account = task.result
+            val googleUserInfo = GoogleUserInfo.from(account)
 
-                Log.d("google", googleUserInfo.name)
-                Log.d("google", googleUserInfo.profileImageUrl)
-                Log.d("google", googleUserInfo.email)
+            Log.d("google", googleUserInfo.name)
+            Log.d("google", googleUserInfo.profileImageUrl)
+            Log.d("google", googleUserInfo.email)
 
-                val userModel = UserModel()
-                userModel.userId = googleUserInfo.email ?: "unknown"
-                userModel.userName = googleUserInfo.name ?: "unknown"
-                userModel.userProfileImage = googleUserInfo.profileImageUrl ?: "unknown"
-                userModel.userSocialLogin = UserSocialLoginState.GOOGLE
+            val userModel = UserModel()
+            userModel.userId = googleUserInfo.email ?: "unknown"
+            userModel.userName = googleUserInfo.name ?: "unknown"
+            userModel.userProfileImage = googleUserInfo.profileImageUrl ?: "unknown"
+            userModel.userSocialLogin = UserSocialLoginState.GOOGLE
 
 
-                viewModelScope.launch {
+            viewModelScope.launch {
+                //로그인이나 회원가입을 하고 데이터를 가져온다
+                val userModelFromDB = loginAndRegisterService.loginOrRegister(userModel)
 
-                    val userModelFromDB = loginAndRegisterService.userExistCheck(userModel)
+                //자동로그인 저장
+                preferenceManager.saveLoginInfo(
+                    UserSocialLoginState.GOOGLE.name,
+                    googleUserInfo.email,
+                    userModelFromDB.userDocumentId,
+                    account.idToken
+                )
 
-                    // 로그인 성공
-                    if (userModelFromDB != null) {
+                //로그인 유저 저장
+                friendsApplication.loginUserModel = userModelFromDB
 
-                        onLoginSuccess(
-                            userModelFromDB,
-                            UserSocialLoginState.GOOGLE,
-                            account.idToken.toString()
-                        )
-
-                    } else { // 유저 없음 - 알림 표시
-                        showLoginFailDialog.value = true
+                //유저가 그룹에 가입되어있지않다면 SCREEN_USER_GROUP으로간다
+                if (userModelFromDB.userGroupDocumentID.isEmpty()) {
+                    friendsApplication.navHostController.apply {
+                        popBackStack(MainScreenName.SCREEN_USER_LOGIN.name, true)
+                        navigate(MainScreenName.SCREEN_USER_GROUP.name)
                         isLoading.value = false
                     }
                 }
-            } else {
-                Log.e("GoogleLogin", "로그인 실패: ${task.exception?.message}")
-                isLoading.value = false
+                //유저가 그룹에 가입되어있다면 SCREEN_USER_MAIN으로간다
+                else {
+                    friendsApplication.navHostController.apply {
+                        preferenceManager.changeIsGroupInTrue()
+                        popBackStack(MainScreenName.SCREEN_USER_LOGIN.name, true)
+                        navigate(MainScreenName.SCREEN_USER_MAIN.name)
+                        isLoading.value = false
+                    }
+                }
             }
-        } catch (e: Exception) {
-            Log.e("GoogleLogin", "로그인 실패", e)
-        }
-    }
 
-    private suspend fun onLoginSuccess(
-        userModelFromDB: UserModel,
-        loginState: UserSocialLoginState,
-        token: String
-    ) {
-        preferenceManager.saveLoginInfo(
-            loginState.name,
-            userModelFromDB.userId,
-            userModelFromDB.userDocumentId,
-            token
-        )
-        friendsApplication.loginUserModel = userModelFromDB
 
-        if (userModelFromDB.userGroupDocumentID.isEmpty()) {
-            loginNavigationEvent.emit(LoginNavigationEvent.NavigateToGroup)
+            //println(googleUserInfo.toString())
         } else {
-            preferenceManager.changeIsGroupInTrue()
-            loginNavigationEvent.emit(LoginNavigationEvent.NavigateToMain)
+            Log.e("GoogleLogin", "로그인 실패: ${task.exception?.message}")
         }
     }
+
+
+
 }

@@ -120,6 +120,23 @@ fun HomeScreen(
         onDispose { }
     }
 
+//    //푸시알림을 감지하고 데이터 리로드
+//    LaunchedEffect(Unit) {
+//        PushEventBus.refreshRequestEvent.collect {
+//            viewModel.clearHomeState()
+//            viewModel.getRequestStateInGroup()
+//        }
+//    }
+//
+//    //푸시알림을 감지하고 데이터 리로드
+//    LaunchedEffect(Unit) {
+//        PushEventBus.refreshQuestionEvent.collect {
+//            viewModel.clearAnswerState()
+//            viewModel.getQuestionModel()
+//            viewModel.getUserAnswerState()
+//        }
+//    }
+
     HomeContent(
         modifier = modifier,
         viewModel,
@@ -128,7 +145,7 @@ fun HomeScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun HomeContent(
     modifier: Modifier,

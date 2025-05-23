@@ -31,14 +31,12 @@ import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.firebase.model.UserModel
 import com.friends.ggiriggiri.room.database.NotificationDatabase
 import com.friends.ggiriggiri.screen.ui.UserGroupScreen
+import com.friends.ggiriggiri.screen.ui.UserLoginScreen
 import com.friends.ggiriggiri.screen.ui.UserMainScreen
 import com.friends.ggiriggiri.screen.ui.home.DoAnswerScreen
 import com.friends.ggiriggiri.screen.ui.home.DoRequestScreen
 import com.friends.ggiriggiri.screen.ui.home.DoResponseScreen
 import com.friends.ggiriggiri.screen.ui.home.memberlist.MemberListDetail
-import com.friends.ggiriggiri.screen.ui.login.RegisterStep1Screen
-import com.friends.ggiriggiri.screen.ui.login.RegisterStep2Screen
-import com.friends.ggiriggiri.screen.ui.login.UserLoginScreen
 import com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion.ViewOneQuestionScreen
 import com.friends.ggiriggiri.screen.ui.memories.request.viewonerequest.ViewOneRequestScreen
 import com.friends.ggiriggiri.screen.ui.mypage.LegalScreen
@@ -97,7 +95,7 @@ fun Main(
     val friendsApplication = context.applicationContext as FriendsApplication
     friendsApplication.navHostController = navHostController
 
-    Log.d("preferenceManager", userLoginViewModel.preferenceManager.isLoggedIn().toString())
+    Log.d("preferenceManager",userLoginViewModel.preferenceManager.isLoggedIn().toString())
 
 
     var startDestination by remember { mutableStateOf<String?>(null) }
@@ -150,20 +148,14 @@ fun Main(
         NavHost(
             navController = navHostController,
             startDestination = startDestination!!,
-            //startDestination = MainScreenName.LOGIN.name,
+            //startDestination = "test",
             enterTransition = {
                 fadeIn(tween(100)) +
-                        slideIntoContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Start,
-                            tween(300)
-                        )
+                        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(300))
             },
             popExitTransition = {
                 fadeOut(tween(100)) +
-                        slideOutOfContainer(
-                            AnimatedContentTransitionScope.SlideDirection.End,
-                            tween(300)
-                        )
+                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(300))
             },
             exitTransition = {
                 fadeOut(tween(100))
@@ -172,6 +164,9 @@ fun Main(
                 fadeIn(tween(100))
             }
         ) {
+            composable(route = MainScreenName.SCREEN_USER_LOGIN.name) {
+                UserLoginScreen(navHostController = navHostController)
+            }
 
             composable(route = MainScreenName.SCREEN_USER_MAIN.name) {
                 UserMainScreen(navHostController = navHostController)
@@ -184,8 +179,7 @@ fun Main(
             composable(
                 route = "${MainScreenName.SCREEN_VIEW_ONE_REQUEST.name}/{requestDocumentId}"
             ) { backStackEntry ->
-                val requestDocumentId =
-                    backStackEntry.arguments?.getString("requestDocumentId") ?: ""
+                val requestDocumentId = backStackEntry.arguments?.getString("requestDocumentId") ?: ""
                 ViewOneRequestScreen(
                     navHostController = navHostController,
                     requestDocumentId = requestDocumentId
@@ -193,9 +187,8 @@ fun Main(
             }
 
             composable(
-                route = "${MainScreenName.SCREEN_SETTING_GROUP.name}/{groupName}"
-            )
-            { backStackEntry ->
+                route = "${MainScreenName.SCREEN_SETTING_GROUP.name}/{groupName}")
+            { backStackEntry->
                 val groupName = backStackEntry.arguments?.getString("groupName") ?: ""
                 SettingGroupScreen(navHostController = navHostController, groupName = groupName)
             }
@@ -223,15 +216,9 @@ fun Main(
                     navArgument("questionNumber") { type = NavType.IntType }
                 )
             ) { backStackEntry ->
-                val imageUrl = URLDecoder.decode(
-                    backStackEntry.arguments?.getString("imageUrl") ?: "",
-                    "UTF-8"
-                )
+                val imageUrl = URLDecoder.decode(backStackEntry.arguments?.getString("imageUrl") ?: "", "UTF-8")
                 val questionNumber = backStackEntry.arguments?.getInt("questionNumber") ?: 0
-                val questionContent = URLDecoder.decode(
-                    backStackEntry.arguments?.getString("questionContent") ?: "",
-                    "UTF-8"
-                )
+                val questionContent = URLDecoder.decode(backStackEntry.arguments?.getString("questionContent") ?: "", "UTF-8")
 
                 DoAnswerScreen(
                     navHostController = navHostController,
@@ -260,22 +247,7 @@ fun Main(
             composable("test") {
                 TestScreen()
             }
-
-            // 새로운 로그인& 회원가입 방식
-            composable(route = MainScreenName.SCREEN_USER_LOGIN.name) {
-                UserLoginScreen(navHostController = navHostController)
-            }
-            composable(route = MainScreenName.REGISTER1.name) {
-                RegisterStep1Screen(navHostController)
-            }
-            composable(
-                route = "${MainScreenName.REGISTER2.name}/{nickName}")
-            { backStackEntry ->
-                val nickName = URLDecoder.decode(backStackEntry.arguments?.getString("nickName") ?: "", "UTF-8")
-                RegisterStep2Screen(navHostController, nickName)
-            }
-
-
+            
         }
     }
 }
