@@ -40,6 +40,74 @@ class DoRequestViewModel @Inject constructor(
         _showFailDialog.value = boolean
     }
 
+    //테스트용 30개 삽입
+    fun test() {
+        viewModelScope.launch {
+            val testMessages = listOf(
+                "오늘 뭐 먹을까?",
+                "심심해.. 뭐 하고 놀지?",
+                "하루 어땠어?",
+                "요즘 재밌는 거 있어?",
+                "카페 추천 좀!",
+                "헬스 끊을까 말까 고민됨",
+                "이번 주말에 뭐 할 거야?",
+                "너 요즘 빠진 거 있음?",
+                "요즘 드라마 뭐 봐?",
+                "갑자기 여행 가고 싶다",
+                "오늘 날씨 어때?",
+                "배고파.. 야식 추천해줘",
+                "지금 시간에 뭐 보면 좋을까?",
+                "영화 추천 좀!",
+                "오늘 기분 어때?",
+                "이번 주 목표 뭐야?",
+                "어제 꾼 꿈 진짜 이상했어",
+                "카톡 답장 늦으면 뭐해?",
+                "좋아하는 계절은?",
+                "스트레스 푸는 법 뭐야?",
+                "시험 끝나면 뭐 할 거야?",
+                "새벽 감성 터지는 중",
+                "요즘 최애 음식 뭐야?",
+                "친구한테 고마운 점 말해보자",
+                "요즘 따라 시간 진짜 빨리 가",
+                "요즘 듣는 노래 뭐야?",
+                "우리 언제 한번 보자~",
+                "주말에 아무것도 안 하고 싶은 날",
+                "빨리 여름휴가 왔으면 좋겠다",
+                "하루에 가장 행복한 순간은?"
+            )
+
+            val userIds = listOf(
+                "4WjwMH93q3I1RQG6hx2n",
+                "OdUikyWt0LzCoYzlpWB2",
+                "uUxeGftIzjjuBUGA4ONY",
+                "ub1i8eFM4XsWjjgq0XW0"
+            )
+
+            val calendar = java.util.Calendar.getInstance().apply {
+                set(2025, 2, 1, 8, 0, 0) // 2025년 3월 1일 오전 8시 (월은 0부터 시작하므로 2가 3월)
+            }
+
+            for (i in testMessages.indices) {
+                val fakeTime = calendar.timeInMillis
+
+                val requestModel = RequestModel(
+                    requestUserDocumentID = userIds[i % userIds.size],
+                    requestMessage = testMessages[i],
+                    requestImage = "테스트",
+                    requestGroupDocumentID = "SeeYBZuWUalPjuZML0yb",
+                    requestState = 2,
+                    requestTime = fakeTime
+                )
+
+                requestService.uploadNewRequest(requestModel)
+
+                // 시간 1일 + 1시간씩 증가
+                calendar.add(java.util.Calendar.HOUR_OF_DAY, 26)
+            }
+        }
+    }
+
+
     //요청 다이얼로그
     private var _showConfirmDialog = mutableStateOf(false)
     var showConfirmDialog: State<Boolean> = _showConfirmDialog
@@ -125,7 +193,7 @@ class DoRequestViewModel @Inject constructor(
                 if (groupFCMList.isNotEmpty()) {
                     sendPushNotificationToGroup(
                         groupFCMList,
-                        title = "끼리끼리 요청!",
+                        title = "${friendsApplication.loginUserModel.userName}의 요청!",
                         body = requestText.value,
                         category = NotificationCategory.REQUEST.str
                     )

@@ -108,6 +108,11 @@ class UserLoginViewModel @Inject constructor(
                 userModel.userProfileImage = naverUserInfo.profileImageUrl ?: "unknown"
                 userModel.userSocialLogin = UserSocialLoginState.NAVER
 
+                Log.d("NaverLogin",userModel.userId)
+                Log.d("NaverLogin",userModel.userName)
+                Log.d("NaverLogin",userModel.userProfileImage)
+                Log.d("NaverLogin",userModel.userSocialLogin.str)
+
                 val userModelFromDB = loginAndRegisterService.userExistCheck(userModel)
 
                 // 로그인 성공

@@ -19,6 +19,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -31,9 +32,21 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         Log.d("FCM", "메시지 수신 (data): ${message.data}")
 
+        Log.d("DEBUG", "notification: ${message.notification}") // ✅ null이 아닐 수도 있음
+        Log.d("DEBUG", "data: ${message.data}") // ✅ 이게 진짜 우리가 보낸 것
+
+        if (message.notification != null && message.data["via"] != "app") {
+            Log.d("FCM", "❌ 시스템이 알림 자동 표시함 → 수동 알림 생략")
+            return
+        }
+
         val title = message.data["title"] ?: return
         val body = message.data["body"] ?: return
         val category = message.data["category"] ?: "기본값"
+
+        Log.d("onMessageReceived",title)
+        Log.d("onMessageReceived",body)
+        Log.d("onMessageReceived",category)
 
         if (category == NotificationCategory.REQUEST.str) {
             Log.d("onMessageReceived","refreshRequestEvent")
@@ -78,8 +91,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val channel = NotificationChannel(
                 channelId,
                 "기본 채널",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             )
+            channel.enableVibration(true)
+            channel.enableLights(true)
             manager.createNotificationChannel(channel)
         }
 
@@ -104,7 +119,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setContentIntent(pendingIntent) // 이 부분이 핵심
             .build()
 
-        manager.notify(0, notification)
+        //알림이 겹치지않게 여러개 뜨게하기
+        val notificationId = UUID.randomUUID().hashCode()
+        manager.notify(notificationId, notification)
+
     }
 
 }

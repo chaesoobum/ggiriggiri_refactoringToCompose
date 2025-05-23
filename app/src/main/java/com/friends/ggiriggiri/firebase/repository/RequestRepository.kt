@@ -71,7 +71,7 @@ class RequestRepository @Inject constructor(
             val requestDocumentId = docRef.id
 
             // 30분 후 상태 변경 Cloud Task 예약
-            scheduleRequestStateUpdate(requestDocumentId)
+            //scheduleRequestStateUpdate(requestDocumentId)
 
         } catch (e: Exception) {
             if (e is CancellationException) throw e else throw e
@@ -123,8 +123,8 @@ class RequestRepository @Inject constructor(
             // 나 자신의 문서인지 확인해서 제외
             if (doc.id == userDocumentId) continue
 
-            val fcmCodes = doc.get("userFcmCode") as? List<String> ?: emptyList()
-            allFcmTokens.addAll(fcmCodes)
+            val fcmCodes = doc.getString("userFcmCode")
+            allFcmTokens.add(fcmCodes.toString())
         }
 
         return allFcmTokens.filter { it.isNotBlank() }.distinct()

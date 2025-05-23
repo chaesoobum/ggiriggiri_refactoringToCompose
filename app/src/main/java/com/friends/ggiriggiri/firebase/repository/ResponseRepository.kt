@@ -64,7 +64,7 @@ class ResponseRepository@Inject constructor(
 
     //같은 그룹내의 유저들의 fcm코드를 리스트로가져온다
     suspend fun getUserFcmList(groupDocumentId: String, userDocumentId: String): List<String> {
-        val snapshot = FirebaseFirestore.getInstance()
+        val snapshot = firestore
             .collection("_users")
             .whereEqualTo("userGroupDocumentID", groupDocumentId)
             .get()
@@ -76,8 +76,8 @@ class ResponseRepository@Inject constructor(
             // 나 자신의 문서인지 확인해서 제외
             if (doc.id == userDocumentId) continue
 
-            val fcmCodes = doc.get("userFcmCode") as? List<String> ?: emptyList()
-            allFcmTokens.addAll(fcmCodes)
+            val fcmCodes = doc.getString("userFcmCode")
+            allFcmTokens.add(fcmCodes.toString())
         }
 
         return allFcmTokens.filter { it.isNotBlank() }.distinct()

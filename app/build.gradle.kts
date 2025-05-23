@@ -5,6 +5,7 @@ plugins {
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
 }
 
 android {
@@ -15,8 +16,8 @@ android {
         applicationId = "com.friends.ggiriggiri"
         minSdk = 25
         targetSdk = 35
-        versionCode = 22
-        versionName = "1.22.0"
+        versionCode = 24
+        versionName = "1.24.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -35,7 +36,11 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // 코드 최적화 및 난독화 활성화
+            isMinifyEnabled = true
+
+            // 리소스 최적화 (안 쓰는 drawable/string 제거)
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -132,7 +137,8 @@ dependencies {
     // shimmer 효과
     implementation(libs.compose.shimmer)
 
-
+    // 직렬화
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
 
     // Glide

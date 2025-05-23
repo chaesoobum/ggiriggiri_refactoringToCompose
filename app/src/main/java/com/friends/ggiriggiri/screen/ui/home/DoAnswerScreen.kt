@@ -38,7 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.R
 import com.friends.ggiriggiri.component.CustomAlertDialog
@@ -49,7 +48,6 @@ import com.friends.ggiriggiri.component.TopAppBar
 import com.friends.ggiriggiri.screen.ui.memories.question.viewonequestion.QuestionImage
 import com.friends.ggiriggiri.screen.viewmodel.PublicViewModel
 import com.friends.ggiriggiri.screen.viewmodel.home.DoAnswerViewModel
-import com.friends.ggiriggiri.util.MainScreenName
 import com.friends.ggiriggiri.util.findActivity
 
 @Composable
@@ -102,7 +100,8 @@ fun DoAnswerContent(
                 },
                 isDivider = false
             )
-        }
+        },
+        containerColor = Color.White,
     ) { innerPadding ->
         Column(
             modifier = Modifier

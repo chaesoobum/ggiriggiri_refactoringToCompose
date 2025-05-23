@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,7 +53,8 @@ fun ViewNotificationContent(
                     }
                 }
             )
-        }
+        },
+        containerColor = Color.White,
     ) { innerPadding ->
         Column(
             modifier = Modifier

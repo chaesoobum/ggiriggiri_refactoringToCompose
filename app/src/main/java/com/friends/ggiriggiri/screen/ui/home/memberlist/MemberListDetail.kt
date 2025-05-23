@@ -36,7 +36,7 @@ fun MemberListDetail(
     viewModel: HomeViewModel = hiltViewModel(),
     navHostController:NavHostController
 ) {
-    val items = remember { mutableStateOf<List<String>>(emptyList()) }
+    val items = remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
     val pvm: PublicViewModel = hiltViewModel(LocalContext.current.findActivity())
     //전역뷰모델에서 값을가져오고 삭제함
     LaunchedEffect(Unit) {

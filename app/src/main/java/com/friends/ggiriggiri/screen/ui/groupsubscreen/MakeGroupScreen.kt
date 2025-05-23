@@ -1,5 +1,6 @@
 package com.friends.ggiriggiri.screen.ui.groupsubscreen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -140,6 +141,7 @@ fun MakeGroupContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.White)
             .pointerInput(Unit) {
                 detectTapGestures { focusManager.clearFocus() }
             }

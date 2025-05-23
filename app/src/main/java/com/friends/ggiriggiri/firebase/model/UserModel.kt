@@ -11,7 +11,7 @@ class UserModel {
     var userName:String = ""
     var userState = UserState.NORMAL
     var userJoinTime:Long = 0L
-    var userFcmCode = mutableListOf<String>()
+    var userFcmCode:String = ""
     var userProfileImage:String = ""
     var userPhoneNumber:String = ""
     var userGroupDocumentID:String = ""
@@ -29,7 +29,7 @@ class UserModel {
         userVO.userName = userName
         userVO.userState = userState.num
         userVO.userJoinTime =userJoinTime
-        userVO.userFcmCode = userFcmCode.toMutableList()
+        userVO.userFcmCode = userFcmCode
         userVO.userProfileImage = userProfileImage
         userVO.userPhoneNumber = userPhoneNumber
         userVO.userGroupDocumentID = userGroupDocumentID

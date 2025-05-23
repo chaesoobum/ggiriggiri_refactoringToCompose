@@ -156,7 +156,8 @@ fun ProfileImageButton(
     if (showSheet) {
         ModalBottomSheet(
             onDismissRequest = { showSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            containerColor = Color.White
         ) {
             Column(
                 modifier = Modifier

@@ -268,16 +268,16 @@ fun HomeContent(
                     UserMain_ToAsk()
                 }
 
-                val selectedImageUrl = remember { mutableStateOf<String?>(null) }
-                ImageCarousel(onImageClick = { url -> selectedImageUrl.value = url })
-                if (selectedImageUrl.value != null) {
-                    ImageDialog(
-                        selectedImageUrl.value,
-                        {
-                            selectedImageUrl.value = null
-                        }
-                    )
-                }
+//                val selectedImageUrl = remember { mutableStateOf<String?>(null) }
+//                ImageCarousel(onImageClick = { url -> selectedImageUrl.value = url })
+//                if (selectedImageUrl.value != null) {
+//                    ImageDialog(
+//                        selectedImageUrl.value,
+//                        {
+//                            selectedImageUrl.value = null
+//                        }
+//                    )
+//                }
                 Spacer(modifier = Modifier.height(100.dp))
             }
         }

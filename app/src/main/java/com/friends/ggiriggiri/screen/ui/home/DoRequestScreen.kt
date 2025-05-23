@@ -54,6 +54,9 @@ fun DoRequestScreen(
     viewModel: DoRequestViewModel = hiltViewModel(),
     navHostController: NavHostController
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.test()
+    }
     DoRequestContent(viewModel, navHostController)
 }
 
@@ -82,7 +85,8 @@ fun DoRequestContent(
                     navHostController.popBackStack(MainScreenName.SCREEN_DO_REQUEST.name, true)
                 }
             )
-        }
+        },
+        containerColor = Color.White,
     ) { innerPadding ->
         Column(
             modifier = Modifier

@@ -50,6 +50,10 @@ import com.friends.ggiriggiri.screen.ui.memories.request.RequestListScreen
 import com.friends.ggiriggiri.screen.viewmodel.memories.MemoriesViewModel
 import com.friends.ggiriggiri.util.MainScreenName
 import com.friends.ggiriggiri.util.Memories
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -59,16 +63,17 @@ import kotlinx.coroutines.launch
 fun MemoriesScreen(
     modifier: Modifier,
     navHostController: NavHostController,
-    viewModel: MemoriesViewModel = hiltViewModel()
+    viewModel: MemoriesViewModel = hiltViewModel(),
 ) {
+    // 최초 한 번만 요청/질문 첫 페이지 불러오기
     LaunchedEffect(Unit) {
-        viewModel.getListInfo()
+        viewModel.loadFirstPagesIfNeeded()
     }
 
     MemoriesContent(
         modifier,
         navHostController,
-        viewModel
+        viewModel,
     )
 }
 
@@ -78,7 +83,7 @@ fun MemoriesScreen(
 fun MemoriesContent(
     modifier: Modifier,
     navHostController: NavHostController,
-    viewModel: MemoriesViewModel
+    viewModel: MemoriesViewModel,
 ) {
 
     val context = LocalContext.current
@@ -93,20 +98,8 @@ fun MemoriesContent(
 
     val coroutineScope = rememberCoroutineScope()
 
-    var isRefreshing by remember { mutableStateOf(false) }
-
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = {
-            coroutineScope.launch {
-                isRefreshing = true
-                viewModel.getListInfo(forceReload = true) // 강제 새로고침
-                isRefreshing = false
-            }
-        }
-    )
-
     Scaffold(
+        containerColor = Color.White,
         topBar = {
             Column(
                 modifier = Modifier
@@ -121,7 +114,7 @@ fun MemoriesContent(
                         CustomIconButton(
                             icon = ImageVector.vectorResource(R.drawable.notifications_24px),
                             iconButtonOnClick = {
-                                viewModel.friendsApplication.navHostController.apply {
+                                viewModel.app.navHostController.apply {
                                     navigate(MainScreenName.SCREEN_NOTIFICATION.name)
                                 }
                             }
@@ -135,9 +128,10 @@ fun MemoriesContent(
                             modifier = Modifier
                                 .tabIndicatorOffset(tabPositions[pagerState.currentPage])
                                 .height(5.dp),
-                            color = selectedColor
+                            color = selectedColor,
                         )
-                    }
+                    },
+                    containerColor = Color.White,
                 ) {
                     memoriesTabs.forEachIndexed { index, group ->
                         val selected = pagerState.currentPage == index
@@ -172,37 +166,25 @@ fun MemoriesContent(
         Box(
             modifier = Modifier
                 .padding(innerPadding)
-                .pullRefresh(pullRefreshState)
                 .fillMaxSize()
         ) {
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) { page ->
-                val isLoading = viewModel.isLoading.value
                 when (memoriesTabs[page]) {
                     Memories.Answers -> QuestionListScreen(
                         viewModel,
-                        isRefreshing || isLoading,
                         navHostController
                     )
+
                     Memories.Requests -> RequestListScreen(
                         viewModel,
-                        isRefreshing || isLoading,
+                        navHostController
                     )
                 }
             }
-
-            // 새로고침 인디케이터
-            PullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
-
         }
-
     }
 }
 

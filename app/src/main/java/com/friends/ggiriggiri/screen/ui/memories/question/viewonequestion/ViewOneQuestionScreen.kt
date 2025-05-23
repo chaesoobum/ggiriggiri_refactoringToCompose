@@ -16,18 +16,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.friends.ggiriggiri.R
-import com.friends.ggiriggiri.component.CustomProgressDialog
 import com.friends.ggiriggiri.component.TopAppBar
-import com.friends.ggiriggiri.screen.viewmodel.memories.MemoriesViewModel
 import com.friends.ggiriggiri.screen.viewmodel.memories.ViewOneQuestionViewModel
-import com.friends.ggiriggiri.util.MainScreenName
-import kotlinx.coroutines.delay
 
 
 @Composable
@@ -66,7 +63,8 @@ fun ViewOneQuestionContent(
                     navHostController.popBackStack()
                 }
             )
-        }
+        },
+        containerColor = Color.White,
     ) { innerPadding ->
         Box(
             modifier = Modifier.fillMaxSize()
@@ -77,7 +75,7 @@ fun ViewOneQuestionContent(
                     .verticalScroll(rememberScrollState())
             ) {
                 if(!isLoading){
-                    QuestionImage(viewModel.questionListModel.value?.questionImg ?:"dummy")
+                    QuestionImage(viewModel.questionListModel.value?.questionImg ?: "dummy")
                     QuestionText(
                         viewModel.questionListModel.value?.questionContent ?: null,
                     )

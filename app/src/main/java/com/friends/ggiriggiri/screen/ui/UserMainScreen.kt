@@ -51,7 +51,7 @@ fun UserMainScreen(
         bottomBar = {
             BottomNavigationBar(navController = navController)
         },
-        containerColor = Color(0xFFFFFFFF)
+        containerColor = Color.White
     ) { innerPadding ->
         NavHost(
             navController = navController,

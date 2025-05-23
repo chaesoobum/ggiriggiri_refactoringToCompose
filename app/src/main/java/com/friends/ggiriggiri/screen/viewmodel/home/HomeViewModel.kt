@@ -47,12 +47,12 @@ class HomeViewModel @Inject constructor(
     }
 
     //그룹원 프로필 이미지가져오기
-    private var _memberImageUrls = mutableStateOf<List<String>>(emptyList())
-    val memberImageUrls: State<List<String>> = _memberImageUrls
+    private var _memberImageUrls = mutableStateOf<List<Pair<String, String>>>(emptyList())
+    val memberImageUrls: State<List<Pair<String, String>>> = _memberImageUrls
     suspend fun getMemberProfileImage() {
         //viewModelScope.launch {
         _memberImageUrls.value =
-            homeService.gettingUserProfileImage(friendsApplication.loginUserModel.userGroupDocumentID)
+            homeService.gettingUserProfileImageWithName(friendsApplication.loginUserModel.userGroupDocumentID)
         //}
     }
 
@@ -276,9 +276,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             PushEventBus.refreshRequestEvent.collect {
                 clearHomeState()
-                withContext(Dispatchers.IO) {
-                    getRequestStateInGroup()
-                }
+                getRequestStateInGroup()
             }
         }
     }
@@ -287,10 +285,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             PushEventBus.refreshQuestionEvent.collect {
                 clearAnswerState()
-                withContext(Dispatchers.IO) {
-                    getQuestionModel()
-                    getUserAnswerState()
-                }
+                getQuestionModel()
+                getUserAnswerState()
             }
         }
     }

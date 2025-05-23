@@ -11,8 +11,13 @@ class HomeService @Inject constructor(
     val homeRepository: HomeRepository
 ) {
     //그룹원들의 이미지들을 가져오는 함수
-    suspend fun gettingUserProfileImage(groupDocumentId: String): List<String> {
-        return homeRepository.gettingUserProfileImage(groupDocumentId)
+    suspend fun gettingUserProfileImageWithName(groupDocumentId: String): List<Pair<String, String>> {
+        return homeRepository.gettingUserProfileImageWithName(groupDocumentId)
+    }
+
+    //그룹원들의 이미지들을 가져오는 함수
+    suspend fun gettingUserProfileImageWithName2(groupDocumentId: String): List<Pair<String, String>> {
+        return homeRepository.gettingUserProfileImageWithName2(groupDocumentId)
     }
 
     //그룹명을 가져온다

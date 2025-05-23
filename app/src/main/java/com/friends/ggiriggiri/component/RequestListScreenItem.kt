@@ -21,15 +21,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.friends.ggiriggiri.R
+import com.friends.ggiriggiri.firebase.model.RequestInfo
 import com.friends.ggiriggiri.util.tools.formatMillisToDateTime
 
 // date는 포맷팅 된상태로 들어올것
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RequestListScreenItem(
-    name: String,
-    content: String,
-    date: String,
+    list:RequestInfo,
     onClick: () -> Unit = {}
 ) {
     Row(
@@ -53,7 +52,7 @@ fun RequestListScreenItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = name,
+                        text = list.userName,
                         fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
                         fontSize = 16.sp
                     )
@@ -65,7 +64,7 @@ fun RequestListScreenItem(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = content,
+                    text = list.requestMessage,
                     fontFamily = FontFamily(Font(R.font.nanumsquarebold)),
                     fontSize = 14.sp,
                     maxLines = 2,
@@ -80,7 +79,7 @@ fun RequestListScreenItem(
             contentAlignment = Alignment.BottomEnd
         ) {
             Text(
-                text = formatMillisToDateTime(date),
+                text = formatMillisToDateTime(list.requestTime),
                 modifier = Modifier
                     .padding(20.dp),
                 fontFamily = FontFamily(Font(R.font.nanumsquareregular)),
@@ -93,5 +92,5 @@ fun RequestListScreenItem(
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
-    RequestListScreenItem("채수범", "내용입니다", "2025.03.04 00:15")
+    //RequestListScreenItem("채수범", "내용입니다", "2025.03.04 00:15")
 }
